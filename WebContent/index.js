@@ -35,12 +35,21 @@ function handleStarResult(resultData) {
             "</th>";
         rowHTML += "<th>" + resultData[i]["movie_year"] + "</th>";
         rowHTML += "<th>" + resultData[i]["movie_director"] + "</th>";
-        rowHTML += "<th>" + resultData[i]["movie_genres"] + "</th>>";
+
+        // get list of genres
+        rowHTML += "<th><ul>";
+        let movieGenres = resultData[i]["movie_genres"];
+        for(let genreIndex = 0; genreIndex < movieGenres.length; genreIndex++){
+            rowHTML += "<li>" + movieGenres[genreIndex]["genre_name"] + "</li>";
+        }
+        rowHTML += "</ul></th>";
 
         // get list of movie Stars
         rowHTML += "<th><ul>";
         let movieStars = resultData[i]["movie_stars"]
         for(let starsIndex = 0; starsIndex < movieStars.length; starsIndex++){
+            //rowHTML += "<li>" + '<a href="single-star.html?id=' + movieStars[starsIndex]["star_id"] + ">";
+            //rowHTML += movieStars[starsIndex]["star_name"] + "</a>" + "</li>";
             rowHTML += "<li>" + movieStars[starsIndex]["star_name"] + "</li>";
         }
         rowHTML += "</ul></th>"

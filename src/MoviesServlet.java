@@ -56,8 +56,10 @@ public class MoviesServlet extends HttpServlet {
                 String movie_year = rs.getString("year");
                 String movie_director = rs.getString("director");
                 String movie_rating = rs.getString("rating");
-                String movie_genres = "";
+
+                // Movie stars and genres will be stored as arrays
                 JsonArray jsonStars = new JsonArray();
+                JsonArray jsonGenres = new JsonArray();
 
                 // additional queries for genres and stars
                 try {
@@ -71,24 +73,29 @@ public class MoviesServlet extends HttpServlet {
                     String starsQuery = String.format("SELECT * FROM stars JOIN stars_in_movies ON (stars.id = starId AND movieId = \"%s\") LIMIT 3", movie_id);
                     ResultSet starsSet = starsStatement.executeQuery(starsQuery);
 
-                    // assemble genre list (just a string)
+                    // assemble genre list (as a JSON object)
                     while (genreSet.next()){
-                        movie_genres += genreSet.getString("name") + ", ";
+                        JsonObject jsonGenre = new JsonObject();
+                        String genre_name = genreSet.getString("name");
+                        jsonGenre.addProperty("genre_name", genre_name);
+
+                        // add to the JSON array of stars
+                        jsonGenres.add(jsonGenre);
                     }
 
                     // stars list (as JSON object)
-
                     while(starsSet.next()){
                         JsonObject jsonStar = new JsonObject();
                         String star_id = starsSet.getString("id");
                         String star_name = starsSet.getString("name");
                         jsonStar.addProperty("star_id", star_id);
                         jsonStar.addProperty("star_name", star_name);
+
+                        // add to the JSON array of stars
                         jsonStars.add(jsonStar);
                     }
 
 
-                    movie_genres = movie_genres.substring(0, movie_genres.length() - 2);
                 } catch (Exception e){
                     System.out.println(e.getMessage());
                 }
@@ -101,7 +108,7 @@ public class MoviesServlet extends HttpServlet {
                 jsonObject.addProperty("movie_year", movie_year);
                 jsonObject.addProperty("movie_director", movie_director);
                 jsonObject.addProperty("movie_rating", movie_rating);
-                jsonObject.addProperty("movie_genres", movie_genres);
+                jsonObject.add("movie_genres", jsonGenres);
                 jsonObject.add("movie_stars", jsonStars);
                 jsonArray.add(jsonObject);
             }
