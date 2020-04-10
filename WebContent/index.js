@@ -17,7 +17,7 @@ function handleStarResult(resultData) {
     console.log("handleStarResult: populating star table from resultData");
 
     // Populate the star table
-    // Find the empty table body by id "star_table_body"
+    // Find the empty table body by id "movie_table_body"
     let starTableBodyElement = jQuery("#movie_table_body");
 
     // Iterate through resultData, no more than 10 entries
@@ -36,6 +36,15 @@ function handleStarResult(resultData) {
         rowHTML += "<th>" + resultData[i]["movie_year"] + "</th>";
         rowHTML += "<th>" + resultData[i]["movie_director"] + "</th>";
         rowHTML += "<th>" + resultData[i]["movie_genres"] + "</th>>";
+
+        // get list of movie Stars
+        rowHTML += "<th><ul>";
+        let movieStars = resultData[i]["movie_stars"]
+        for(let starsIndex = 0; starsIndex < movieStars.length; starsIndex++){
+            rowHTML += "<li>" + movieStars[starsIndex]["star_name"] + "</li>";
+        }
+        rowHTML += "</ul></th>"
+
         rowHTML += "<th>" + resultData[i]["movie_rating"] + "</th>";
         rowHTML += "</tr>";
 

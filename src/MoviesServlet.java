@@ -57,22 +57,40 @@ public class MoviesServlet extends HttpServlet {
                 String movie_director = rs.getString("director");
                 String movie_rating = rs.getString("rating");
                 String movie_genres = "";
+                JsonArray jsonStars = new JsonArray();
 
-                System.out.println("yeet");
+                // additional queries for genres and stars
                 try {
+                    // Get list of first three genres
                     Statement genreStatement = dbcon.createStatement();
-                    String genreQuery = String.format("SELECT * FROM genres JOIN genres_in_movies ON (genres.id = genreId AND movieId = \"%s\")", movie_id);
+                    String genreQuery = String.format("SELECT genres.name FROM genres JOIN genres_in_movies ON (genres.id = genreId AND movieId = \"%s\") LIMIT 3", movie_id);
                     ResultSet genreSet = genreStatement.executeQuery(genreQuery);
 
+                    // get list of first three stars
+                    Statement starsStatement = dbcon.createStatement();
+                    String starsQuery = String.format("SELECT * FROM stars JOIN stars_in_movies ON (stars.id = starId AND movieID = \"%s\") LIMIT 3", movie_id);
+                    ResultSet starsSet = starsStatement.executeQuery(starsQuery);
 
-
+                    // assemble genre list (just a string)
                     while (genreSet.next()){
                         movie_genres += genreSet.getString("name") + ", ";
                     }
+
+                    // stars list (as JSON object)
+
+                    while(starsSet.next()){
+                        JsonObject jsonStar = new JsonObject();
+                        String star_id = starsSet.getString("id");
+                        String star_name = starsSet.getString("name");
+                        jsonStar.addProperty("star_id", star_id);
+                        jsonStar.addProperty("star_name", star_name);
+                        jsonStars.add(jsonStar);
+                    }
+
+
                     movie_genres = movie_genres.substring(0, movie_genres.length() - 2);
                 } catch (Exception e){
                     System.out.println(e.getMessage());
-                    movie_genres = e.getMessage();
                 }
 
 
@@ -84,6 +102,7 @@ public class MoviesServlet extends HttpServlet {
                 jsonObject.addProperty("movie_director", movie_director);
                 jsonObject.addProperty("movie_rating", movie_rating);
                 jsonObject.addProperty("movie_genres", movie_genres);
+                jsonObject.add("movie_stars", jsonStars);
                 jsonArray.add(jsonObject);
             }
             
