@@ -68,7 +68,7 @@ public class MoviesServlet extends HttpServlet {
 
                     // get list of first three stars
                     Statement starsStatement = dbcon.createStatement();
-                    String starsQuery = String.format("SELECT * FROM stars JOIN stars_in_movies ON (stars.id = starId AND movieID = \"%s\") LIMIT 3", movie_id);
+                    String starsQuery = String.format("SELECT * FROM stars JOIN stars_in_movies ON (stars.id = starId AND movieId = \"%s\") LIMIT 3", movie_id);
                     ResultSet starsSet = starsStatement.executeQuery(starsQuery);
 
                     // assemble genre list (just a string)
