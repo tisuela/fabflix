@@ -11,6 +11,7 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
@@ -55,6 +56,25 @@ public class MoviesServlet extends HttpServlet {
                 String movie_year = rs.getString("year");
                 String movie_director = rs.getString("director");
                 String movie_rating = rs.getString("rating");
+                String movie_genres = "";
+
+                System.out.println("yeet");
+                try {
+                    Statement genreStatement = dbcon.createStatement();
+                    String genreQuery = String.format("SELECT * FROM genres JOIN genres_in_movies ON (genres.id = genreId AND movieId = \"%s\")", movie_id);
+                    ResultSet genreSet = genreStatement.executeQuery(genreQuery);
+
+
+
+                    while (genreSet.next()){
+                        movie_genres += genreSet.getString("name") + ", ";
+                    }
+                    movie_genres = movie_genres.substring(0, movie_genres.length() - 2);
+                } catch (Exception e){
+                    System.out.println(e.getMessage());
+                    movie_genres = e.getMessage();
+                }
+
 
                 // Create a JsonObject based on the data we retrieve from rs
                 JsonObject jsonObject = new JsonObject();
@@ -63,6 +83,7 @@ public class MoviesServlet extends HttpServlet {
                 jsonObject.addProperty("movie_year", movie_year);
                 jsonObject.addProperty("movie_director", movie_director);
                 jsonObject.addProperty("movie_rating", movie_rating);
+                jsonObject.addProperty("movie_genres", movie_genres);
                 jsonArray.add(jsonObject);
             }
             
