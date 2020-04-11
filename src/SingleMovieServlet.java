@@ -21,7 +21,7 @@ public class SingleMovieServlet extends HttpServlet {
 	private static final long serialVersionUID = 2L;
 
 	// Create a dataSource which registered in web.xml
-	@Resource(name = "jdbc/testa")
+	@Resource(name = "jdbc/moviedb")
 	private DataSource dataSource;
 
 	/**
