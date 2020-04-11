@@ -16,7 +16,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 
 // Declaring a WebServlet called SingleStarServlet, which maps to url "/api/single-movie"
-@WebServlet(name = "SingleStarServlet", urlPatterns = "/api/single-movie")
+@WebServlet(name = "SingleMovieServlet", urlPatterns = "/api/single-movie")
 public class SingleMovieServlet extends HttpServlet {
 	private static final long serialVersionUID = 2L;
 
@@ -76,11 +76,14 @@ public class SingleMovieServlet extends HttpServlet {
 			JsonArray jsonStars = new JsonArray();
 			JsonArray jsonGenres = new JsonArray();
 
-			movieSet.last();
-			System.out.println(movieSet.getRow());
-			System.out.println("Getting movie name");
+			// Get movie info
+			movieSet.last(); // IMPORTANT! Solved bug
 			String movie_name = movieSet.getString("title");
+			String movie_year = movieSet.getString("year");
+			String movie_director = movieSet.getString("director");
 			jsonObject.addProperty("movie_name", movie_name);
+			jsonObject.addProperty("movie_year", movie_year);
+			jsonObject.addProperty("movie_director", movie_director);
 
 			System.out.println("Getting Stars Info");
 			// Iterate through each row of stars
@@ -99,7 +102,6 @@ public class SingleMovieServlet extends HttpServlet {
 
 				// add JSON to the array of stars
 				jsonStars.add(jsonStar);
-				System.out.println(starName);
 			}
 
 			// Iterate through each row of genres

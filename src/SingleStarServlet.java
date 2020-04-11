@@ -32,6 +32,7 @@ public class SingleStarServlet extends HttpServlet {
 
 		response.setContentType("application/json"); // Response mime type
 
+		System.out.println("starting single star body");
 		// Retrieve parameter id from url request.
 		String id = request.getParameter("id");
 
@@ -43,6 +44,7 @@ public class SingleStarServlet extends HttpServlet {
 			Connection dbcon = dataSource.getConnection();
 
 			// Construct a query with parameter represented by "?"
+			System.out.println("making query");
 			String query = "SELECT * from stars as s, stars_in_movies as sim, movies as m where m.id = sim.movieId and sim.starId = s.id and s.id = ?";
 
 			// Declare our statement
@@ -58,6 +60,7 @@ public class SingleStarServlet extends HttpServlet {
 			JsonArray jsonArray = new JsonArray();
 
 			// Iterate through each row of rs
+			System.out.println("collecting set info");
 			while (rs.next()) {
 
 				String starId = rs.getString("starId");
