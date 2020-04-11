@@ -46,11 +46,11 @@ function handleStarResult(resultData) {
 
         // get list of movie Stars
         rowHTML += "<th><ul>";
-        let movieStars = resultData[i]["movie_stars"]
+        let movieStars = resultData[i]["movie_stars"];
         for(let starsIndex = 0; starsIndex < movieStars.length; starsIndex++){
-            //rowHTML += "<li>" + '<a href="single-star.html?id=' + movieStars[starsIndex]["star_id"] + ">";
-            //rowHTML += movieStars[starsIndex]["star_name"] + "</a>" + "</li>";
-            rowHTML += "<li>" + movieStars[starsIndex]["star_name"] + "</li>";
+            rowHTML += "<li>" + '<a href="single-star.html?id=' + movieStars[starsIndex]["star_id"] + '">';
+            rowHTML += movieStars[starsIndex]["star_name"] + "</a>" + "</li>";
+            //rowHTML += "<li>" + movieStars[starsIndex]["star_name"] + "</li>";
         }
         rowHTML += "</ul></th>"
 

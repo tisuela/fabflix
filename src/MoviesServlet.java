@@ -86,7 +86,7 @@ public class MoviesServlet extends HttpServlet {
                     // stars list (as JSON object)
                     while(starsSet.next()){
                         JsonObject jsonStar = new JsonObject();
-                        String star_id = starsSet.getString("id");
+                        String star_id = starsSet.getString("starId");
                         String star_name = starsSet.getString("name");
                         jsonStar.addProperty("star_id", star_id);
                         jsonStar.addProperty("star_name", star_name);
