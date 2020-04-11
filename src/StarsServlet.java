@@ -14,7 +14,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-
+// hello, we don't use any of this 
 // Declaring a WebServlet called StarsServlet, which maps to url "/api/stars"
 @WebServlet(name = "StarsServlet", urlPatterns = "/api/stars")
 public class StarsServlet extends HttpServlet {
