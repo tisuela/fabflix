@@ -50,7 +50,6 @@ function handleStarResult(resultData) {
         for(let starsIndex = 0; starsIndex < movieStars.length; starsIndex++){
             rowHTML += "<li>" + '<a href="single-star.html?id=' + movieStars[starsIndex]["star_id"] + '">';
             rowHTML += movieStars[starsIndex]["star_name"] + "</a>" + "</li>";
-            //rowHTML += "<li>" + movieStars[starsIndex]["star_name"] + "</li>";
         }
         rowHTML += "</ul></th>"
 
