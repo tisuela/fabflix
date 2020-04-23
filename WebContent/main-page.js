@@ -35,15 +35,12 @@ function submitSearchForm(formSubmitEvent) {
      * event handler when the event is triggered.
      */
     formSubmitEvent.preventDefault();
+    let url = "index.html?";
 
-    $.ajax(
-        "api/search", {
-            method: "POST",
-            // Serialize the search form to the data sent by POST request
-            data: search_form.serialize(),
-            success: handleSearchResult
-        }
-    );
+    url += search_form.serialize();
+
+    window.location.replace(url); // remove last "&" from URL
+
 }
 
 // Bind the submit action of the form to a handler function

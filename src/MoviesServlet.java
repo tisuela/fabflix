@@ -32,6 +32,12 @@ public class MoviesServlet extends HttpServlet {
 
         response.setContentType("application/json"); // Response mime type
 
+        String title = request.getParameter("title");
+        String year = request.getParameter("year");
+
+        System.out.println("title = " + title);
+        System.out.println("year = " + year);
+
         // Output stream to STDOUT
         PrintWriter out = response.getWriter();
 

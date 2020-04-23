@@ -16,34 +16,27 @@ public class SearchServlet extends HttpServlet {
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
      */
-    @Resource(name = "jdbc/moviedb")
-    private DataSource dataSource;
 
+    // not being used
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String username = request.getParameter("title");
-        String password = request.getParameter("year");
+        String title = request.getParameter("title");
+        String year = request.getParameter("year");
+        String director = request.getParameter("director");
+        String starName = request.getParameter("starName");
+
+        String url = "index.html?";
+
+
+
 
         JsonObject responseJsonObject = new JsonObject();
-        Connection dbcon = null;
-        try {
-            dbcon = dataSource.getConnection();
-
-            // Find the matching movies from the moviedb
-            Statement findMoviesStatement = dbcon.createStatement();
 
 
-            // close resources
-            findMoviesStatement.close();
-            dbcon.close();
-            responseJsonObject.addProperty("status", "success");
-            responseJsonObject.addProperty("message", "haven't implemented fully lol");
-            System.out.println("success with search servlet");
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            responseJsonObject.addProperty("status", "fail");
-            responseJsonObject.addProperty("message", "Database error");
-        }
+
+        responseJsonObject.addProperty("status", "success");
+        responseJsonObject.addProperty("message", "haven't implemented fully lol");
+
 
 
 
