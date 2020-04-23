@@ -28,15 +28,40 @@ public class MoviesServlet extends HttpServlet {
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
      */
+
+    private boolean notEmpty(String s){
+        return (s != null && s != "");
+    }
+
+    // Build query for MYSQL from request parameters
+    private String buildQuery(HttpServletRequest request){
+        String title = request.getParameter("title");
+        String year = request.getParameter("year");
+        String director = request.getParameter("director");
+        String starName = request.getParameter("starName");
+        String sortBy = request.getParameter("genre");
+
+        String query = "SELECT * FROM movies_with_rating WHERE";
+        String like = " %s LIKE \"%%%s%%\"";
+
+        if (notEmpty(title)) query += String.format(like, "title", title);
+        if (notEmpty(director)) query += String.format(like, "director", director);
+
+        query += " LIMIT 20";
+
+        return query;
+
+
+
+    }
+
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         response.setContentType("application/json"); // Response mime type
 
-        String title = request.getParameter("title");
-        String year = request.getParameter("year");
 
-        System.out.println("title = " + title);
-        System.out.println("year = " + year);
+
+
 
         // Output stream to STDOUT
         PrintWriter out = response.getWriter();
@@ -48,7 +73,8 @@ public class MoviesServlet extends HttpServlet {
             // Declare our statement
             Statement statement = dbcon.createStatement();
 
-            String query = "SELECT * FROM movies_with_rating limit 20";
+            String query = buildQuery(request);
+            System.out.println("query = " + query);
 
             // Perform the query
             ResultSet rs = statement.executeQuery(query);
