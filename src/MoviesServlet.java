@@ -35,17 +35,36 @@ public class MoviesServlet extends HttpServlet {
 
     // Build query for MYSQL from request parameters
     private String buildQuery(HttpServletRequest request){
+        // get query values
         String title = request.getParameter("title");
         String year = request.getParameter("year");
         String director = request.getParameter("director");
         String starName = request.getParameter("starName");
-        String sortBy = request.getParameter("genre");
+        String genre = request.getParameter("genre");
 
-        String query = "SELECT * FROM movies_with_rating WHERE";
+        // templates for the query
         String like = " %s LIKE \"%%%s%%\"";
+        String equalsStr = " %s = \"%s\"";
+        String equalsInt = " %s = %s";
 
+        // base query
+        String query = "SELECT * FROM movies_with_rating";
+
+        // have to join other tables to search for stars and genre
+        if (notEmpty(starName)){
+            query += " JOIN (stars JOIN stars_in_movies ON id = starId) ON movies_with_rating.id = stars_in_movies.movieId";
+        }
+        if(notEmpty(genre)){
+            query += "";
+        }
+
+        // put values into query
+        query += " WHERE";
         if (notEmpty(title)) query += String.format(like, "title", title);
         if (notEmpty(director)) query += String.format(like, "director", director);
+        if (notEmpty(year)) query += String.format(equalsInt, "year", year);
+        if (notEmpty(starName)) query += String.format(like, "stars.name", starName);
+
 
         query += " LIMIT 20";
 
