@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Main Page</title>
+
+</head>
+<body>
+
+<h1>Home</h1>
+<h2><a href="index.html"> Go to Movies Page </a></h2>
+<h3>Search</h3>
+
+<form id="search_form" method="post" action="#">
+    <label><b>Title</b></label>
+    <label>
+        <input name="title" placeholder="Enter Movie Title" type="text">
+    </label>
+    <br>
+    <label><b>Year</b></label>
+    <label>
+        <input name="year" placeholder="Enter Movie Year" type="text">
+    </label>
+    <br>
+    <input type="submit" value="Search">
+</form>
+
+<div id="search_error_message"></div>
+
+<!-- include jQuery-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!-- include our own JS file -->
+<script src="./main-page.js"></script>
+
+
+
+</body>
+</html>
