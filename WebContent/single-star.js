@@ -62,7 +62,7 @@ function handleResult(resultData) {
         rowHTML += "<th>" + '<a href="single-movie.html?id=' + resultData[i]["movie_id"] + '">';
         rowHTML += resultData[i]["movie_title"] + "</a>" + "</th>";
         rowHTML += "<th>" + resultData[i]["movie_year"] + "</th>";
-        rowHTML += "<th>" + resultData[i]["movie_director"] + "sup" + "</th>";
+        rowHTML += "<th>" + resultData[i]["movie_director"] + "</th>";
         rowHTML += "</tr>";
 
         // Append the row created to the table body, which will refresh the page

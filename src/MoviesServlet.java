@@ -20,6 +20,7 @@ import java.sql.Statement;
 @WebServlet(name = "MoviesServlet", urlPatterns = "/api/movies")
 public class MoviesServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
+    private int numberOfArguments = 0;
 
     // Create a dataSource which registered in web.xml
     @Resource(name = "jdbc/moviedb")
@@ -33,8 +34,30 @@ public class MoviesServlet extends HttpServlet {
         return (s != null && s != "");
     }
 
+
+    // generates String to add to a query for the filtering of columns
+    private String addQueryFilter(String template, String columnName, String value){
+        if (notEmpty(value)){
+
+            // Check if this is the first argument
+            if(numberOfArguments == 0) {
+                // add "WHERE" to front
+                template = " WHERE" + template;
+            }
+            else{
+                template = " AND" + template;
+            }
+            numberOfArguments++;
+            return String.format(template, columnName, value);
+        }
+        else return "";
+    }
+
+
     // Build query for MYSQL from request parameters
     private String buildQuery(HttpServletRequest request){
+        // clear history
+        numberOfArguments = 0;
         // get query values
         String title = request.getParameter("title");
         String year = request.getParameter("year");
@@ -55,22 +78,19 @@ public class MoviesServlet extends HttpServlet {
             query += " JOIN (stars JOIN stars_in_movies ON id = starId) ON movies_with_rating.id = stars_in_movies.movieId";
         }
         if(notEmpty(genre)){
-            query += "";
+            query += " JOIN (genres JOIN genres_in_movies ON id = genreId) ON movies_with_rating.id = genres_in_movies.movieId";
         }
 
-        // put values into query
-        query += " WHERE";
-        if (notEmpty(title)) query += String.format(like, "title", title);
-        if (notEmpty(director)) query += String.format(like, "director", director);
-        if (notEmpty(year)) query += String.format(equalsInt, "year", year);
-        if (notEmpty(starName)) query += String.format(like, "stars.name", starName);
-
+        // put arguments into query
+        query += addQueryFilter(like, "title", title);
+        query += addQueryFilter(like, "director", director);
+        query += addQueryFilter(equalsInt, "year", year);
+        query += addQueryFilter(like, "stars.name", starName);
+        query += addQueryFilter(equalsStr, "genres", genre);
 
         query += " LIMIT 20";
 
         return query;
-
-
 
     }
 
