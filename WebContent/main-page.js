@@ -4,24 +4,7 @@ let search_form = $("#search_form");
  * Handle the data returned by LoginServlet
  * @param resultDataString jsonObject
  */
-function handleSearchResult(resultDataString) {
-    let resultDataJson = JSON.parse(resultDataString);
 
-    console.log("handle search response");
-    console.log(resultDataJson);
-    console.log(resultDataJson["status"]);
-
-    // If login succeeds, it will redirect the user to main-page.html
-    if (resultDataJson["status"] === "success") {
-        $("#search_error_message").text(resultDataJson["message"]);
-    } else {
-        // If search fails, the web page will display
-        // error messages on <div> with id "search_error_message"
-        console.log("show error message");
-        console.log(resultDataJson["message"]);
-        $("#search_error_message").text(resultDataJson["message"]);
-    }
-}
 
 /**
  * Submit the form content with POST method
