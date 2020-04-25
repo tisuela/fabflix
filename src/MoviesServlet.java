@@ -86,7 +86,7 @@ public class MoviesServlet extends HttpServlet {
         query += addQueryFilter(like, "director", director);
         query += addQueryFilter(equalsInt, "year", year);
         query += addQueryFilter(like, "stars.name", starName);
-        query += addQueryFilter(equalsStr, "genres", genre);
+        query += addQueryFilter(equalsStr, "genres.name", genre);
 
         query += " LIMIT 20";
 
