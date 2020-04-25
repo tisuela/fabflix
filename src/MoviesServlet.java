@@ -30,28 +30,7 @@ public class MoviesServlet extends HttpServlet {
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
      */
 
-    private boolean notEmpty(String s){
-        return (s != null && s != "");
-    }
 
-
-    // generates String to add to a query for the filtering of columns
-    private String addQueryFilter(String template, String columnName, String value){
-        if (notEmpty(value)){
-
-            // Check if this is the first argument
-            if(numberOfArguments == 0) {
-                // add "WHERE" to front
-                template = " WHERE" + template;
-            }
-            else{
-                template = " AND" + template;
-            }
-            numberOfArguments++;
-            return String.format(template, columnName, value);
-        }
-        else return "";
-    }
 
 
     // Build query for MYSQL from request parameters
@@ -66,41 +45,36 @@ public class MoviesServlet extends HttpServlet {
         String genre = request.getParameter("genre");
 
         // templates for the query
-        String like = " %s LIKE \"%%%s%%\"";
-        String equalsStr = " %s = \"%s\"";
-        String equalsInt = " %s = %s";
+        String like = "%s LIKE \"%%%s%%\"";
+        String equalsStr = "%s = \"%s\"";
+        String equalsInt = "%s = %s";
 
         // base query
-        String query = "SELECT * FROM movies_with_rating";
+        BuildQuery query = new BuildQuery();
+        query.setSelectStr("*");
+        query.addFromTables("movies_with_rating");
 
         // have to join other tables to search for stars and genre
-        if (notEmpty(starName)){
-            query += " JOIN (stars JOIN stars_in_movies ON id = starId) ON movies_with_rating.id = stars_in_movies.movieId";
-        }
-        if(notEmpty(genre)){
-            query += " JOIN (genres JOIN genres_in_movies ON id = genreId) ON movies_with_rating.id = genres_in_movies.movieId";
-        }
+        query.addFromTables("JOIN (stars JOIN stars_in_movies ON id = starId) ON movies_with_rating.id = stars_in_movies.movieId");
+        query.addFromTables("JOIN (genres JOIN genres_in_movies ON id = genreId) ON movies_with_rating.id = genres_in_movies.movieId");
+
 
         // put arguments into query
-        query += addQueryFilter(like, "title", title);
-        query += addQueryFilter(like, "director", director);
-        query += addQueryFilter(equalsInt, "year", year);
-        query += addQueryFilter(like, "stars.name", starName);
-        query += addQueryFilter(equalsStr, "genres", genre);
+        query.addWhereConditions(like, "title", title);
+        query.addWhereConditions(like, "director", director);
+        query.addWhereConditions(equalsInt, "year", year);
+        query.addWhereConditions(like, "stars.name", starName);
+        query.addWhereConditions(equalsStr, "genres", genre);
 
-        query += " LIMIT 20";
+        query.append("LIMIT 20");
 
-        return query;
+        return query.getQuery();
 
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         response.setContentType("application/json"); // Response mime type
-
-
-
-
 
         // Output stream to STDOUT
         PrintWriter out = response.getWriter();

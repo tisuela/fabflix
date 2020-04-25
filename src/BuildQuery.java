@@ -1,3 +1,5 @@
+// import javax.servlet.http.HttpServletRequest;
+import java.util.Enumeration;
 import java.util.HashMap;
 
 public class BuildQuery {
@@ -12,6 +14,8 @@ public class BuildQuery {
 
     // WHERE ...
     private String whereStr = "";
+
+    private String appendStr = "";
 
     // The full query
     private String query = "";
@@ -33,45 +37,59 @@ public class BuildQuery {
 
     private void initializeParametersToColumns(){
         parametersToColumns = new HashMap<String, String>() {{
-            put("title", "movies.title");
-            put("director", "movies.director");
+            put("title", "movies_with_rating.title");
+            put("director", "movies_with_rating.director");
             put("starName", "stars.name");
             put("genre", "genres.name");
         }};
     }
 
+/*
+    public void addWhereConditionsFromRequest(HttpServletRequest request){
+        Enumeration<String> parameterNames = request.getParameterNames();
+
+        while(parameterNames.hasMoreElements()){
+            String name = parameterNames.nextElement();
+            String value = request.getParameter(name);
+
+        }
+    }
+*/
 
     private boolean notEmpty(String s){
         return (s != null && !s.equals(""));
     }
 
 
-    public String addFromTables(String tables){
-        return tables;
+    public void addFromTables(String tables){
+        if (numberOfTables == 0){
+            selectStr += " FROM";
+        }
+        selectStr += " " + tables;
+        ++numberOfTables;
     }
 
 
-
-    // adds the where conditions, returns the added portion (for debugging)
-    public String addWhereConditions(String template, String columnName, String value){
+    // adds the where conditions
+    public void addWhereConditions(String template, String columnName, String value){
         if (notEmpty(value)){
 
             // Check if this is the first argument
             if(numberOfConditions == 0) {
                 // add "WHERE" to front
-                template = " WHERE" + template;
+                template = " WHERE " + template;
             }
             else{
-                template = " AND" + template;
+                template = " AND " + template;
             }
             numberOfConditions++;
-            String filter = String.format(template, columnName, value);
-            whereStr += filter;
-            return filter;
+            whereStr += String.format(template, columnName, value);
         }
-        else return "";
     }
 
+    public void append(String s){
+        appendStr += " " + s;
+    }
 
     public void setSelectStr(String selectStr) {
         this.selectStr += selectStr;
@@ -98,8 +116,22 @@ public class BuildQuery {
     }
 
     public String getQuery() {
-        query = selectStr + fromStr + whereStr;
+        query = selectStr + fromStr + whereStr + appendStr;
         return query;
+    }
+
+
+    public static void main(String[] args){
+        System.out.println("running BuildQuery Main");
+
+        BuildQuery query = new BuildQuery();
+        query.setSelectStr("*");
+        query.addFromTables("movies_with_rating");
+        query.addWhereConditions("%s LIKE \"%%%s%%\"","movies_with_ratings.title", "a");
+        query.addWhereConditions("%s LIKE \"%%%s%%\"","stars.name", "a");
+        query.addFromTables("JOIN (stars JOIN stars_in_movies ON id = starId) ON movies_with_rating.id = stars_in_movies.movieId");
+
+        System.out.println(query.getQuery());
     }
 
 }

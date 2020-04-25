@@ -35,7 +35,7 @@ function submitSearchForm(formSubmitEvent) {
      * event handler when the event is triggered.
      */
     formSubmitEvent.preventDefault();
-    let url = "index.html?";
+    let url = "index.html?search=true";
 
     url += search_form.serialize();
 
