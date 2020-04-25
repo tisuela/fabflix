@@ -23,6 +23,16 @@ function getParameters(){
     return query;
 }
 
+function genreBrowse(){
+    let result = '';
+    let genres = ["Action", "Adult", "Adventure", "Animation", "Biography", "Comedy", "Crime",
+        "Documentary", "Drama", "Family", "Fantasy", "History", "Horror", "Music", "Musical",
+        "Mystery", "Reality-TV", "Romance", "Sci-Fi", "Sport", "Thriller", "War", "Western"]
+    for(const genre of genres){
+        result += "<a href='index.html?genre=" + genre + "'>" + genre + "</a> ";
+    }
+    return result;
+}
 
 /**
  * Handles the data returned by the API, read the jsonObject and populate data into html elements
@@ -73,6 +83,15 @@ function handleMovieResult(resultData) {
 
         // Append the row created to the table body, which will refresh the page
         movieTableBodyElement.append(rowHTML);
+        }
+
+    let debug = true;
+    // Change debug to something in our url that lets us know we're browing by genre
+
+    if (debug) {
+
+        let browseCategories = $("#browse-categories");
+        browseCategories.append(genreBrowse());
     }
 }
 
