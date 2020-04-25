@@ -18,7 +18,7 @@ function submitSearchForm(formSubmitEvent) {
      * event handler when the event is triggered.
      */
     formSubmitEvent.preventDefault();
-    let url = "index.html?search=true";
+    let url = "index.html?";
 
     url += search_form.serialize();
 
@@ -32,7 +32,7 @@ function genreBrowse(){
         "Documentary", "Drama", "Family", "Fantasy", "History", "Horror", "Music", "Musical",
         "Mystery", "Reality-TV", "Romance", "Sci-Fi", "Sport", "Thriller", "War", "Western"]
     for(const genre of genres){
-        result += "<a href='index.html?genre=" + genre + "'>" + genre + "</a> ";
+        result += "<a href='index.html?browse=true&genre=" + genre + "'>" + genre + "</a> ";
     }
     return result;
 }
