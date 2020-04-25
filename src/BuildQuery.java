@@ -80,10 +80,12 @@ public class BuildQuery {
         Map<String, String> templates = new HashMap<String, String>();
         if (parameters.get("browse") != null && notEmpty(parameters.get("browse")[0]) && parameters.get("browse")[0].equals("true")) {
             templates = parametersToBrowseTemplates;
+            append("ORDER BY title ASC");
         }
         // else use search
         else {
             templates = parametersToSearchTemplates;
+            append("ORDER BY rating DESC");
         }
 
         for (String name: parameters.keySet()){
