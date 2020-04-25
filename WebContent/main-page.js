@@ -26,6 +26,19 @@ function submitSearchForm(formSubmitEvent) {
 
 }
 
+function genreBrowse(){
+    let result = '';
+    let genres = ["Action", "Adult", "Adventure", "Animation", "Biography", "Comedy", "Crime",
+        "Documentary", "Drama", "Family", "Fantasy", "History", "Horror", "Music", "Musical",
+        "Mystery", "Reality-TV", "Romance", "Sci-Fi", "Sport", "Thriller", "War", "Western"]
+    for(const genre of genres){
+        result += "<a href='index.html?genre=" + genre + "'>" + genre + "</a> ";
+    }
+    return result;
+}
+
 // Bind the submit action of the form to a handler function
 search_form.submit(submitSearchForm);
+let browseCategories = $("#browse-genres");
+browseCategories.append(genreBrowse());
 
