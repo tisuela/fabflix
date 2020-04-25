@@ -34,6 +34,7 @@ public class LoginServlet extends HttpServlet {
             String findUserQuery = String.format("SELECT email,password FROM customers WHERE email = \"%s\"", username);
             ResultSet userSet = findUserStatement.executeQuery(findUserQuery);
 
+            String failureMessage = "Failed login attempt. Please verify your username and password";
             // If user exists (by user ResultSet.isBeforeFirst()), then check password
             if (userSet.isBeforeFirst()) {
                 // get first result
@@ -41,8 +42,6 @@ public class LoginServlet extends HttpServlet {
 
                 // Get password of user found in database
                 String userPassword = userSet.getString("password");
-
-
 
                 // If password is right, proceed to login
                 if(password.equals(userPassword)){
@@ -53,13 +52,15 @@ public class LoginServlet extends HttpServlet {
                 // Send error message for incorrect password
                 else{
                     responseJsonObject.addProperty("status", "fail");
-                    responseJsonObject.addProperty("message", "incorrect password");
+                    responseJsonObject.addProperty("message", failureMessage);
                 }
 
             }
             else{
                 responseJsonObject.addProperty("status", "fail");
-                responseJsonObject.addProperty("message", String.format("user %s does not exist", username));
+                // Giving users information such as their username is correct but their password is a security risk
+                // so failure messages should be consistent with each other, only to let users know that their login attempt failed.
+                responseJsonObject.addProperty("message", failureMessage);
             }
 
             // close resources
