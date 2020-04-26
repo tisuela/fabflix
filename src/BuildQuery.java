@@ -18,9 +18,6 @@ public class BuildQuery {
 
     private String appendStr = "";
 
-    // The full query
-    private String query = "";
-
     // maps url parameters to the MySQL table column names
     private HashMap<String, String> parametersToColumns;
 
@@ -78,14 +75,36 @@ public class BuildQuery {
     public void addParameters(Map<String, String[]> parameters){
         // check if browsing
         Map<String, String> templates = new HashMap<String, String>();
-        if (parameters.get("browse") != null && notEmpty(parameters.get("browse")[0]) && parameters.get("browse")[0].equals("true")) {
+        if (parameters.get("type") != null && this.notEmpty(parameters.get("type")[0]) && parameters.get("type")[0].equals("browse")) {
             templates = parametersToBrowseTemplates;
-            append("ORDER BY title ASC");
         }
-        // else use search
+        // otherwise, by default we use search page
         else {
             templates = parametersToSearchTemplates;
-            append("ORDER BY rating DESC");
+        }
+
+        // check for order and sort to append the appropriate conditions
+        if ( parameters.get("order") != null && this.notEmpty(parameters.get("order")[0]) ){
+            String ordering1 = "rating";
+            String sorting1  = "DESC";
+            String ordering2 = "title";
+            String sorting2  = "ASC";
+            // By default, we will have things in order of Rating Descending, Title Ascending
+            String statement = "ORDER BY %1$s %2$s, %3$s %4$s";
+
+            if(parameters.get("sort") != null && this.notEmpty(parameters.get("sort")[0]) && parameters.get("sort").equals("ASC")){
+                sorting1 = "ASC";
+            }
+            if(parameters.get("sort") != null && this.notEmpty(parameters.get("sort")[1]) && parameters.get("sort").equals("DESC")){
+                sorting1 = "DESC";
+            }
+
+            if(parameters.get("order").equals("title")) {
+                ordering1 = "title";
+                ordering2 = "rating";
+            }
+
+            this.append(String.format(statement, ordering1, sorting1, ordering2, sorting2));
         }
 
         for (String name: parameters.keySet()){
@@ -137,6 +156,7 @@ public class BuildQuery {
 
     public void setSelectStr(String selectStr) {
         this.selectStr += selectStr;
+        // is it correct to += here or is just equal?
     }
 
     public void setFromStr(String fromStr) {
@@ -147,6 +167,7 @@ public class BuildQuery {
         this.whereStr = whereStr;
     }
 
+    // are these needed?
     public String getSelectStr() {
         return selectStr;
     }
@@ -160,8 +181,8 @@ public class BuildQuery {
     }
 
     public String getQuery() {
-        query = selectStr + fromStr + whereStr + appendStr;
-        return query;
+        return selectStr + fromStr + whereStr + appendStr;
+
     }
 
 
