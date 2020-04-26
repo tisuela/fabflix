@@ -97,7 +97,7 @@ public class MoviesServlet extends HttpServlet {
                     // get list of first three stars
 
                     String starsQuery = String.format("SELECT * FROM stars JOIN stars_in_movies ON (stars.id = starId AND movieId = \"%s\") LIMIT 3", movie_id);
-                    ExecuteQuery starsResult = new ExecuteQuery(dbcon, genreQuery);
+                    ExecuteQuery starsResult = new ExecuteQuery(dbcon, starsQuery);
                     ResultSet starsSet = starsResult.execute();
 
                     // assemble genre list (as a JSON object)

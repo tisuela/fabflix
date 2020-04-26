@@ -43,7 +43,7 @@ public class BuildQuery {
             put("director", "movies_with_rating.director");
             put("starName", "stars.name");
             put("genre", "genres.name");
-            put("year", "movies_with_ratings.year");
+            put("year", "movies_with_rating.year");
         }};
     }
 
@@ -92,14 +92,14 @@ public class BuildQuery {
             // By default, we will have things in order of Rating Descending, Title Ascending
             String statement = "ORDER BY %1$s %2$s, %3$s %4$s";
 
-            if(parameters.get("sort") != null && this.notEmpty(parameters.get("sort")[0]) && parameters.get("sort").equals("ASC")){
+            if(parameters.get("sort") != null && this.notEmpty(parameters.get("sort")[0]) && parameters.get("sort")[0].equals("asc")){
                 sorting1 = "ASC";
             }
-            if(parameters.get("sort") != null && this.notEmpty(parameters.get("sort")[1]) && parameters.get("sort").equals("DESC")){
-                sorting1 = "DESC";
+            if(parameters.get("sort") != null && (parameters.get("sort").length > 1) && parameters.get("sort")[1].equals("desc")){
+                sorting2 = "DESC";
             }
 
-            if(parameters.get("order").equals("title")) {
+            if(parameters.get("order")[0].equals("title")) {
                 ordering1 = "title";
                 ordering2 = "rating";
             }
@@ -194,7 +194,7 @@ public class BuildQuery {
         query.addFromTables("movies_with_rating");
         query.addWhereConditions("%s LIKE \"%%%s%%\"","movies_with_ratings.title", "a");
         query.addWhereConditions("%s LIKE \"%%%s%%\"","stars.name", "a");
-        query.addFromTables("JOIN (stars JOIN stars_in_movies ON id = starId) ON movies_with_rating.id = stars_in_movies.movieId");
+        query.addFromTables("JOIN (stars JOIN stars_in_movies ON id = stars_in_movies.starId) ON movies_with_rating.id = stars_in_movies.movieId");
 
         System.out.println(query.getQuery());
     }
