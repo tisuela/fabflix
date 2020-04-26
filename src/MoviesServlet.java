@@ -10,10 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 
 
 // Declaring a WebServlet called MoviesServlet, which maps to url "/api/movies"
@@ -97,7 +94,8 @@ public class MoviesServlet extends HttpServlet {
                     // get list of first three stars
 
                     String starsQuery = String.format("SELECT * FROM stars JOIN stars_in_movies ON (stars.id = starId AND movieId = \"%s\") LIMIT 3", movie_id);
-                    ExecuteQuery starsResult = new ExecuteQuery(dbcon, genreQuery);
+                    System.out.println("stars query = " + starsQuery);
+                    ExecuteQuery starsResult = new ExecuteQuery(dbcon, starsQuery);
                     ResultSet starsSet = starsResult.execute();
 
                     // assemble genre list (as a JSON object)
@@ -113,6 +111,7 @@ public class MoviesServlet extends HttpServlet {
                     // stars list (as JSON object)
                     while(starsSet.next()){
                         JsonObject jsonStar = new JsonObject();
+
                         String star_id = starsSet.getString("starId");
                         String star_name = starsSet.getString("name");
                         jsonStar.addProperty("star_id", star_id);
@@ -128,6 +127,8 @@ public class MoviesServlet extends HttpServlet {
 
                 } catch (Exception e){
                     System.out.println(e.getMessage());
+                    e.printStackTrace();
+                    System.out.println("failed to grab genres/stars");
                 }
 
 
@@ -167,3 +168,10 @@ public class MoviesServlet extends HttpServlet {
 
     }
 }
+/*
+
+debug:
+                        ResultSetMetaData rsmd = rs.getMetaData();
+                        System.out.println(rsmd);
+
+ */

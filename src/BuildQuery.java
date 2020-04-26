@@ -43,7 +43,7 @@ public class BuildQuery {
             put("director", "movies_with_rating.director");
             put("starName", "stars.name");
             put("genre", "genres.name");
-            put("year", "movies_with_ratings.year");
+            put("year", "movies_with_rating.year");
         }};
     }
 
