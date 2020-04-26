@@ -46,6 +46,7 @@ public class SingleMovieServlet extends HttpServlet {
 
 			String matchId = "%s = \"%s\"";
 
+			// Build Stars query
 			BuildQuery starsQuery = new BuildQuery("SELECT *, COUNT(*) as totalMovies");
 
 			// first get the stars in the movie
@@ -55,33 +56,29 @@ public class SingleMovieServlet extends HttpServlet {
 			starsQuery.addFromTables("JOIN stars_in_movies as all_stars ON (in_movie.starId = all_stars.starId)");
 			starsQuery.append("GROUP BY all_stars.starId ORDER BY totalMovies DESC, stars.name ASC");
 
-			// Construct a query with parameter represented by "?"
-			String movieQuery = "SELECT * FROM movies WHERE id = ?";
-			String genreQuery = "SELECT genres.name FROM genres JOIN genres_in_movies ON genres.id = genreId WHERE movieId = ? ORDER BY name ASC";
+			// Build movie query
+			BuildQuery movieQuery = new BuildQuery();
+			movieQuery.setSelectStr("*");
+			movieQuery.addFromTables("movies");
+			movieQuery.addWhereConditions(matchId, "id", id);
 
-			System.out.println("collecting single movie info");
-
-			// Declare our statements
-
-			PreparedStatement movieStatement = dbcon.prepareStatement(movieQuery);
-			PreparedStatement genresStatement = dbcon.prepareStatement(genreQuery);
-
-			System.out.println("setting String");
-			// Set the parameter represented by "?" in the query to the id we get from url,
-			// num 1 indicates the first "?" in the query
-
-			movieStatement.setString(1,id);
-			genresStatement.setString(1, id);
+			// Build genre query
+			BuildQuery genreQuery = new BuildQuery();
+			genreQuery.setSelectStr("genres.name");
+			genreQuery.addFromTables("genres JOIN genres_in_movies ON genres.id = genreId");
+			genreQuery.addWhereConditions(matchId, "movieId", id);
+			genreQuery.append("ORDER BY genres.name ASC");
 
 			// Perform the query
 			System.out.println("Perform Query");
-			System.out.println(starsQuery.getQuery());
-			ExecuteQuery starExecute = new ExecuteQuery(dbcon, starsQuery.getQuery());
+			System.out.println(genreQuery.getQuery());
+			ExecuteQuery starExecute = new ExecuteQuery(dbcon, starsQuery);
+			ExecuteQuery movieExecute = new ExecuteQuery(dbcon, movieQuery);
+			ExecuteQuery genreExecute = new ExecuteQuery(dbcon, genreQuery);
 			ResultSet starsSet = starExecute.execute();
-			ResultSet movieSet = movieStatement.executeQuery();
-			ResultSet genreSet = genresStatement.executeQuery();
+			ResultSet movieSet = movieExecute.execute();
+			ResultSet genreSet = genreExecute.execute();
 
-			System.out.println("create json objects");
 			// Create JSON objects and Arrays
 			JsonObject jsonObject = new JsonObject(); // final object
 			JsonArray jsonStars = new JsonArray();
@@ -96,7 +93,6 @@ public class SingleMovieServlet extends HttpServlet {
 			jsonObject.addProperty("movie_year", movie_year);
 			jsonObject.addProperty("movie_director", movie_director);
 
-			System.out.println("Getting Stars Info");
 			// Iterate through each row of stars
 			while (starsSet.next()) {
 				// Create a JsonObject based on the data we retrieve from starsSet
@@ -135,11 +131,8 @@ public class SingleMovieServlet extends HttpServlet {
             // set response status to 200 (OK)
             response.setStatus(200);
 
-			starExecute.close();
-			movieSet.close();
-			genreSet.close();
-			movieStatement.close();
-			genresStatement.close();
+			starExecute.close(); movieExecute.close(); genreExecute.close();
+
 			dbcon.close();
 		} catch (Exception e) {
 			// write error message JSON object to output

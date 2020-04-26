@@ -22,6 +22,10 @@ public class ExecuteQuery {
         setQuery(query);
     }
 
+    public ExecuteQuery(Connection dbcon, BuildQuery query){
+        this(dbcon, query.getQuery());
+    }
+
 
     // Executes statement
     public ResultSet execute(){
