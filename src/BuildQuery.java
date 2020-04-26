@@ -83,29 +83,35 @@ public class BuildQuery {
             templates = parametersToSearchTemplates;
         }
 
-        // check for order and sort to append the appropriate conditions
-        if ( parameters.get("order") != null && this.notEmpty(parameters.get("order")[0]) ){
-            String ordering1 = "rating";
-            String sorting1  = "DESC";
-            String ordering2 = "title";
-            String sorting2  = "ASC";
-            // By default, we will have things in order of Rating Descending, Title Ascending
-            String statement = "ORDER BY %1$s %2$s, %3$s %4$s";
+        // By default, we will have things in order of Rating Descending, Title Ascending
+        String ordering1 = "rating";
+        String sorting1  = "DESC";
+        String ordering2 = "title";
+        String sorting2  = "ASC";
+        String statement = "ORDER BY %1$s %2$s, %3$s %4$s";
 
-            if(parameters.get("sort") != null && this.notEmpty(parameters.get("sort")[0]) && parameters.get("sort")[0].equals("asc")){
+        // check for order and sort to append the appropriate conditions
+        if ( parameters.get("order") != null && this.notEmpty(parameters.get("order")[0]) && parameters.get("order")[0].equals("title")){
+            ordering1 = "title";
+            sorting1  = "ASC";
+            ordering2 = "rating";
+            sorting2  = "DESC";
+        }
+        if(parameters.get("sort1") != null && this.notEmpty(parameters.get("sort1")[0])) {
+            if (parameters.get("sort1")[0].equals("asc")) {
                 sorting1 = "ASC";
+            } else {
+                sorting1 = "DESC";
             }
-            if(parameters.get("sort") != null && (parameters.get("sort").length > 1) && parameters.get("sort")[1].equals("desc")){
+        }
+        if(parameters.get("sort2") != null && this.notEmpty(parameters.get("sort2")[0])){
+            if(parameters.get("sort2")[0].equals("ASC")) {
+                sorting2 = "ASC";
+            } else {
                 sorting2 = "DESC";
             }
-
-            if(parameters.get("order")[0].equals("title")) {
-                ordering1 = "title";
-                ordering2 = "rating";
-            }
-
-            this.append(String.format(statement, ordering1, sorting1, ordering2, sorting2));
         }
+        this.append(String.format(statement, ordering1, sorting1, ordering2, sorting2));
 
         for (String name: parameters.keySet()){
             String column = parametersToColumns.get(name);
