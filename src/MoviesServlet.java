@@ -59,10 +59,6 @@ public class MoviesServlet extends HttpServlet {
 
         response.setContentType("application/json"); // Response mime type
 
-
-
-
-
         // Output stream to STDOUT
         PrintWriter out = response.getWriter();
 
@@ -70,14 +66,13 @@ public class MoviesServlet extends HttpServlet {
             // Get a connection from dataSource
             Connection dbcon = dataSource.getConnection();
 
-            // Declare our statement
-            Statement statement = dbcon.createStatement();
-
+            // Build query
             String query = buildQuery(request);
             System.out.println("query = " + query);
 
-            // Perform the query
-            ResultSet rs = statement.executeQuery(query);
+            // Perform the query using the helper class (Execute Query
+            ExecuteQuery result = new ExecuteQuery(dbcon, query);
+            ResultSet rs = result.execute();
 
             JsonArray jsonArray = new JsonArray();
 
@@ -96,14 +91,15 @@ public class MoviesServlet extends HttpServlet {
                 // additional queries for genres and stars
                 try {
                     // Get list of first three genres
-                    Statement genreStatement = dbcon.createStatement();
                     String genreQuery = String.format("SELECT genres.name FROM genres JOIN genres_in_movies ON (genres.id = genreId AND movieId = \"%s\") LIMIT 3", movie_id);
-                    ResultSet genreSet = genreStatement.executeQuery(genreQuery);
+                    ExecuteQuery genreResult = new ExecuteQuery(dbcon, genreQuery);
+                    ResultSet genreSet = genreResult.execute();
 
                     // get list of first three stars
-                    Statement starsStatement = dbcon.createStatement();
+
                     String starsQuery = String.format("SELECT * FROM stars JOIN stars_in_movies ON (stars.id = starId AND movieId = \"%s\") LIMIT 3", movie_id);
-                    ResultSet starsSet = starsStatement.executeQuery(starsQuery);
+                    ExecuteQuery starsResult = new ExecuteQuery(dbcon, genreQuery);
+                    ResultSet starsSet = starsResult.execute();
 
                     // assemble genre list (as a JSON object)
                     while (genreSet.next()){
@@ -126,6 +122,9 @@ public class MoviesServlet extends HttpServlet {
                         // add to the JSON array of stars
                         jsonStars.add(jsonStar);
                     }
+
+                    // free resources
+                    genreResult.close(); starsResult.close();
 
 
                 } catch (Exception e){
@@ -150,11 +149,12 @@ public class MoviesServlet extends HttpServlet {
             // set response status to 200 (OK)
             response.setStatus(200);
 
-            rs.close();
-            statement.close();
+            // free resources
+            result.close();
             dbcon.close();
         } catch (Exception e) {
-        	
+        	e.printStackTrace();
+        	System.out.println("error");
 			// write error message JSON object to output
 			JsonObject jsonObject = new JsonObject();
 			jsonObject.addProperty("errorMessage", e.getMessage());
