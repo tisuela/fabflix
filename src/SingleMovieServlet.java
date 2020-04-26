@@ -44,29 +44,40 @@ public class SingleMovieServlet extends HttpServlet {
 			// Get a connection from dataSource
 			Connection dbcon = dataSource.getConnection();
 
+			String matchId = "%s = \"%s\"";
+
+			BuildQuery starsQuery = new BuildQuery("SELECT *, COUNT(*) as totalMovies");
+
+			// first get the stars in the movie
+			starsQuery.addFromTables(String.format("stars JOIN stars_in_movies as in_movie ON (stars.id = starId and movieId = \"%s\")", id));
+
+			// Join again with allstars to get all the movies the stars in THIS MOVIE starred in
+			starsQuery.addFromTables("JOIN stars_in_movies as all_stars ON (in_movie.starId = all_stars.starId)");
+			starsQuery.append("GROUP BY all_stars.starId ORDER BY totalMovies DESC, stars.name ASC");
 
 			// Construct a query with parameter represented by "?"
-			String starsQuery = "SELECT * FROM stars JOIN stars_in_movies ON stars.id = starId WHERE movieId = ?";
 			String movieQuery = "SELECT * FROM movies WHERE id = ?";
-			String genreQuery = "SELECT genres.name FROM genres JOIN genres_in_movies ON genres.id = genreId WHERE movieId = ?";
+			String genreQuery = "SELECT genres.name FROM genres JOIN genres_in_movies ON genres.id = genreId WHERE movieId = ? ORDER BY name ASC";
 
 			System.out.println("collecting single movie info");
 
 			// Declare our statements
-			PreparedStatement starsStatement = dbcon.prepareStatement(starsQuery);
+
 			PreparedStatement movieStatement = dbcon.prepareStatement(movieQuery);
 			PreparedStatement genresStatement = dbcon.prepareStatement(genreQuery);
 
 			System.out.println("setting String");
 			// Set the parameter represented by "?" in the query to the id we get from url,
 			// num 1 indicates the first "?" in the query
-			starsStatement.setString(1, id);
+
 			movieStatement.setString(1,id);
 			genresStatement.setString(1, id);
 
 			// Perform the query
 			System.out.println("Perform Query");
-			ResultSet starsSet = starsStatement.executeQuery();
+			System.out.println(starsQuery.getQuery());
+			ExecuteQuery starExecute = new ExecuteQuery(dbcon, starsQuery.getQuery());
+			ResultSet starsSet = starExecute.execute();
 			ResultSet movieSet = movieStatement.executeQuery();
 			ResultSet genreSet = genresStatement.executeQuery();
 
@@ -124,10 +135,9 @@ public class SingleMovieServlet extends HttpServlet {
             // set response status to 200 (OK)
             response.setStatus(200);
 
-			starsSet.close();
+			starExecute.close();
 			movieSet.close();
 			genreSet.close();
-			starsStatement.close();
 			movieStatement.close();
 			genresStatement.close();
 			dbcon.close();
