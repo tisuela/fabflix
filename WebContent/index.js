@@ -23,6 +23,13 @@ function getParameters(){
     return query;
 }
 
+function sortBy(){
+    var searchParams = new URLSearchParams(window.location.search);
+    searchParams.set("sort", "asc");
+    var newParams = searchParams.toString();
+    console.log("new parameters = " + newParams);
+}
+
 function genreBrowse(){
     let result = '';
     let genres = ["Action", "Adult", "Adventure", "Animation", "Biography", "Comedy", "Crime",
@@ -39,7 +46,7 @@ function genreBrowse(){
  * @param resultData jsonObject
  */
 function handleMovieResult(resultData) {
-    console.log("handleStarResult: populating star table from resultDataaaa");
+    console.log("handleStarResult: populating star table from resultData");
 
     // Populate the star table
     // Find the empty table body by id "movie_table_body"
@@ -101,6 +108,7 @@ function handleMovieResult(resultData) {
  */
 
 let query = getParameters();
+sortBy();
 
 // Makes the HTTP GET request and registers on success callback function handleStarResult
 jQuery.ajax({
