@@ -89,8 +89,9 @@ public class BuildQuery {
         String sorting1  = "DESC";
         String ordering2 = "title";
         String sorting2  = "ASC";
-        String limit = "20";
-        String statement = "ORDER BY %1$s %2$s, %3$s %4$s LIMIT %5$s";
+        String results = "25";
+        String offset = "0";
+        String statement = "ORDER BY %1$s %2$s, %3$s %4$s LIMIT %5$s OFFSET %6$s";
 
         // check for order and sort to append the appropriate conditions
         if ( parameters.get("order") != null && this.notEmpty(parameters.get("order")[0]) && parameters.get("order")[0].equals("title")){
@@ -114,10 +115,14 @@ public class BuildQuery {
             }
         }
         if(parameters.get("results") != null && this.notEmpty(parameters.get("results")[0])){
-            limit = parameters.get("results")[0];
+            results = parameters.get("results")[0];
+        }
+        if(parameters.get("page") != null && this.notEmpty(parameters.get("page")[0])){
+            String page = parameters.get("page")[0];
+            offset = String.valueOf( (Integer.parseInt(page) - 1) * Integer.parseInt(results) );
         }
 
-        this.append(String.format(statement, ordering1, sorting1, ordering2, sorting2, limit));
+        this.append(String.format(statement, ordering1, sorting1, ordering2, sorting2, results, offset));
 
         for (String name: parameters.keySet()){
             String column = parametersToColumns.get(name);
