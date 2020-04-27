@@ -27,24 +27,29 @@ public class CartServlet extends HttpServlet {
     private DataSource dataSource;
 
 
-    private void addToCart(User user, String movieId){
-        user.addToCart(movieId);
+    // Check and execute cart actions from URL parameter
+    private void checkCartActions(String action, User user, String movieId){
+        if (action != null){
+            if (action.equals("add_to_cart")){
+                user.addToCart(movieId);
+            }
+            else if (action.equals("decrease_from_cart")){
+                user.decreaseQuantity(movieId);
+            }
+            else if (action.equals("remove_from_cart")){
+                user.removeFromCart(movieId);
+            }
+        }
     }
 
 
 
     // Gets cart information from session
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
         response.setContentType("application/json"); // Response mime type
 
         // Output stream to STDOUT
         PrintWriter out = response.getWriter();
-
-        String action = request.getParameter("action");
-
-
-
 
         try{
             JsonObject jsonObject = new JsonObject();
@@ -54,13 +59,13 @@ public class CartServlet extends HttpServlet {
             // Get user object, since user object stores the cart
             User user = (User)request.getSession().getAttribute("user");
 
-            if (action != null && action.equals("addtocart")){
-                String thisMovieId = request.getParameter("id");
-                user.addToCart(thisMovieId);
-            }
+           // Check parameters for action to be done
+            String action = request.getParameter("action");
+            String actionMovieId = request.getParameter("id");
+            this.checkCartActions(action, user, actionMovieId);
 
+            // Get cart
             HashMap<String, Integer> cart = new HashMap<String, Integer>(user.getCart());
-
             for(String id: cart.keySet()){
                 // Get set
                 String query = String.format("SELECT * FROM movies WHERE id = \"%s\"",id);
