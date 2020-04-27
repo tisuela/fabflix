@@ -37,7 +37,6 @@ function sortByGenerator(orderBy, sortBy){
     }
     sort1 = sortBy;
     if(!sort2){ // sort 2 is null here so we set it to our default value based
-        console.log("sort2 is null");
         if(order == "rating"){ sort2 = "asc";} // sort2 will be title , which is defaulted to ascending
         else{sort2 = "desc"}                   // sort2 will be rating, which is defaulted to descending
     }
@@ -58,7 +57,6 @@ function setSortButtons(){
     for(i = 0; i< buttonPairs.length; i++){
         var order = buttonPairs[i][0];
         var sort  = buttonPairs[i][1];
-        console.log("new url for " + order + sort + " : " + sortByGenerator(order, sort));
         result += "<a href='index.html?" + sortByGenerator(order, sort) + "'>" + order + encoder[sort] + "</a> ";
     }
     sortingButtons.append(result);
@@ -99,12 +97,21 @@ function setBrowseCategories() {
     }
 }
 
+function changedRPP() {
+    let rpp = $("#Count :selected").val();
+    let searchParams = new URLSearchParams(window.location.search);
+    searchParams.set("results", rpp);
+    window.location.replace("index.html?" + searchParams);
+}
+
 /**
  * Handles the data returned by the API, read the jsonObject and populate data into html elements
  * @param resultData jsonObject
  */
-function handleMovieResult(resultData) {
+function handleMovieResult(resultJson) {
     console.log("handleStarResult: populating star table from resultData");
+
+    let resultData = resultJson["movies"];
 
     // Populate the Movie table
     // Find the empty table body by id "movie_table_body"
@@ -149,6 +156,12 @@ function handleMovieResult(resultData) {
         // Append the row created to the table body, which will refresh the page
         movieTableBodyElement.append(rowHTML);
         }
+
+    // also handles the prev and next buttons since it requires the resultJSON data
+    let searchParams = new URLSearchParams(window.location.search);
+
+    let pagination = $("#pagination");
+    //pagination.append()
 }
 
 
@@ -159,9 +172,6 @@ function handleMovieResult(resultData) {
 let query = getParameters();
 setSortButtons();
 setBrowseCategories();
-
-//console.log("new url    : " + sortByTitleFirstAscending());
-console.log("current url: " + new URLSearchParams(window.location.search));
 
 // Makes the HTTP GET request and registers on success callback function handleStarResult
 jQuery.ajax({
