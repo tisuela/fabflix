@@ -23,11 +23,42 @@ function getParameters(){
     return query;
 }
 
-function sortBy(){
+function sortByGenerator(orderBy, sortBy){
     var searchParams = new URLSearchParams(window.location.search);
-    searchParams.set("sort", "asc");
-    var newParams = searchParams.toString();
-    console.log("new parameters = " + newParams);
+    var order = searchParams.get("order");
+    var sort1 = searchParams.get("sort1")
+    var sort2 = searchParams.get("sort2");
+    if(order !== orderBy) { // if order is not set or the incorrect one
+        order = orderBy;
+        if (sort1 && sort2) { // neither sort is null, we save sort1 into sort2 to preserve it
+                              // since we are swapping from title to rating or vice versa
+            sort2 = sort1;
+        }
+    }
+    sort1 = sortBy;
+    if(!sort2){ // sort 2 is null here so we set it to our default value based
+        console.log("sort2 is null");
+        if(order == "rating"){ sort2 = "asc";} // sort2 will be title , which is defaulted to ascending
+        else{sort2 = "desc"}                   // sort2 will be rating, which is defaulted to descending
+    }
+
+    searchParams.set("order", order);
+    searchParams.set("sort1", sort1);
+    searchParams.set("sort2", sort2);
+    return searchParams;
+}
+
+function setSortButtons(){
+    const buttonPairs = [ ["title", "asc"], ["title", "desc"], ["rating", "asc"], ["rating", "desc"] ];
+    let sortingButtons = $("#sorting-buttons");
+    let result = "";
+    for(i = 0; i< buttonPairs.length; i++){
+        var order = buttonPairs[i][0];
+        var sort  = buttonPairs[i][1];
+        console.log("new url for " + order + sort + " : " + sortByGenerator(order, sort));
+        result += "<a href='index.html?" + sortByGenerator(order, sort) + "'>" + order + sort + "</a> ";
+    }
+    sortingButtons.append(result);
 }
 
 function genreBrowse(){
@@ -48,7 +79,7 @@ function genreBrowse(){
 function handleMovieResult(resultData) {
     console.log("handleStarResult: populating star table from resultData");
 
-    // Populate the star table
+    // Populate the Movie table
     // Find the empty table body by id "movie_table_body"
     let movieTableBodyElement = jQuery("#movie_table_body");
 
@@ -108,12 +139,15 @@ function handleMovieResult(resultData) {
  */
 
 let query = getParameters();
-sortBy();
+setSortButtons();
+
+//console.log("new url    : " + sortByTitleFirstAscending());
+console.log("current url: " + new URLSearchParams(window.location.search));
 
 // Makes the HTTP GET request and registers on success callback function handleStarResult
 jQuery.ajax({
     dataType: "json", // Setting return data type
     method: "GET", // Setting request method
-    url: "api/movies?" + query, // Setting request url, which is mapped by StarsServlet in Stars.java
-    success: (resultData) => handleMovieResult(resultData) // Setting callback function to handle data returned successfully by the StarsServlet
+    url: "api/movies?" + query, // Setting request url, which is mapped by MoviesServlet
+    success: (resultData) => handleMovieResult(resultData) // Setting callback function to handle data returned successfully by the MoviesServlet
 });
