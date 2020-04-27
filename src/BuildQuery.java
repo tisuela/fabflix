@@ -75,7 +75,8 @@ public class BuildQuery {
     public void addParameters(Map<String, String[]> parameters){
         // check if browsing
         Map<String, String> templates = new HashMap<String, String>();
-        if (parameters.get("type") != null && this.notEmpty(parameters.get("type")[0]) && parameters.get("type")[0].equals("browse")) {
+        if (parameters.get("mode") != null && this.notEmpty(parameters.get("mode")[0]) &&
+                (parameters.get("mode")[0].equals("title") || parameters.get("mode")[0].equals("genre") )) {
             templates = parametersToBrowseTemplates;
         }
         // otherwise, by default we use search page
