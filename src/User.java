@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * This User class only has the username field in this example.
@@ -8,23 +9,42 @@ public class User {
 
     private final String username;
 
-    // Cart is an arraylist of movieIds
-    private ArrayList<String> cart;
+    // Cart is an map {movieId: quantity}
+    private HashMap<String, Integer> cart;
 
     public User(String username) {
         this.username = username;
-        this.cart = new ArrayList<String>();
+        this.cart = new HashMap<String, Integer>();
+        this.addToCart("tt0094859");
     }
 
 
-    public User(String username, ArrayList<String> cart){
+    public User(String username, HashMap<String, Integer> cart){
         this(username);
         this.cart = cart;
     }
 
-
+    // adds movie to cart and adds quantity
     public void addToCart(String movieId){
-        cart.add(movieId);
+        this.cart.putIfAbsent(movieId, 0);
+        this.cart.put(movieId, this.cart.get(movieId) + 1);
+    }
+
+
+    // decreases quantity of movie in cart
+    public void decreaseQuantity(String movieId){
+        this.cart.put(movieId, this.cart.get(movieId) - 1);
+
+        // if the quantity is less than 1
+        if (this.cart.get(movieId) < 1){
+            this.removeFromCart(movieId);
+        }
+    }
+
+
+    // removes movie from cart
+    public void removeFromCart(String movieId){
+        this.cart.remove(movieId);
     }
 
 
@@ -32,7 +52,7 @@ public class User {
         return username;
     }
 
-    public ArrayList<String> getCart() {
+    public HashMap<String, Integer> getCart() {
         return cart;
     }
 }
