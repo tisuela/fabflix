@@ -73,10 +73,13 @@ public class MoviesServlet extends HttpServlet {
             ExecuteQuery result = new ExecuteQuery(dbcon, query);
             ResultSet rs = result.execute();
 
+            int resultSetCount = 0;
+
             JsonArray jsonArray = new JsonArray();
 
             // Iterate through each row of rs
             while (rs.next()) {
+                resultSetCount++;
                 String movie_id = rs.getString("id");
                 String movie_title = rs.getString("title");
                 String movie_year = rs.getString("year");
@@ -142,9 +145,13 @@ public class MoviesServlet extends HttpServlet {
                 jsonObject.add("movie_stars", jsonStars);
                 jsonArray.add(jsonObject);
             }
-            
+
+            JsonObject resultSet = new JsonObject();
+            resultSet.add("movies", jsonArray);
+            resultSet.addProperty("resultCount", resultSetCount);
+
             // write JSON string to output
-            out.write(jsonArray.toString());
+            out.write(resultSet.toString());
             // set response status to 200 (OK)
             response.setStatus(200);
 
