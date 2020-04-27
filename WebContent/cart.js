@@ -1,17 +1,16 @@
 
 
-function createButton(value, func){
+function createButton(value, func, movieId){
     let button = document.createElement("input");
     button.type = "button";
     button.value = value;
-    button.onclick = func;
-    return button
+    button.onclick = function(){return func(movieId);};
+    return button;
 }
 
 
 // generates row for cart table
 function generateRow(movieJson){
-    let addQuantity = document.createElement("BUTTON")
     let rowHTML = "";
     rowHTML += "<tr>";
     rowHTML +=
@@ -23,12 +22,21 @@ function generateRow(movieJson){
         "</th>";
     rowHTML += "<th>" + movieJson["price"] + "</th>";
     rowHTML += "<th>" + movieJson["quantity"] + "</th>";
-    rowHTML += "<th>" + "button lol" + "</th>";
-    rowHTML += "</tr>";
+
+
 
     return rowHTML;
 }
 
+
+function addToCart(movieId){
+    jQuery.ajax({
+        dataType: "json",  // Setting return data type
+        method: "GET",// Setting request method
+        url: "api/cart?action=addtocart&id=" + movieId,
+        success: (resultData) => populateTable(resultData) // Setting callback function to handle data returned successfully by the CartServlet
+    });
+}
 
 // Populate the table of cart.html from the data from CartServlet
 function populateTable(resultDataJson){
@@ -39,10 +47,13 @@ function populateTable(resultDataJson){
 
     let cartTable = jQuery("#cart_table_body");
     let movieJson = resultDataJson["movies"];
-
+    cartTable.empty();
     // put in the rows
     for(let i = 0; i < movieJson.length; ++i){
         cartTable.append(generateRow(movieJson[i]))
+        cartTable.append("<th>")
+        cartTable.append(createButton("add",addToCart,movieJson[i]["id"]))
+        cartTable.append("</th></tr>")
     }
 
     $("#cart_error_message").text(resultDataJson["errorMessage"])

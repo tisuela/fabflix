@@ -21,9 +21,17 @@ public class CartServlet extends HttpServlet {
     // important, just google this if u don't get it
     private static final long serialVersionUID = 2L;
 
+
     // mySql resource
     @Resource(name = "jdbc/moviedb")
     private DataSource dataSource;
+
+
+    private void addToCart(User user, String movieId){
+        user.addToCart(movieId);
+    }
+
+
 
     // Gets cart information from session
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -34,7 +42,9 @@ public class CartServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         String action = request.getParameter("action");
-        
+
+
+
 
         try{
             JsonObject jsonObject = new JsonObject();
@@ -43,6 +53,11 @@ public class CartServlet extends HttpServlet {
 
             // Get user object, since user object stores the cart
             User user = (User)request.getSession().getAttribute("user");
+
+            if (action != null && action.equals("addtocart")){
+                String thisMovieId = request.getParameter("id");
+                user.addToCart(thisMovieId);
+            }
 
             HashMap<String, Integer> cart = new HashMap<String, Integer>(user.getCart());
 
