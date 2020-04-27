@@ -15,7 +15,6 @@ public class User {
     public User(String username) {
         this.username = username;
         this.cart = new HashMap<String, Integer>();
-        this.addToCart("tt0094859");
     }
 
 

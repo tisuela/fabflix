@@ -28,7 +28,7 @@ public class CartServlet extends HttpServlet {
 
 
     // Check and execute cart actions from URL parameter
-    private void checkCartActions(String action, User user, String movieId){
+    private void checkCartActions(String action, User user, String movieId, JsonObject jsonObject){
         if (action != null){
             if (action.equals("add_to_cart")){
                 user.addToCart(movieId);
@@ -39,6 +39,8 @@ public class CartServlet extends HttpServlet {
             else if (action.equals("remove_from_cart")){
                 user.removeFromCart(movieId);
             }
+            // record the edited movieId
+            jsonObject.addProperty("cartMovieId", movieId);
         }
     }
 
@@ -62,7 +64,7 @@ public class CartServlet extends HttpServlet {
            // Check parameters for action to be done
             String action = request.getParameter("action");
             String actionMovieId = request.getParameter("id");
-            this.checkCartActions(action, user, actionMovieId);
+            this.checkCartActions(action, user, actionMovieId, jsonObject);
 
             // Get cart
             HashMap<String, Integer> cart = new HashMap<String, Integer>(user.getCart());
@@ -89,7 +91,7 @@ public class CartServlet extends HttpServlet {
                 movieExecute.close();
             }
             jsonObject.add("movies", moviesArray);
-            jsonObject.addProperty("errorMessage","no errors");
+            jsonObject.addProperty("errorMessage","success");
             out.write(jsonObject.toString());
             response.setStatus(200);
 

@@ -48,7 +48,7 @@ public class MoviesServlet extends HttpServlet {
         // Add the WHERE conditions from parameters
         query.addParameters(request.getParameterMap());
 
-        query.append("LIMIT 20");
+
 
         return query.getQuery();
 
@@ -93,13 +93,21 @@ public class MoviesServlet extends HttpServlet {
                 // additional queries for genres and stars
                 try {
                     // Get list of first three genres
-                    String genreQuery = String.format("SELECT genres.name FROM genres JOIN genres_in_movies ON (genres.id = genreId AND movieId = \"%s\") LIMIT 3", movie_id);
+                    String genreQuery = String.format("SELECT genres.name FROM genres JOIN genres_in_movies ON (genres.id = genreId AND movieId = \"%s\") ORDER BY genres.name LIMIT 3", movie_id);
                     ExecuteQuery genreResult = new ExecuteQuery(dbcon, genreQuery);
                     ResultSet genreSet = genreResult.execute();
 
                     // get list of first three stars
 
-                    String starsQuery = String.format("SELECT * FROM stars JOIN stars_in_movies ON (stars.id = starId AND movieId = \"%s\") LIMIT 3", movie_id);
+                    // Build Stars query
+                    BuildQuery starsQuery = new BuildQuery("SELECT *, COUNT(*) as totalMovies");
+
+                    // first get the stars in the movie
+                    starsQuery.addFromTables(String.format("stars JOIN stars_in_movies as in_movie ON (stars.id = starId and movieId = \"%s\")", movie_id));
+
+                    // Join again with allstars to get all the movies the stars in THIS MOVIE starred in
+                    starsQuery.addFromTables("JOIN stars_in_movies as all_stars ON (in_movie.starId = all_stars.starId)");
+                    starsQuery.append("GROUP BY all_stars.starId ORDER BY totalMovies DESC, stars.name ASC LIMIT 3");
                     ExecuteQuery starsResult = new ExecuteQuery(dbcon, starsQuery);
                     ResultSet starsSet = starsResult.execute();
 
