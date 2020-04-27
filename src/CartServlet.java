@@ -21,10 +21,11 @@ public class CartServlet extends HttpServlet {
     // important, just google this if u don't get it
     private static final long serialVersionUID = 2L;
 
-
     // mySql resource
     @Resource(name = "jdbc/moviedb")
     private DataSource dataSource;
+
+    private int totalPrice = 0;
 
 
     // Check and execute cart actions from URL parameter
@@ -53,6 +54,8 @@ public class CartServlet extends HttpServlet {
         // Output stream to STDOUT
         PrintWriter out = response.getWriter();
 
+        this.totalPrice = 0;
+
         try{
             JsonObject jsonObject = new JsonObject();
             JsonArray moviesArray = new JsonArray();
@@ -80,6 +83,10 @@ public class CartServlet extends HttpServlet {
                 String price = "5";
                 String quantity = cart.get(id).toString();
 
+                // increment price
+                int priceInt = Integer.parseInt(price);
+                this.totalPrice += priceInt;
+
                 // Put it in JSON
                 JsonObject movieJson = new JsonObject();
                 movieJson.addProperty("id", id);
@@ -91,6 +98,7 @@ public class CartServlet extends HttpServlet {
                 movieExecute.close();
             }
             jsonObject.add("movies", moviesArray);
+            jsonObject.addProperty("totalPrice", this.totalPrice);
             jsonObject.addProperty("errorMessage","success");
             out.write(jsonObject.toString());
             response.setStatus(200);

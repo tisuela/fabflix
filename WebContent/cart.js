@@ -68,12 +68,32 @@ function removeFromCart(movieId){
 }
 
 
+function createLinkButton(value, link){
+    let button = document.createElement("input");
+    button.type = "button";
+    button.value = value;
+
+    // create another function in order to put arguments in "func"
+    button.onclick = function(){return window.location=link;};
+    return button;
+}
+
+
+// Populate the header above the table (mostly buttons)
+function populateHeader(resultDataJson){
+    let divElement = document.getElementById("cart_header");
+
+    // clear anything that might already be there
+    divElement.innerHTML = "";
+
+    // Create buttons
+    divElement.append(createLinkButton("Back to Movies", "index.html"));
+    divElement.append(createLinkButton("Proceed to Payment", "payment.html"));
+}
+
+
 // Populate the table of cart.html from the data from CartServlet
 function populateTable(resultDataJson){
-
-    console.log("handle login response");
-    console.log(resultDataJson);
-    console.log(resultDataJson["errorMessage"]);
 
     let cartTable = jQuery("#cart_table_body");
     let movieJson = resultDataJson["movies"];
@@ -87,13 +107,23 @@ function populateTable(resultDataJson){
 }
 
 
+function handleGetCart(resultDataJson){
+    console.log("handle cart response");
+    console.log(resultDataJson);
+    console.log(resultDataJson["errorMessage"]);
+
+    populateHeader(resultDataJson);
+    populateTable(resultDataJson)
+}
+
+
 // get cart by sending GET request to CartServlet
 function getCart(){
     jQuery.ajax({
         dataType: "json",  // Setting return data type
         method: "GET",// Setting request method
         url: "api/cart",
-        success: (resultData) => populateTable(resultData) // Setting callback function to handle data returned successfully by the CartServlet
+        success: (resultData) => handleGetCart(resultData) // Setting callback function to handle data returned successfully by the CartServlet
     });
 }
 
