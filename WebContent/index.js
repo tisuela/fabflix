@@ -24,10 +24,10 @@ function getParameters(){
 }
 
 function sortByGenerator(orderBy, sortBy){
-    var searchParams = new URLSearchParams(window.location.search);
-    var order = searchParams.get("order");
-    var sort1 = searchParams.get("sort1")
-    var sort2 = searchParams.get("sort2");
+    let searchParams = new URLSearchParams(window.location.search);
+    let order = searchParams.get("order");
+    let sort1 = searchParams.get("sort1")
+    let sort2 = searchParams.get("sort2");
     if(order !== orderBy) { // if order is not set or the incorrect one
         order = orderBy;
         if (sort1 && sort2) { // neither sort is null, we save sort1 into sort2 to preserve it
@@ -70,9 +70,33 @@ function genreBrowse(){
         "Documentary", "Drama", "Family", "Fantasy", "History", "Horror", "Music", "Musical",
         "Mystery", "Reality-TV", "Romance", "Sci-Fi", "Sport", "Thriller", "War", "Western"]
     for(const genre of genres){
-        result += "<a href='index.html?genre=" + genre + "'>" + genre + "</a> ";
+        result += "<a href='index.html?mode=genre&genre=" + genre + "'>" + genre + "</a> ";
     }
     return result;
+}
+
+function titleBrowse(){
+    let result = "";
+    let titles = "0123456789abcdefghijklmnopqrstuvwxyz*";
+    for(let i = 0; i < titles.length; i++){
+        let character = titles.charAt(i);
+        result += "<a href='index.html?mode=title&title=" + character + "'>" + character + "</a> ";
+    }
+    return result;
+}
+
+function setBrowseCategories() {
+    let searchParams = new URLSearchParams(window.location.search);
+    let mode = searchParams.get("mode");
+    if(mode){
+        let banner = $("#browse-categories");
+        if(mode === "title"){
+            banner.append(titleBrowse());
+        }
+        if(mode === "genre"){
+            banner.append(genreBrowse());
+        }
+    }
 }
 
 /**
@@ -125,15 +149,6 @@ function handleMovieResult(resultData) {
         // Append the row created to the table body, which will refresh the page
         movieTableBodyElement.append(rowHTML);
         }
-
-    let debug = true;
-    // Change debug to something in our url that lets us know we're browing by genre
-
-    if (debug) {
-
-        let browseCategories = $("#browse-categories");
-        browseCategories.append(genreBrowse());
-    }
 }
 
 
@@ -143,6 +158,7 @@ function handleMovieResult(resultData) {
 
 let query = getParameters();
 setSortButtons();
+setBrowseCategories();
 
 //console.log("new url    : " + sortByTitleFirstAscending());
 console.log("current url: " + new URLSearchParams(window.location.search));
