@@ -52,11 +52,14 @@ function setSortButtons(){
     const buttonPairs = [ ["title", "asc"], ["title", "desc"], ["rating", "asc"], ["rating", "desc"] ];
     let sortingButtons = $("#sorting-buttons");
     let result = "";
+
+    const encoder = {"asc": "↑", "desc": "↓"}
+
     for(i = 0; i< buttonPairs.length; i++){
         var order = buttonPairs[i][0];
         var sort  = buttonPairs[i][1];
         console.log("new url for " + order + sort + " : " + sortByGenerator(order, sort));
-        result += "<a href='index.html?" + sortByGenerator(order, sort) + "'>" + order + sort + "</a> ";
+        result += "<a href='index.html?" + sortByGenerator(order, sort) + "'>" + order + encoder[sort] + "</a> ";
     }
     sortingButtons.append(result);
 }
