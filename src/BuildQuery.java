@@ -105,7 +105,7 @@ public class BuildQuery {
             }
         }
         if(parameters.get("sort2") != null && this.notEmpty(parameters.get("sort2")[0])){
-            if(parameters.get("sort2")[0].equals("ASC")) {
+            if(parameters.get("sort2")[0].equals("asc")) {
                 sorting2 = "ASC";
             } else {
                 sorting2 = "DESC";
