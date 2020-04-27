@@ -2,5 +2,6 @@
 .DS_Store
 *.iml
 */movie-data.sql
+*/test.java
 
 
