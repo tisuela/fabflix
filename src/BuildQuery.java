@@ -118,7 +118,7 @@ public class BuildQuery {
             results = parameters.get("results")[0];
         }
         if(parameters.get("pageNum") != null && this.notEmpty(parameters.get("pageNum")[0])){
-            String page = parameters.get("page")[0];
+            String page = parameters.get("pageNum")[0];
             offset = String.valueOf( (Integer.parseInt(page) - 1) * Integer.parseInt(results) );
         }
 
