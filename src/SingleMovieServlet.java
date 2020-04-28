@@ -73,6 +73,7 @@ public class SingleMovieServlet extends HttpServlet {
 			// Perform the query
 			System.out.println("Perform Query");
 			System.out.println(genreQuery.getQuery());
+			System.out.println("making query " + starsQuery.getQuery());
 			ExecuteQuery starExecute = new ExecuteQuery(dbcon, starsQuery);
 			ExecuteQuery movieExecute = new ExecuteQuery(dbcon, movieQuery);
 			ExecuteQuery genreExecute = new ExecuteQuery(dbcon, genreQuery);

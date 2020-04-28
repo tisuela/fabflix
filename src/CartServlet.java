@@ -85,7 +85,7 @@ public class CartServlet extends HttpServlet {
 
                 // increment price
                 int priceInt = Integer.parseInt(price);
-                this.totalPrice += priceInt;
+                this.totalPrice += priceInt * cart.get(id);
 
                 // Put it in JSON
                 JsonObject movieJson = new JsonObject();
