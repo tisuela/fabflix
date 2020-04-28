@@ -37,7 +37,7 @@ function sortByGenerator(orderBy, sortBy){
     }
     sort1 = sortBy;
     if(!sort2){ // sort 2 is null here so we set it to our default value based
-        if(order == "rating"){ sort2 = "asc";} // sort2 will be title , which is defaulted to ascending
+        if(order === "rating"){ sort2 = "asc";} // sort2 will be title , which is defaulted to ascending
         else{sort2 = "desc"}                   // sort2 will be rating, which is defaulted to descending
     }
 
@@ -54,12 +54,39 @@ function setSortButtons(){
 
     const encoder = {"asc": "↑", "desc": "↓"}
 
-    for(i = 0; i< buttonPairs.length; i++){
-        var order = buttonPairs[i][0];
-        var sort  = buttonPairs[i][1];
+    for(let i = 0; i< buttonPairs.length; i++){
+        let order = buttonPairs[i][0];
+        let sort  = buttonPairs[i][1];
         result += "<a href='index.html?" + sortByGenerator(order, sort) + "'>" + order + encoder[sort] + "</a> ";
     }
     sortingButtons.append(result);
+}
+
+function generatePaginationButtons(resultCount){
+    let searchParams = new URLSearchParams(window.location.search);
+    let page = searchParams.get("pageNum");
+    let rpp = searchParams.get("results");
+    let result = "";
+    if(!page){ // If page is null, it is default page = 1
+        page = "1";
+    }
+    if(!rpp){ // If rpp is null, it is default results = 25
+        rpp = "25";
+    }
+    if(page !== "1"){ // If it's the first page, we don't need to generate a link for the previous page otherwise go ahead
+        let prevPage = parseInt(page) - 1;
+        let prevParams = new URLSearchParams(window.location.search);
+        prevParams.set("pageNum", prevPage.toString());
+        result += "<a href='index.html?" + prevParams + "'>" + "Previous" + "</a> ";
+    }
+    if (parseInt(resultCount) === parseInt(rpp)){ // There is enough to populate the current page so generate a link for the next page
+        let nextPage = parseInt(page) + 1;
+        let nextParams = new URLSearchParams(window.location.search);
+        nextParams.set("pageNum", nextPage.toString());
+        result += "<a href='index.html?" + nextParams + "'>" + "Next" + "</a> ";
+    }
+    console.log(result);
+    return result;
 }
 
 function genreBrowse(){
@@ -214,6 +241,7 @@ function handleMovieResult(resultJson) {
     console.log("handleStarResult: populating star table from resultData");
 
     let resultData = resultJson["movies"];
+    let resultCount = resultJson["resultCount"];
 
     // Populate the Movie table
     // Find the empty table body by id "movie_table_body"
@@ -227,10 +255,8 @@ function handleMovieResult(resultJson) {
         }
 
     // also handles the prev and next buttons since it requires the resultJSON data
-    let searchParams = new URLSearchParams(window.location.search);
-
     let pagination = $("#pagination");
-    //pagination.append()
+    pagination.append(generatePaginationButtons(resultCount));
 }
 
 
