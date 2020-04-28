@@ -36,10 +36,11 @@ function getParameterByName(target) {
  * @param resultData jsonObject
  */
 
-function handleResult(resultData) {
+function handleResult(resultJson) {
 
     console.log("handleResult: populating star info from resultData");
 
+    let resultData = resultJson["starList"];
     // populate the star info h3
     // find the empty h3 body by id "star_info"
     let starInfoElement = jQuery("#star_info");
@@ -47,7 +48,7 @@ function handleResult(resultData) {
     // append two html <p> created to the h3 body, which will refresh the page
     starInfoElement.append("<p>Star Name: " + resultData[0]["star_name"] + "</p>" +
         "<p>Date Of Birthdate: " + resultData[0]["star_dob"] + "</p>" +
-        "<p>" + '<a href="index.html"> Back to Main Movies Page </a>' + "</p>");
+        "<p>" + '<a href="' + resultJson["movieState"] +'"> Back to Movies</a>' + "</p>");
 
     console.log("handleResult: populating movie table from resultData");
 

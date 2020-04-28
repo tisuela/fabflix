@@ -14,6 +14,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 
 // Declaring a WebServlet called MoviesServlet, which maps to url "/api/movies"
@@ -48,7 +51,25 @@ public class MoviesServlet extends HttpServlet {
         // Add the WHERE conditions from parameters
         query.addParameters(request.getParameterMap());
 
+        // This code block was adapted from:
+        // https://www.java4s.com/java-servlet-tutorials/example-on-getparametermap-method-of-servlet-request-object/
+        Map m = request.getParameterMap();
+        Set s = m.entrySet();
+        Iterator it = s.iterator();
 
+        String url = "";
+
+        while(it.hasNext()){
+            Map.Entry<String,String[]> entry = (Map.Entry<String,String[]>)it.next();
+            String parameter = "";
+            String   key   = entry.getKey();
+            String[] value = entry.getValue();
+            parameter += key + "=" + value[0] + "&";
+            url += parameter;
+        }
+        // end code block
+
+        request.getSession().setAttribute("movieState", "index.html?" + url.substring(0, url.length()-1));
 
         return query.getQuery();
 

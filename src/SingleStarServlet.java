@@ -30,6 +30,7 @@ public class SingleStarServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
+		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		response.setContentType("application/json"); // Response mime type
 
 		System.out.println("starting single star body");
@@ -74,6 +75,9 @@ public class SingleStarServlet extends HttpServlet {
 
 				// Create a JsonObject based on the data we retrieve from rs
 
+				// *************************************************************************************
+				// Why are we adding star info from each result set when we're looking at a single star?
+				// *************************************************************************************
 				JsonObject jsonObject = new JsonObject();
 				jsonObject.addProperty("star_id", starId);
 				jsonObject.addProperty("star_name", starName);
@@ -85,9 +89,16 @@ public class SingleStarServlet extends HttpServlet {
 
 				jsonArray.add(jsonObject);
 			}
+
+			JsonObject resultJson = new JsonObject();
+
+			String url = httpRequest.getSession().getAttribute("movieState").toString();
+
+			resultJson.addProperty("movieState", url);
+			resultJson.add("starList", jsonArray);
 			
             // write JSON string to output
-            out.write(jsonArray.toString());
+            out.write(resultJson.toString());
             // set response status to 200 (OK)
             response.setStatus(200);
 
