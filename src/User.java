@@ -8,12 +8,20 @@ import java.util.HashMap;
 public class User {
 
     private final String username;
+    private final int id;
+    private int totalPrice = 0;
 
     // Cart is an map {movieId: quantity}
     private HashMap<String, Integer> cart;
 
     public User(String username) {
+        this(username, 0);
+    }
+
+
+    public User(String username, int id){
         this.username = username;
+        this.id = id;
         this.cart = new HashMap<String, Integer>();
     }
 
@@ -40,6 +48,9 @@ public class User {
         }
     }
 
+    public int getId() {
+        return id;
+    }
 
     // removes movie from cart
     public void removeFromCart(String movieId){
@@ -53,5 +64,13 @@ public class User {
 
     public HashMap<String, Integer> getCart() {
         return cart;
+    }
+
+    public int getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(int totalPrice) {
+        this.totalPrice = totalPrice;
     }
 }

@@ -31,7 +31,7 @@ public class LoginServlet extends HttpServlet {
 
             // Find the matching customer from the moviedb
             Statement findUserStatement = dbcon.createStatement();
-            String findUserQuery = String.format("SELECT email,password FROM customers WHERE email = \"%s\"", username);
+            String findUserQuery = String.format("SELECT email,password,id FROM customers WHERE email = \"%s\"", username);
             ResultSet userSet = findUserStatement.executeQuery(findUserQuery);
 
             String failureMessage = "Failed login attempt. Please verify your username and password";
@@ -42,10 +42,11 @@ public class LoginServlet extends HttpServlet {
 
                 // Get password of user found in database
                 String userPassword = userSet.getString("password");
+                int userId = userSet.getInt("id");
 
                 // If password is right, proceed to login
                 if(password.equals(userPassword)){
-                    request.getSession().setAttribute("user", new User(username));
+                    request.getSession().setAttribute("user", new User(username, userId));
                     responseJsonObject.addProperty("status", "success");
                     responseJsonObject.addProperty("message", "success");
                 }

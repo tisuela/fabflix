@@ -99,6 +99,9 @@ public class CartServlet extends HttpServlet {
             }
             jsonObject.add("movies", moviesArray);
             jsonObject.addProperty("totalPrice", this.totalPrice);
+
+            user.setTotalPrice(this.totalPrice);
+
             jsonObject.addProperty("errorMessage","success");
             out.write(jsonObject.toString());
             response.setStatus(200);

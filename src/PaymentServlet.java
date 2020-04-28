@@ -7,8 +7,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Date;
+import java.util.HashMap;
 
 @WebServlet(name = "PaymentServlet", urlPatterns = "/api/payment")
 public class PaymentServlet  extends HttpServlet {
@@ -68,13 +72,52 @@ public class PaymentServlet  extends HttpServlet {
     }
 
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    // does payment by inserting balues into moviedb.sales
+    private void doPayment(HttpServletRequest request, JsonObject responseJsonObject){
+        try{
+            String firstName = request.getParameter("firstName");
+            String lastName = request.getParameter("lastName");
+            String creditCardNumber = request.getParameter("creditCardNumber");
+            String expirationDate = request.getParameter("expirationDate");
 
+
+            Connection dbcon = dataSource.getConnection();
+
+            Date date = new Date();
+            java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+
+            User user = (User)request.getSession().getAttribute("user");
+
+            HashMap<String, Integer> cart = user.getCart();
+
+            for(String movieId: cart.keySet()){
+                PreparedStatement ps = dbcon.prepareStatement("INSERT INTO sales (customerId, movieId, saleDate) VALUES (?, ?, ?)");
+                ps.setInt(1, user.getId());
+                ps.setString(2, movieId);
+                ps.setDate(3, sqlDate);
+                ps.executeUpdate();
+                ps.close();
+            }
+
+
+            dbcon.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseJsonObject.addProperty("message", "Database error");
+            responseJsonObject.addProperty("status", "fail");
+
+        }
+    }
+
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
 
         JsonObject responseJsonObject = new JsonObject();
         if (this.isValidPayment(request, responseJsonObject)){
             responseJsonObject.addProperty("status", "success");
+            this.doPayment(request, responseJsonObject);
         }
         else{
             responseJsonObject.addProperty("status", "fail");
@@ -83,4 +126,21 @@ public class PaymentServlet  extends HttpServlet {
 
         response.getWriter().write(responseJsonObject.toString());
     }
+
+
+    // not used but might have to later
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("application/json"); // Response mime type
+
+        // Output stream to STDOUT
+        PrintWriter out = response.getWriter();
+        JsonObject jsonObject = new JsonObject();
+
+
+
+        out.write(jsonObject.toString());
+        response.setStatus(200);
+    }
+
+
 }
