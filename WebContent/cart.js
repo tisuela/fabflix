@@ -86,11 +86,13 @@ function populateHeader(resultDataJson){
     // clear anything that might already be there
     divElement.innerHTML = "";
 
-    let totalPrice = resultDataJson["totalPrice"];
+    let totalPrice = document.createElement("p");
+    totalPrice.innerText = "Total Price = $" +  resultDataJson["totalPrice"];
 
     // Create buttons
     divElement.append(createLinkButton("Back to Movies", "index.html"));
-    divElement.append(createLinkButton("Proceed to Payment", "payment.html?total_price=" + totalPrice));
+    divElement.append(createLinkButton("Proceed to Payment", "payment.html?total_price=" + resultDataJson["totalPrice"]));
+    divElement.appendChild(totalPrice);
 }
 
 

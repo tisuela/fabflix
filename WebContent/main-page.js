@@ -47,6 +47,19 @@ function titleBrowse(){
     return result;
 }
 
+
+function createCheckoutButton(){
+    let checkoutDiv = document.getElementById("checkout-button");
+    let button = document.createElement("input");
+    button.type = "button";
+    button.value = "Check out";
+
+    // create another function in order to put arguments in "func"
+    button.onclick = function(){return window.location='cart.html';};
+    checkoutDiv.appendChild(button);
+}
+
+createCheckoutButton();
 // Bind the submit action of the form to a handler function
 search_form.submit(submitSearchForm);
 let browseGenres = $("#browse-genres");

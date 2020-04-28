@@ -65,7 +65,7 @@ public class SingleMovieServlet extends HttpServlet {
 
 			// Build genre query
 			BuildQuery genreQuery = new BuildQuery();
-			genreQuery.setSelectStr("genres.name");
+			genreQuery.setSelectStr("*");
 			genreQuery.addFromTables("genres JOIN genres_in_movies ON genres.id = genreId");
 			genreQuery.addWhereConditions(matchId, "movieId", id);
 			genreQuery.append("ORDER BY genres.name ASC");
@@ -90,9 +90,11 @@ public class SingleMovieServlet extends HttpServlet {
 			String movie_name = movieSet.getString("title");
 			String movie_year = movieSet.getString("year");
 			String movie_director = movieSet.getString("director");
+			String movie_id = movieSet.getString("movies.id");
 			jsonObject.addProperty("movie_name", movie_name);
 			jsonObject.addProperty("movie_year", movie_year);
 			jsonObject.addProperty("movie_director", movie_director);
+			jsonObject.addProperty("movie_id", movie_id);
 
 			// Iterate through each row of stars
 			while (starsSet.next()) {

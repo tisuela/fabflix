@@ -36,6 +36,17 @@ function getParameterByName(target) {
  * @param resultData jsonObject
  */
 
+function createCheckoutButton(){
+    let checkoutDiv = document.getElementById("checkout-button");
+    let button = document.createElement("input");
+    button.type = "button";
+    button.value = "Check out";
+
+    // create another function in order to put arguments in "func"
+    button.onclick = function(){return window.location='cart.html';};
+    checkoutDiv.appendChild(button);
+}
+
 function handleResult(resultJson) {
 
     console.log("handleResult: populating star info from resultData");
@@ -77,7 +88,7 @@ function handleResult(resultJson) {
 
 // Get id from URL
 let starId = getParameterByName('id');
-
+createCheckoutButton();
 // Makes the HTTP GET request and registers on success callback function handleResult
 jQuery.ajax({
     dataType: "json",  // Setting return data type
