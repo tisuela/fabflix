@@ -136,7 +136,7 @@ public class BuildQuery {
             String template = templates.get(name);
             if(notEmpty(template)) {
                 String value = parameters.get(name)[0];
-                if(value.equals("*")) { continue; }
+                if(value.equals("*") && parameters.get("mode") != null) { continue; }
                 System.out.println(template + " " +column + " " + value);
                 addWhereConditions(template, column, value);
             }
