@@ -52,13 +52,22 @@ public class PaymentServlet  extends HttpServlet {
 
             ResultSet cardSet = cardExecute.execute();
 
-            // Check if there is no matching card
+            User user = (User) request.getSession().getAttribute("user");
+
+            // Check if there is no matching card and that there are items in cart
             if (!cardSet.isBeforeFirst() || !notEmpty(creditCardNumber) || !notEmpty(expirationDate)){
                 responseJsonObject.addProperty("message", "Invalid Payment Information");
                 return false;
             }
+            else if (user.notEmpty()){
+                responseJsonObject.addProperty("message","Payment is Valid");
+            }
+            else{
+                // cart is empty
+                responseJsonObject.addProperty("message", "No items in cart -- please add items then proceed to payment");
+                return false;
+            }
 
-            responseJsonObject.addProperty("message","Payment is Valid");
 
             dbcon.close();
             cardExecute.close();
@@ -104,6 +113,7 @@ public class PaymentServlet  extends HttpServlet {
             String transactionId = String.valueOf(latestId + 1);
 
             for(String movieId: cart.keySet()){
+
                 PreparedStatement ps = dbcon.prepareStatement("INSERT INTO sales (customerId, movieId, saleDate, quantity, transactionId) VALUES (?, ?, ?, ?, ?)");
                 ps.setInt(1, user.getId());
                 ps.setString(2, movieId);

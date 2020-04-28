@@ -72,7 +72,12 @@ public class ConfirmationServlet  extends HttpServlet {
            }
            jsonObject.add("movies", moviesArray);
 
+           String totalPrice = String.valueOf(user.getTotalPrice());
 
+           jsonObject.addProperty("totalPrice", totalPrice);
+
+           user.emptyCart();
+           user.setTotalPrice(0);
            jsonObject.addProperty("errorMessage","success");
            out.write(jsonObject.toString());
            response.setStatus(200);

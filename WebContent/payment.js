@@ -7,6 +7,16 @@ function updateErrorMessage(resultDataJson){
     errorDiv.innerText = resultDataJson["message"];
 }
 
+function createLinkButton(value, link){
+    let button = document.createElement("input");
+    button.type = "button";
+    button.value = value;
+
+    // create another function in order to put arguments in "func"
+    button.onclick = function(){return window.location=link;};
+    return button;
+}
+
 // Populate the header above the table (mostly buttons)
 function populateHeader(resultDataJson){
     let divElement = document.getElementById("payment_header");
@@ -15,9 +25,12 @@ function populateHeader(resultDataJson){
     divElement.innerHTML = "";
 
     let paymentParams = new URLSearchParams(window.location.search);
-    let totalPrice = paymentParams.get("total_price");
 
-   divElement.innerText = "Total price = $" + totalPrice
+    let totalPrice = document.createElement("p");
+    totalPrice.innerText = "Total Price = $" + paymentParams.get("total_price");
+
+    divElement.appendChild(createLinkButton("Back to Movies", "index.html"));
+    divElement.appendChild(totalPrice);
 
 }
 

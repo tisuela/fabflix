@@ -42,8 +42,15 @@ function populateHeader(resultDataJson){
     let transactionId = confirmationParams.get("transaction_id");
 
     // Create buttons
-    divElement.append(createLinkButton("Back to Movies", "index.html"));
-    divElement.append("Transaction ID = " + transactionId);
+    let transaction = document.createElement("p");
+    let totalPrice = document.createElement("p");
+
+    transaction.innerText = "Transaction ID = " + transactionId;
+    totalPrice.innerText = "Total Price = " + resultDataJson["totalPrice"];
+
+    divElement.appendChild(createLinkButton("Back to Movies", "index.html"));
+    divElement.appendChild(transaction);
+    divElement.appendChild(totalPrice);
 }
 
 

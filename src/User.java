@@ -58,6 +58,20 @@ public class User {
     }
 
 
+    public void emptyCart(){
+        this.cart.clear();
+    }
+
+    public boolean notEmpty(){
+        int numberOfItems = 0;
+        for(String key: this.cart.keySet()){
+            ++numberOfItems;
+        }
+
+        return (numberOfItems > 0);
+    }
+
+
     public String getUsername() {
         return username;
     }
