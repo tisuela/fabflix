@@ -48,7 +48,7 @@ function handleResult(resultData) {
     movieInfoElement.append("<p>Movie Name: " + resultData["movie_name"] + "</p>" +
         "<p>Movie Year: "  + resultData["movie_year"] + "</p>" +
         "<p>Movie Director: "  + resultData["movie_director"] + "</p>" +
-        "<p>" + '<a href="index.html"> Back to Main Movies Page </a>' + "</p>");
+        "<p>" + '<a href="' + resultData["movieState"] +'"> Back to Movies </a>' + "</p>");
 
     console.log("handleResult: populating movie table from resultData");
 

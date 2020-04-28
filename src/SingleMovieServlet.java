@@ -31,6 +31,7 @@ public class SingleMovieServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
+		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		response.setContentType("application/json"); // Response mime type
 
 		// Retrieve parameter id from url request.
@@ -121,11 +122,12 @@ public class SingleMovieServlet extends HttpServlet {
 				jsonGenres.add(jsonGenre);
 			}
 
-
+			String url = httpRequest.getSession().getAttribute("movieState").toString();
 
 
 			jsonObject.add("movie_stars", jsonStars);
 			jsonObject.add("movie_genres", jsonGenres);
+			jsonObject.addProperty("movieState", url);
             // write JSON string to output
             out.write(jsonObject.toString());
             // set response status to 200 (OK)
