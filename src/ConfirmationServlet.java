@@ -1,3 +1,6 @@
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -7,6 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.util.HashMap;
 
 // Declaring a WebServlet called CartServlet, which maps to url "/api/confirmation"
 @WebServlet(name = "ConfirmationServlet", urlPatterns = "/api/confirmation")
@@ -26,9 +32,57 @@ public class ConfirmationServlet  extends HttpServlet {
         PrintWriter out = response.getWriter();
 
        try{
+           JsonObject jsonObject = new JsonObject();
+           JsonArray moviesArray = new JsonArray();
+           User user = (User) request.getSession().getAttribute("user");
+           Connection dbcon = dataSource.getConnection();
 
+
+           // Get cart
+           HashMap<String, Integer> cart = new HashMap<String, Integer>(user.getCart());
+           for(String id: cart.keySet()){
+               // Get set
+               String query = String.format("SELECT * FROM movies JOIN sales ON movies.id = sales.movieId WHERE movies.id = \"%s\"",id);
+               ExecuteQuery movieExecute = new ExecuteQuery(dbcon, query);
+               ResultSet movieSet = movieExecute.execute();
+
+               // Get the one result
+               movieSet.first();
+               String title = movieSet.getString("title");
+               String price = "5";
+               String quantity = cart.get(id).toString();
+               String sailId =  String.valueOf(movieSet.getInt("sales.id"));
+
+               // increment price
+               int priceInt = Integer.parseInt(price);
+
+               // Put it in JSON
+               JsonObject movieJson = new JsonObject();
+               movieJson.addProperty("id", id); // movieId
+               movieJson.addProperty("sailId", sailId);
+               movieJson.addProperty("title", title);
+               movieJson.addProperty("price", price);
+               movieJson.addProperty("quantity", quantity);
+
+               moviesArray.add(movieJson);
+               movieExecute.close();
+           }
+           jsonObject.add("movies", moviesArray);
+
+
+           jsonObject.addProperty("errorMessage","success");
+           out.write(jsonObject.toString());
+           response.setStatus(200);
        } catch (Exception e){
+           e.printStackTrace();
 
+           // write error message JSON object to output
+           JsonObject jsonObject = new JsonObject();
+           jsonObject.addProperty("errorMessage", e.getMessage());
+           out.write(jsonObject.toString());
+
+           // set reponse status to 500 (Internal Server Error)
+           response.setStatus(500);
        }
 
 

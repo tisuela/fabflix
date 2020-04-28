@@ -15,9 +15,18 @@ function generateRow(movieJson) {
     let row = document.createElement("tr");
 
     // Add cells
+    let saleCell = row.insertCell(-1);
     let titleCell = row.insertCell(-1);
     let priceCell = row.insertCell(-1);
     let quantityCell = row.insertCell(-1);
+
+    // populate cells
+    saleCell.innerHTML = movieJson["sailId"];
+    titleCell.innerHTML =  '<a href="single-movie.html?id=' + movieJson['id'] + '">'
+        + movieJson["title"] + '</a>';
+    priceCell.innerHTML = "$" +  movieJson["price"];
+    quantityCell.innerHTML = movieJson["quantity"];
+
 
     return row;
 }
@@ -67,8 +76,10 @@ function getConfirmation(){
     jQuery.ajax({
         dataType: "json",  // Setting return data type
         method: "GET",// Setting request method
-        url: "api/cart",
+        url: "api/confirmation",
         success: (resultData) => handleGetConfirmation(resultData) // Setting callback function to handle data returned successfully by the CartServlet
     });
 }
+
+getConfirmation();
 
