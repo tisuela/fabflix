@@ -33,7 +33,7 @@ function handlePaymentResult(ResultDataString){
 
     updateErrorMessage(resultDataJson);
     if (resultDataJson["status"] == "success"){
-        window.location.replace("confirmation.html");
+        window.location.replace("confirmation.html?transaction_id=" + resultDataJson["transactionId"]);
     }
 }
 

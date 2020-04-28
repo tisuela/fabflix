@@ -27,7 +27,6 @@ function generateRow(movieJson) {
     priceCell.innerHTML = "$" +  movieJson["price"];
     quantityCell.innerHTML = movieJson["quantity"];
 
-
     return row;
 }
 
@@ -39,10 +38,12 @@ function populateHeader(resultDataJson){
     // clear anything that might already be there
     divElement.innerHTML = "";
 
-    let totalPrice = resultDataJson["totalPrice"];
+    let confirmationParams = new URLSearchParams(window.location.search);
+    let transactionId = confirmationParams.get("transaction_id");
 
     // Create buttons
     divElement.append(createLinkButton("Back to Movies", "index.html"));
+    divElement.append("Transaction ID = " + transactionId);
 }
 
 
@@ -73,10 +74,12 @@ function handleGetConfirmation(resultDataJson){
 
 // get cart by sending GET request to CartServlet
 function getConfirmation(){
+    let paymentParams = new URLSearchParams(window.location.search);
+    let transactionId = paymentParams.get("transaction_id");
     jQuery.ajax({
         dataType: "json",  // Setting return data type
         method: "GET",// Setting request method
-        url: "api/confirmation",
+        url: "api/confirmation?transaction_id=" + transactionId,
         success: (resultData) => handleGetConfirmation(resultData) // Setting callback function to handle data returned successfully by the CartServlet
     });
 }

@@ -37,12 +37,15 @@ public class ConfirmationServlet  extends HttpServlet {
            User user = (User) request.getSession().getAttribute("user");
            Connection dbcon = dataSource.getConnection();
 
+           String transactionId = request.getParameter("transaction_id");
+
 
            // Get cart
            HashMap<String, Integer> cart = new HashMap<String, Integer>(user.getCart());
            for(String id: cart.keySet()){
                // Get set
-               String query = String.format("SELECT * FROM movies JOIN sales ON movies.id = sales.movieId WHERE movies.id = \"%s\"",id);
+               String query = String.format("SELECT * FROM movies JOIN sales ON movies.id = sales.movieId WHERE movies.id = \"%s\" AND transactionId = \"%s\"",id, transactionId);
+               System.out.println("getting transaction " + query);
                ExecuteQuery movieExecute = new ExecuteQuery(dbcon, query);
                ResultSet movieSet = movieExecute.execute();
 

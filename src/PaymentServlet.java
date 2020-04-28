@@ -90,16 +90,31 @@ public class PaymentServlet  extends HttpServlet {
 
             HashMap<String, Integer> cart = user.getCart();
 
+            String latestSaleIdQuery = "SELECT * FROM sales ORDER BY sales.id DESC LIMIT 3";
+            ExecuteQuery latestSaleIdExecute = new ExecuteQuery(dbcon, latestSaleIdQuery);
+            ResultSet latestSales = latestSaleIdExecute.execute();
+            int latestId = 0;
+            if (latestSales.isBeforeFirst()){
+                latestSales.first();
+                latestId = latestSales.getInt("sales.id");
+
+            }
+
+            // id to be set for this transaction; all the sales made here found via this
+            String transactionId = String.valueOf(latestId + 1);
+
             for(String movieId: cart.keySet()){
-                PreparedStatement ps = dbcon.prepareStatement("INSERT INTO sales (customerId, movieId, saleDate) VALUES (?, ?, ?)");
+                PreparedStatement ps = dbcon.prepareStatement("INSERT INTO sales (customerId, movieId, saleDate, quantity, transactionId) VALUES (?, ?, ?, ?, ?)");
                 ps.setInt(1, user.getId());
                 ps.setString(2, movieId);
                 ps.setDate(3, sqlDate);
+                ps.setInt(4, cart.get(movieId));
+                ps.setString(5, transactionId);
                 ps.executeUpdate();
                 ps.close();
             }
 
-
+            responseJsonObject.addProperty("transactionId", transactionId);
             dbcon.close();
 
         } catch (Exception e) {
