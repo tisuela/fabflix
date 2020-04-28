@@ -78,6 +78,11 @@ public class BuildQuery {
         if (parameters.get("mode") != null && this.notEmpty(parameters.get("mode")[0]) &&
                 (parameters.get("mode")[0].equals("title") || parameters.get("mode")[0].equals("genre") )) {
             templates = parametersToBrowseTemplates;
+            if(parameters.get("title") != null && this.notEmpty(parameters.get("title")[0]) &&
+                    parameters.get("title")[0].equals("*")){
+                this.append("WHERE title REGEXP \"^[^a-z0-9]+\"");
+                numberOfConditions++;
+            }
         }
         // otherwise, by default we use search page
         else {
@@ -118,9 +123,11 @@ public class BuildQuery {
             results = parameters.get("results")[0];
         }
         if(parameters.get("pageNum") != null && this.notEmpty(parameters.get("pageNum")[0])){
-            String page = parameters.get("page")[0];
+            String page = parameters.get("pageNum")[0];
             offset = String.valueOf( (Integer.parseInt(page) - 1) * Integer.parseInt(results) );
         }
+
+
 
         this.append(String.format(statement, ordering1, sorting1, ordering2, sorting2, results, offset));
 
@@ -129,7 +136,8 @@ public class BuildQuery {
             String template = templates.get(name);
             if(notEmpty(template)) {
                 String value = parameters.get(name)[0];
-
+                if(value.equals("*") && parameters.get("mode") != null) { continue; }
+                System.out.println(template + " " +column + " " + value);
                 addWhereConditions(template, column, value);
             }
         }
@@ -184,7 +192,6 @@ public class BuildQuery {
         this.whereStr = whereStr;
     }
 
-    // are these needed?
     public String getSelectStr() {
         return selectStr;
     }

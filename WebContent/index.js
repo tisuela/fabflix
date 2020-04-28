@@ -128,7 +128,7 @@ function changedRPP() {
     let rpp = $("#Count :selected").val();
     let searchParams = new URLSearchParams(window.location.search);
     searchParams.set("results", rpp);
-    searchParams.set("page", "1"); // reset our page to the first page
+    searchParams.set("pageNum", "1"); // reset our page to the first page
     // Rationale for resetting page to 1:
     // Prevent users from reaching a high page count with a low results per page
     // then swapping to a high results per page and getting an empty page with it
