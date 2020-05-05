@@ -44,10 +44,10 @@ public class ConfirmationServlet  extends HttpServlet {
            HashMap<String, Integer> cart = new HashMap<String, Integer>(user.getCart());
            for(String id: cart.keySet()){
                // Get set
-               String query = String.format("SELECT * FROM movies JOIN sales ON movies.id = sales.movieId WHERE movies.id = \"%s\" AND transactionId = \"%s\"",id, transactionId);
-               System.out.println("getting transaction " + query);
-               ExecuteQuery movieExecute = new ExecuteQuery(dbcon, query);
-               ResultSet movieSet = movieExecute.execute();
+               MyQuery query = new MyQuery(dbcon, "SELECT * FROM movies JOIN sales ON movies.id = sales.movieId");
+               query.addWhereConditions("%s = ?", "movies.id", id);
+               query.addWhereConditions("%s = ?", "transaction.id", transactionId);
+               ResultSet movieSet = query.execute();
 
                // Get the one result
                movieSet.first();
@@ -68,7 +68,7 @@ public class ConfirmationServlet  extends HttpServlet {
                movieJson.addProperty("quantity", quantity);
 
                moviesArray.add(movieJson);
-               movieExecute.close();
+               query.close();
            }
            jsonObject.add("movies", moviesArray);
 

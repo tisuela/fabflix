@@ -73,9 +73,9 @@ public class CartServlet extends HttpServlet {
             HashMap<String, Integer> cart = new HashMap<String, Integer>(user.getCart());
             for(String id: cart.keySet()){
                 // Get set
-                String query = String.format("SELECT * FROM movies WHERE id = \"%s\"",id);
-                ExecuteQuery movieExecute = new ExecuteQuery(dbcon, query);
-                ResultSet movieSet = movieExecute.execute();
+                MyQuery query = new MyQuery(dbcon, "SELECT * FROM movies");
+                query.addWhereConditions("%s = ?", "id", id);
+                ResultSet movieSet = query.execute();
 
                 // Get the one result
                 movieSet.first();
@@ -95,7 +95,7 @@ public class CartServlet extends HttpServlet {
                 movieJson.addProperty("quantity", quantity);
 
                 moviesArray.add(movieJson);
-                movieExecute.close();
+                query.close();
             }
             jsonObject.add("movies", moviesArray);
             jsonObject.addProperty("totalPrice", this.totalPrice);

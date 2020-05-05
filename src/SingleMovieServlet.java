@@ -46,7 +46,7 @@ public class SingleMovieServlet extends HttpServlet {
 			String matchId = "%s = \"%s\"";
 
 			// Build Stars query
-			BuildQuery starsQuery = new BuildQuery("SELECT *, COUNT(*) as totalMovies");
+			MyQuery starsQuery = new MyQuery(dbcon,"SELECT *, COUNT(*) as totalMovies");
 
 			// first get the stars in the movie
 			starsQuery.addFromTables(String.format("stars JOIN stars_in_movies as in_movie ON (stars.id = starId and movieId = \"%s\")", id));
@@ -56,28 +56,22 @@ public class SingleMovieServlet extends HttpServlet {
 			starsQuery.append("GROUP BY all_stars.starId ORDER BY totalMovies DESC, stars.name ASC");
 
 			// Build movie query
-			BuildQuery movieQuery = new BuildQuery();
+			MyQuery movieQuery = new MyQuery(dbcon);
 			movieQuery.setSelectStr("*");
 			movieQuery.addFromTables("movies");
 			movieQuery.addWhereConditions(matchId, "id", id);
 
 			// Build genre query
-			BuildQuery genreQuery = new BuildQuery();
+			MyQuery genreQuery = new MyQuery(dbcon);
 			genreQuery.setSelectStr("*");
 			genreQuery.addFromTables("genres JOIN genres_in_movies ON genres.id = genreId");
 			genreQuery.addWhereConditions(matchId, "movieId", id);
 			genreQuery.append("ORDER BY genres.name ASC");
 
 			// Perform the query
-			System.out.println("Perform Query");
-			System.out.println(genreQuery.getQuery());
-			System.out.println("making query " + starsQuery.getQuery());
-			ExecuteQuery starExecute = new ExecuteQuery(dbcon, starsQuery);
-			ExecuteQuery movieExecute = new ExecuteQuery(dbcon, movieQuery);
-			ExecuteQuery genreExecute = new ExecuteQuery(dbcon, genreQuery);
-			ResultSet starsSet = starExecute.execute();
-			ResultSet movieSet = movieExecute.execute();
-			ResultSet genreSet = genreExecute.execute();
+			ResultSet starsSet = starsQuery.execute();
+			ResultSet movieSet = movieQuery.execute();
+			ResultSet genreSet = genreQuery.execute();
 
 			// Create JSON objects and Arrays
 			JsonObject jsonObject = new JsonObject(); // final object
@@ -134,7 +128,7 @@ public class SingleMovieServlet extends HttpServlet {
             // set response status to 200 (OK)
             response.setStatus(200);
 
-			starExecute.close(); movieExecute.close(); genreExecute.close();
+			starsQuery.close(); movieQuery.close(); genreQuery.close();
 
 			dbcon.close();
 		} catch (Exception e) {

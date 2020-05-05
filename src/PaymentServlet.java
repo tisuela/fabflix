@@ -37,9 +37,9 @@ public class PaymentServlet  extends HttpServlet {
 
             Connection dbcon = dataSource.getConnection();
 
-            String equalsStr = "%1$s = \"%2$s\"";
+            String equalsStr = "%1$s = ?";
 
-            BuildQuery cardQuery = new BuildQuery();
+            MyQuery cardQuery = new MyQuery(dbcon);
             cardQuery.setSelectStr("*");
             cardQuery.addFromTables("creditcards");
             cardQuery.addWhereConditions(equalsStr, "creditcards.id", creditCardNumber);
@@ -48,9 +48,7 @@ public class PaymentServlet  extends HttpServlet {
             System.out.println("Payment query = " + cardQuery.getQuery());
             System.out.println("Payment query where = " + String.format(equalsStr, creditCardNumber, expirationDate));
 
-            ExecuteQuery cardExecute = new ExecuteQuery(dbcon, cardQuery);
-
-            ResultSet cardSet = cardExecute.execute();
+            ResultSet cardSet = cardQuery.execute();
 
             User user = (User) request.getSession().getAttribute("user");
 
@@ -70,7 +68,7 @@ public class PaymentServlet  extends HttpServlet {
 
 
             dbcon.close();
-            cardExecute.close();
+            cardQuery.close();
             return true;
         } catch (Exception e) {
             e.printStackTrace();
