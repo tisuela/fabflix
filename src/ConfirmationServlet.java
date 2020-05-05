@@ -46,7 +46,7 @@ public class ConfirmationServlet  extends HttpServlet {
                // Get set
                MyQuery query = new MyQuery(dbcon, "SELECT * FROM movies JOIN sales ON movies.id = sales.movieId");
                query.addWhereConditions("%s = ?", "movies.id", id);
-               query.addWhereConditions("%s = ?", "transaction.id", transactionId);
+               query.addWhereConditions("%s = ?", "transactionId", transactionId);
                ResultSet movieSet = query.execute();
 
                // Get the one result

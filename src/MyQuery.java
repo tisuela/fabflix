@@ -41,7 +41,6 @@ public class MyQuery extends BuildQuery{
         for(Map<String, String> valueInfo: this.getValues()){
             String type = valueInfo.get("type");
             String value = valueInfo.get("value");
-            System.out.println(value + " " + type);
 
             // check type
             try {
@@ -63,7 +62,6 @@ public class MyQuery extends BuildQuery{
         try{
             this.buildStatement();
             this.prepareStatement();
-            System.out.println(this.statement);
             rs = this.statement.executeQuery();
         } catch (Exception e){ e.printStackTrace();}
 
@@ -79,4 +77,7 @@ public class MyQuery extends BuildQuery{
         } catch (Exception e){ e.printStackTrace();}
     }
 
+    public PreparedStatement getStatement() {
+        return statement;
+    }
 }

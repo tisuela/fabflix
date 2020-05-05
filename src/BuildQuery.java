@@ -22,8 +22,7 @@ public class BuildQuery {
     protected HashMap<String, String> parametersToColumns;
 
     // templates
-    protected HashMap<String, String> parametersToSearchTemplates;
-    protected HashMap<String, String> parametersToBrowseTemplates;
+    protected Map<String, Map<String, String>> parameterTemplates;
 
     // values, used to fill in the "?" for PreparedStatements
     // Array of map, where map = {"value": String, "type": String}
@@ -66,35 +65,62 @@ public class BuildQuery {
 
 
     protected void initializeParametersToTemplates(){
+        // SQL columns
         String like = "%s LIKE ?";
-        String equalsStr = "%s = ?";
-        String equalsInt = "%s = ?";
-        String beginsStr = "%s LIKE ?";
+        String equals = "%s = ?";
 
-        parametersToSearchTemplates = new HashMap<String, String>() {{
-            put("title", like);
-            put("director", like);
-            put("starName", like);
-            put("genre", equalsStr);
-            put("year", equalsInt);
-        }};
+        // SQL values
+        String contains = "%%%s%%";
+        String beginsWith = "%%%s";
+        String match = "%s";
 
-        parametersToBrowseTemplates = new HashMap<String, String>() {{
-            put("title", beginsStr);
-            put("director", like);
-            put("starName", like);
-            put("genre", equalsStr);
-            put("year", equalsInt);
+
+        parameterTemplates = new HashMap<String, Map<String, String>>(){{
+           put("title", new HashMap<String, String>(){{
+               put("search_column", like);
+               put("search_value", contains);
+               put("browse_column", like);
+               put("browse_value", beginsWith);
+               put("type", "String");
+           }});
+            put("director", new HashMap<String, String>(){{
+                put("search_column", like);
+                put("search_value", contains);
+                put("browse_column", like);
+                put("browse_value", contains);
+                put("type", "String");
+            }});
+            put("starName", new HashMap<String, String>(){{
+                put("search_column", like);
+                put("search_value", contains);
+                put("browse_column", like);
+                put("browse_value", contains);
+                put("type", "String");
+            }});
+            put("genre", new HashMap<String, String>(){{
+                put("search_column", equals);
+                put("search_value", match);
+                put("browse_column", equals);
+                put("browse_value", match);
+                put("type", "String");
+            }});
+            put("year", new HashMap<String, String>(){{
+                put("search_column", equals);
+                put("search_value", match);
+                put("browse_column", equals);
+                put("browse_value", match);
+                put("type", "int");
+            }});
         }};
     }
 
     // adds parameters to WHERE conditions
     public void addParameters(Map<String, String[]> parameters){
         // check if browsing
-        Map<String, String> templates = new HashMap<String, String>();
+        String templateName = "";
         if (parameters.get("mode") != null && this.notEmpty(parameters.get("mode")[0]) &&
                 (parameters.get("mode")[0].equals("title") || parameters.get("mode")[0].equals("genre") )) {
-            templates = parametersToBrowseTemplates;
+            templateName = "browse_";
             if(parameters.get("title") != null && this.notEmpty(parameters.get("title")[0]) &&
                     parameters.get("title")[0].equals("*")){
                 this.addWhereConditions("%s REGEXP ?", "title", "^[^a-z0-9]+");
@@ -103,7 +129,7 @@ public class BuildQuery {
         }
         // otherwise, by default we use search page
         else {
-            templates = parametersToSearchTemplates;
+            templateName = "search_";
         }
 
         // By default, we will have things in order of Rating Descending, Title Ascending
@@ -150,16 +176,31 @@ public class BuildQuery {
         this.append("LIMIT ?", results, "int");
         this.append("OFFSET ?", offset, "int");
 
-        for (String name: parameters.keySet()){
-            String column = parametersToColumns.get(name);
-            String template = templates.get(name);
-            if(notEmpty(template)) {
+        for (String name: parameters.keySet()) {
+            try {
                 String value = parameters.get(name)[0];
-                if(value.equals("*") && parameters.get("mode") != null) { continue; }
-                System.out.println(template + " " +column + " " + value);
-                addWhereConditions(template, column, value);
+                if (notEmpty(value)) {
+
+                    String column = parametersToColumns.get(name);
+                    String columnTemplate = this.parameterTemplates.get(name).get(templateName + "column");
+                    String valueTemplate = this.parameterTemplates.get(name).get(templateName + "value");
+
+
+                    if (value.equals("*") && parameters.get("mode") != null) {
+                        continue;
+                    } // ????
+
+                    String formattedValue = String.format(valueTemplate, value);
+                    System.out.println(columnTemplate + column + formattedValue);
+                    addWhereConditions(columnTemplate, column, formattedValue);
+                }
+            }
+            catch (NullPointerException e){
+                // Skip invalid parameters
+                System.out.println(e.getMessage());
             }
         }
+
     }
 
 

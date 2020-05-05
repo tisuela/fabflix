@@ -43,17 +43,19 @@ public class SingleMovieServlet extends HttpServlet {
 			// Get a connection from dataSource
 			Connection dbcon = dataSource.getConnection();
 
-			String matchId = "%s = \"%s\"";
+			String matchId = "%s = ?";
 
 			// Build Stars query
 			MyQuery starsQuery = new MyQuery(dbcon,"SELECT *, COUNT(*) as totalMovies");
 
 			// first get the stars in the movie
-			starsQuery.addFromTables(String.format("stars JOIN stars_in_movies as in_movie ON (stars.id = starId and movieId = \"%s\")", id));
+			starsQuery.addFromTables("stars JOIN stars_in_movies as in_movie ON (stars.id = starId and movieId = ?)", id);
 
 			// Join again with allstars to get all the movies the stars in THIS MOVIE starred in
 			starsQuery.addFromTables("JOIN stars_in_movies as all_stars ON (in_movie.starId = all_stars.starId)");
 			starsQuery.append("GROUP BY all_stars.starId ORDER BY totalMovies DESC, stars.name ASC");
+
+
 
 			// Build movie query
 			MyQuery movieQuery = new MyQuery(dbcon);
@@ -72,6 +74,7 @@ public class SingleMovieServlet extends HttpServlet {
 			ResultSet starsSet = starsQuery.execute();
 			ResultSet movieSet = movieQuery.execute();
 			ResultSet genreSet = genreQuery.execute();
+			System.out.println("Stars query = " + starsQuery.getStatement());
 
 			// Create JSON objects and Arrays
 			JsonObject jsonObject = new JsonObject(); // final object
@@ -136,6 +139,7 @@ public class SingleMovieServlet extends HttpServlet {
 			JsonObject jsonObject = new JsonObject();
 			jsonObject.addProperty("errorMessage", e.getMessage());
 			out.write(jsonObject.toString());
+			e.printStackTrace();
 
 			// set reponse status to 500 (Internal Server Error)
 			response.setStatus(500);
