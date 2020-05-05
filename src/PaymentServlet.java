@@ -97,9 +97,9 @@ public class PaymentServlet  extends HttpServlet {
 
             HashMap<String, Integer> cart = user.getCart();
 
-            String latestSaleIdQuery = "SELECT * FROM sales ORDER BY sales.id DESC LIMIT 3";
-            ExecuteQuery latestSaleIdExecute = new ExecuteQuery(dbcon, latestSaleIdQuery);
-            ResultSet latestSales = latestSaleIdExecute.execute();
+            MyQuery latestSaleIdQuery = new MyQuery(dbcon, "SELECT * FROM sales ORDER BY sales.id DESC");
+            latestSaleIdQuery.append("LIMIT ?", 3);
+            ResultSet latestSales = latestSaleIdQuery.execute();
             int latestId = 0;
             if (latestSales.isBeforeFirst()){
                 latestSales.first();
@@ -123,6 +123,7 @@ public class PaymentServlet  extends HttpServlet {
             }
 
             responseJsonObject.addProperty("transactionId", transactionId);
+            latestSaleIdQuery.close();
             dbcon.close();
 
         } catch (Exception e) {

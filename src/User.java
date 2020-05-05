@@ -112,7 +112,7 @@ public class User {
     }
 
 
-    // --- saved Query stuff --- //
+    // --- saved Query stuff (might be used later, but we don't need it) --- //
 
 
     public Map<String, String[]> getSavedQueryParameters() {

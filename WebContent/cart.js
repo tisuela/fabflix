@@ -106,8 +106,11 @@ function populateTable(resultDataJson){
     for(let i = 0; i < movieJson.length; ++i){
         cartTable.append(generateRow(movieJson[i]));
     }
+    let errorMessage = resultDataJson["errorMessage"];
+    if (errorMessage != "success"){
+        $("#cart_error_message").text(errorMessage);
+    }
 
-    $("#cart_error_message").text(resultDataJson["errorMessage"])
 }
 
 

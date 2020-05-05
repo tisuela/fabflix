@@ -3,6 +3,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/* Purpose of this class is to:
+ *  > Reduce duplicate code
+ *  > Have control over all queries made
+ *  > Break up the building of queries into small parts
+ *  > Make it easier to implement future changes
+ */
+
 public class BuildQuery {
     protected int numberOfConditions = 0;
     protected int numberOfTables = 0;
@@ -21,10 +28,14 @@ public class BuildQuery {
     // maps url parameters to the MySQL table column names
     protected HashMap<String, String> parametersToColumns;
 
-    // templates
+    // templates for creating queries
+    // string formatting for column names and parameter values
+    // Sets up the query to be used as a Prepared Statement
+    // Map of Maps: {"parameter": {"value": String, "template1": String}}
     protected Map<String, Map<String, String>> parameterTemplates;
 
     // values, used to fill in the "?" for PreparedStatements
+    // Sets up the query to be executed
     // Array of map, where map = {"value": String, "type": String}
     protected ArrayList<Map<String, String>> selectValues;
     protected ArrayList<Map<String, String>> fromValues;
@@ -45,7 +56,10 @@ public class BuildQuery {
     }
 
 
-    protected void initializeQueryValues(){
+    // --- initializing data structures --- //
+
+
+    private void initializeQueryValues(){
         selectValues = new ArrayList<Map<String,String>>();
         fromValues = new ArrayList<Map<String,String>>();
         whereValues = new ArrayList<Map<String,String>>();
@@ -53,7 +67,7 @@ public class BuildQuery {
     }
 
 
-    protected void initializeParametersToColumns(){
+    private void initializeParametersToColumns(){
         parametersToColumns = new HashMap<String, String>() {{
             put("title", "movies_with_rating.title");
             put("director", "movies_with_rating.director");
@@ -64,12 +78,12 @@ public class BuildQuery {
     }
 
 
-    protected void initializeParametersToTemplates(){
+    private void initializeParametersToTemplates(){
         // SQL columns
         String like = "%s LIKE ?";
         String equals = "%s = ?";
 
-        // SQL values
+        // SQL values with matching
         String contains = "%%%s%%";
         String beginsWith = "%%%s";
         String match = "%s";
@@ -114,99 +128,16 @@ public class BuildQuery {
         }};
     }
 
-    // adds parameters to WHERE conditions
-    public void addParameters(Map<String, String[]> parameters){
-        // check if browsing
-        String templateName = "";
-        if (parameters.get("mode") != null && this.notEmpty(parameters.get("mode")[0]) &&
-                (parameters.get("mode")[0].equals("title") || parameters.get("mode")[0].equals("genre") )) {
-            templateName = "browse_";
-            if(parameters.get("title") != null && this.notEmpty(parameters.get("title")[0]) &&
-                    parameters.get("title")[0].equals("*")){
-                this.addWhereConditions("%s REGEXP ?", "title", "^[^a-z0-9]+");
-                numberOfConditions++;
-            }
-        }
-        // otherwise, by default we use search page
-        else {
-            templateName = "search_";
-        }
 
-        // By default, we will have things in order of Rating Descending, Title Ascending
-        String ordering1 = "rating";
-        String sorting1  = "DESC";
-        String ordering2 = "title";
-        String sorting2  = "ASC";
-        String results = "25";
-        String offset = "0";
-        String statement = "ORDER BY %1$s %2$s, %3$s %4$s";
-
-        // check for order and sort to append the appropriate conditions
-        if ( parameters.get("order") != null && this.notEmpty(parameters.get("order")[0]) && parameters.get("order")[0].equals("title")){
-            ordering1 = "title";
-            sorting1  = "ASC";
-            ordering2 = "rating";
-            sorting2  = "DESC";
-        }
-        if(parameters.get("sort1") != null && this.notEmpty(parameters.get("sort1")[0])) {
-            if (parameters.get("sort1")[0].equals("asc")) {
-                sorting1 = "ASC";
-            } else {
-                sorting1 = "DESC";
-            }
-        }
-        if(parameters.get("sort2") != null && this.notEmpty(parameters.get("sort2")[0])){
-            if(parameters.get("sort2")[0].equals("asc")) {
-                sorting2 = "ASC";
-            } else {
-                sorting2 = "DESC";
-            }
-        }
-        if(parameters.get("results") != null && this.notEmpty(parameters.get("results")[0])){
-            results = parameters.get("results")[0];
-        }
-        if(parameters.get("pageNum") != null && this.notEmpty(parameters.get("pageNum")[0])){
-            String page = parameters.get("pageNum")[0];
-            offset = String.valueOf( (Integer.parseInt(page) - 1) * Integer.parseInt(results) );
-        }
-
-
-
-        this.append(String.format(statement, ordering1, sorting1, ordering2, sorting2));
-        this.append("LIMIT ?", results, "int");
-        this.append("OFFSET ?", offset, "int");
-
-        for (String name: parameters.keySet()) {
-            try {
-                String value = parameters.get(name)[0];
-                if (notEmpty(value)) {
-
-                    String column = parametersToColumns.get(name);
-                    String columnTemplate = this.parameterTemplates.get(name).get(templateName + "column");
-                    String valueTemplate = this.parameterTemplates.get(name).get(templateName + "value");
-
-
-                    if (value.equals("*") && parameters.get("mode") != null) {
-                        continue;
-                    } // ????
-
-                    String formattedValue = String.format(valueTemplate, value);
-                    System.out.println(columnTemplate + column + formattedValue);
-                    addWhereConditions(columnTemplate, column, formattedValue);
-                }
-            }
-            catch (NullPointerException e){
-                // Skip invalid parameters
-                System.out.println(e.getMessage());
-            }
-        }
-
-    }
+    // --- Utility methods --- //
 
 
     protected boolean notEmpty(String s){
         return (s != null && !s.equals(""));
     }
+
+
+    // --- Building Query --- //
 
 
     public void addFromTables(String tables){
@@ -306,6 +237,108 @@ public class BuildQuery {
     }
 
 
+    // --- Building query from parameter map --- //
+
+
+    // adds ordering/sorting parameters to query
+    private void addOrdering(Map<String,String[]> parameters){
+        // By default, we will have things in order of Rating Descending, Title Ascending
+        String ordering1 = "rating";
+        String sorting1  = "DESC";
+        String ordering2 = "title";
+        String sorting2  = "ASC";
+        String results = "25";
+        String offset = "0";
+        String statement = "ORDER BY %1$s %2$s, %3$s %4$s";
+
+        // check for order and sort to append the appropriate conditions
+        if ( parameters.get("order") != null && this.notEmpty(parameters.get("order")[0]) && parameters.get("order")[0].equals("title")){
+            ordering1 = "title";
+            sorting1  = "ASC";
+            ordering2 = "rating";
+            sorting2  = "DESC";
+        }
+        if(parameters.get("sort1") != null && this.notEmpty(parameters.get("sort1")[0])) {
+            if (parameters.get("sort1")[0].equals("asc")) {
+                sorting1 = "ASC";
+            } else {
+                sorting1 = "DESC";
+            }
+        }
+        if(parameters.get("sort2") != null && this.notEmpty(parameters.get("sort2")[0])){
+            if(parameters.get("sort2")[0].equals("asc")) {
+                sorting2 = "ASC";
+            } else {
+                sorting2 = "DESC";
+            }
+        }
+        if(parameters.get("results") != null && this.notEmpty(parameters.get("results")[0])){
+            results = parameters.get("results")[0];
+        }
+        if(parameters.get("pageNum") != null && this.notEmpty(parameters.get("pageNum")[0])){
+            String page = parameters.get("pageNum")[0];
+            offset = String.valueOf( (Integer.parseInt(page) - 1) * Integer.parseInt(results) );
+        }
+
+
+
+        this.append(String.format(statement, ordering1, sorting1, ordering2, sorting2));
+        this.append("LIMIT ?", results, "int");
+        this.append("OFFSET ?", offset, "int");
+    }
+
+
+
+    // adds parameters to WHERE conditions
+    public void addParameters(Map<String, String[]> parameters){
+        this.addOrdering(parameters);
+
+        // check if browsing or searching to determine templates
+        // default is search
+        String templateName = "search_";;
+        if (parameters.get("mode") != null && this.notEmpty(parameters.get("mode")[0]) &&
+                (parameters.get("mode")[0].equals("title") || parameters.get("mode")[0].equals("genre") )) {
+            templateName = "browse_";
+            if(parameters.get("title") != null && this.notEmpty(parameters.get("title")[0]) &&
+                    parameters.get("title")[0].equals("*")){
+                this.addWhereConditions("%s REGEXP ?", "title", "^[^a-z0-9]+");
+                numberOfConditions++;
+            }
+        }
+
+        // add where conditions
+        for (String name: parameters.keySet()) {
+            try {
+                String value = parameters.get(name)[0];
+
+                // ensure that parameter value is not an empty String
+                if (notEmpty(value)) {
+
+                    String column = parametersToColumns.get(name);
+                    String columnTemplate = this.parameterTemplates.get(name).get(templateName + "column");
+                    String valueTemplate = this.parameterTemplates.get(name).get(templateName + "value");
+
+                    // idk what this is for???
+                    if (value.equals("*") && parameters.get("mode") != null) {
+                        continue;
+                    }
+
+                    String formattedValue = String.format(valueTemplate, value);
+                    System.out.println(columnTemplate + column + formattedValue);
+                    addWhereConditions(columnTemplate, column, formattedValue);
+                }
+            }
+            catch (NullPointerException e){
+                // Skip invalid parameters
+                System.out.println(e.getMessage());
+            }
+        }
+
+    }
+
+
+    // --- Getters and Setters --- //
+
 
     public void setSelectStr(String selectStr) {
         this.selectStr += selectStr;
@@ -350,6 +383,10 @@ public class BuildQuery {
     }
 
 
+    // --- Testing --- //
+
+
+    // For testing
     public static void main(String[] args){
         System.out.println("running BuildQuery Main");
 
