@@ -32,7 +32,7 @@
     </dependencies>
 
     <build>
-        <finalName>cs122b-spring20-project1-api-example</finalName>
+        <finalName>fabflix</finalName>
         <sourceDirectory>src</sourceDirectory>
         <plugins>
             <plugin>
