@@ -11,9 +11,7 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -36,9 +34,9 @@ public class MoviesServlet extends HttpServlet {
 
 
     // Build query for MYSQL from request parameters
-    private String buildQuery(HttpServletRequest request){
+    private MyQuery buildQuery(HttpServletRequest request, Connection dbcon){
 
-        BuildQuery query = new BuildQuery();
+        MyQuery query = new MyQuery(dbcon);
         query.setSelectStr("title, year, director, movies_with_rating.id, rating");
 
         // add FROM conditions
@@ -48,8 +46,19 @@ public class MoviesServlet extends HttpServlet {
         query.addFromTables("JOIN (stars JOIN stars_in_movies ON id = starId) ON movies_with_rating.id = stars_in_movies.movieId");
         query.addFromTables("JOIN (genres JOIN genres_in_movies ON id = genreId) ON movies_with_rating.id = genres_in_movies.movieId");
 
+        // NOT FULLY IMPLEMENTED: Check if we should use the saved query
+        User user = (User) request.getSession().getAttribute("user");
+        if (user.hasSavedQuery() && request.getParameter("use_saved_query") != null && request.getParameter("use_saved_query").equals("true")) {
+            query.addParameters(user.getSavedQueryParameters());
+        }
+        else{
+            user.setSavedQueryParameters(request.getParameterMap());
+            query.addParameters(request.getParameterMap());
+        }
+
         // Add the WHERE conditions from parameters
-        query.addParameters(request.getParameterMap());
+
+
 
         // This code block was adapted from:
         // https://www.java4s.com/java-servlet-tutorials/example-on-getparametermap-method-of-servlet-request-object/
@@ -71,7 +80,7 @@ public class MoviesServlet extends HttpServlet {
 
         request.getSession().setAttribute("movieState", "index.html?" + url.substring(0, url.length()-1));
 
-        return query.getQuery();
+        return query;
 
     }
 
@@ -83,16 +92,15 @@ public class MoviesServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         try {
+
             // Get a connection from dataSource
             Connection dbcon = dataSource.getConnection();
 
             // Build query
-            String query = buildQuery(request);
-            System.out.println("query = " + query);
+            MyQuery query = buildQuery(request, dbcon);
 
-            // Perform the query using the helper class (Execute Query
-            ExecuteQuery result = new ExecuteQuery(dbcon, query);
-            ResultSet rs = result.execute();
+            // Perform the query
+            ResultSet rs = query.execute();
 
             int resultSetCount = 0;
 
@@ -114,23 +122,24 @@ public class MoviesServlet extends HttpServlet {
                 // additional queries for genres and stars
                 try {
                     // Get list of first three genres
-                    String genreQuery = String.format("SELECT genres.name FROM genres JOIN genres_in_movies ON (genres.id = genreId AND movieId = \"%s\") ORDER BY genres.name LIMIT 3", movie_id);
-                    ExecuteQuery genreResult = new ExecuteQuery(dbcon, genreQuery);
-                    ResultSet genreSet = genreResult.execute();
+                    MyQuery genreQuery = new MyQuery(dbcon);
+                    genreQuery.setSelectStr("genres.name");
+                    genreQuery.addFromTables("genres JOIN genres_in_movies ON (genres.id = genreId AND movieId = ?)", movie_id);
+                    genreQuery.append("ORDER BY genres.name LIMIT ?", "3", "int");
+                    ResultSet genreSet = genreQuery.execute();
 
                     // get list of first three stars
 
                     // Build Stars query
-                    BuildQuery starsQuery = new BuildQuery("SELECT *, COUNT(*) as totalMovies");
+                    MyQuery starsQuery = new MyQuery(dbcon,"SELECT *, COUNT(*) as totalMovies");
 
                     // first get the stars in the movie
-                    starsQuery.addFromTables(String.format("stars JOIN stars_in_movies as in_movie ON (stars.id = starId and movieId = \"%s\")", movie_id));
+                    starsQuery.addFromTables("stars JOIN stars_in_movies as in_movie ON (stars.id = starId and movieId = ?)", movie_id);
 
                     // Join again with allstars to get all the movies the stars in THIS MOVIE starred in
                     starsQuery.addFromTables("JOIN stars_in_movies as all_stars ON (in_movie.starId = all_stars.starId)");
-                    starsQuery.append("GROUP BY all_stars.starId ORDER BY totalMovies DESC, stars.name ASC LIMIT 3");
-                    ExecuteQuery starsResult = new ExecuteQuery(dbcon, starsQuery);
-                    ResultSet starsSet = starsResult.execute();
+                    starsQuery.append("GROUP BY all_stars.starId ORDER BY totalMovies DESC, stars.name ASC LIMIT ?", 3);
+                    ResultSet starsSet = starsQuery.execute();
 
                     // assemble genre list (as a JSON object)
                     while (genreSet.next()){
@@ -155,7 +164,7 @@ public class MoviesServlet extends HttpServlet {
                     }
 
                     // free resources
-                    genreResult.close(); starsResult.close();
+                    genreQuery.close(); starsQuery.close();
 
 
                 } catch (Exception e){
@@ -185,7 +194,7 @@ public class MoviesServlet extends HttpServlet {
             response.setStatus(200);
 
             // free resources
-            result.close();
+            query.close();
             dbcon.close();
         } catch (Exception e) {
         	e.printStackTrace();

@@ -30,9 +30,13 @@ public class LoginServlet extends HttpServlet {
             dbcon = dataSource.getConnection();
 
             // Find the matching customer from the moviedb
-            Statement findUserStatement = dbcon.createStatement();
-            String findUserQuery = String.format("SELECT email,password,id FROM customers WHERE email = \"%s\"", username);
-            ResultSet userSet = findUserStatement.executeQuery(findUserQuery);
+            MyQuery findUserQuery = new MyQuery(dbcon);
+            findUserQuery.setSelectStr("email,password,id");
+            findUserQuery.addFromTables("customers");
+            findUserQuery.addWhereConditions("%s = ?", "email", username);
+
+
+            ResultSet userSet = findUserQuery.execute();
 
             String failureMessage = "Failed login attempt. Please verify your username and password";
             // If user exists (by user ResultSet.isBeforeFirst()), then check password
@@ -66,7 +70,7 @@ public class LoginServlet extends HttpServlet {
 
             // close resources
             userSet.close();
-            findUserStatement.close();
+            findUserQuery.close();
             dbcon.close();
 
         } catch (Exception e) {

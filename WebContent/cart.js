@@ -42,7 +42,7 @@ function addToCart(movieId){
         dataType: "json",  // Setting return data type
         method: "GET",// Setting request method
         url: "api/cart?action=add_to_cart&id=" + movieId,
-        success: (resultData) => populateTable(resultData) // Setting callback function to handle data returned successfully by the CartServlet
+        success: (resultData) => handleGetCart(resultData) // Setting callback function to handle data returned successfully by the CartServlet
     });
 }
 
@@ -53,7 +53,7 @@ function decreaseFromCart(movieId){
         dataType: "json",  // Setting return data type
         method: "GET",// Setting request method
         url: "api/cart?action=decrease_from_cart&id=" + movieId,
-        success: (resultData) => populateTable(resultData) // Setting callback function to handle data returned successfully by the CartServlet
+        success: (resultData) => handleGetCart(resultData) // Setting callback function to handle data returned successfully by the CartServlet
     });
 }
 
@@ -63,7 +63,7 @@ function removeFromCart(movieId){
         dataType: "json",  // Setting return data type
         method: "GET",// Setting request method
         url: "api/cart?action=remove_from_cart&id=" + movieId,
-        success: (resultData) => populateTable(resultData) // Setting callback function to handle data returned successfully by the CartServlet
+        success: (resultData) => handleGetCart(resultData) // Setting callback function to handle data returned successfully by the CartServlet
     });
 }
 
@@ -117,7 +117,7 @@ function handleGetCart(resultDataJson){
     console.log(resultDataJson["errorMessage"]);
 
     populateHeader(resultDataJson);
-    populateTable(resultDataJson)
+    populateTable(resultDataJson);
 }
 
 
