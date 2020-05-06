@@ -16,8 +16,8 @@ BEGIN
     DECLARE max_id_int MEDIUMINT ZEROFILL;
 
     -- split the maximum ID into two substrings
-    -- 1st substring is the first two char "tt"
-    -- 2nd substring is the rest, which are integers, to be converted to an INT
+    -- 1st substring max_id_sub_char is the first two char "tt"
+    -- 2nd substring max_id_sub_int is the rest, which are integers, to be converted to an INT
     SELECT max(id) INTO max_id FROM movies;
     SELECT SUBSTRING(max_id, 1, 2) INTO max_id_sub_char;
     SELECT SUBSTRING(max_id, 3) INTO max_id_sub_int;
@@ -40,7 +40,7 @@ BEGIN
 END $$
 
 
-
+-- basically a copy generate_movie_id, except for the stars table
 CREATE FUNCTION generate_star_id()
     RETURNS VARCHAR(10)
 BEGIN
@@ -49,8 +49,8 @@ BEGIN
     DECLARE max_id_int MEDIUMINT ZEROFILL;
 
     -- split the maximum ID into two substrings
-    -- 1st substring is the first two char "tt"
-    -- 2nd substring is the rest, which are integers, to be converted to an INT
+    -- 1st substring max_id_sub_char is the first two char "nm"
+    -- 2nd substring max_id_sub_int is the rest, which are integers, to be converted to an INT
     SELECT max(id) INTO max_id FROM stars;
     SELECT SUBSTRING(max_id, 1, 2) INTO max_id_sub_char;
     SELECT SUBSTRING(max_id, 3) INTO max_id_sub_int;
@@ -73,7 +73,7 @@ BEGIN
 END $$
 
 
--- adding star and movie procedures -- 
+-- adding star and movie procedures --
 
 CREATE PROCEDURE add_star(IN name VARCHAR(100), IN birth_year INT)
 BEGIN

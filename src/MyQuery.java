@@ -69,6 +69,14 @@ public class MyQuery extends BuildQuery{
     }
 
 
+    // check if result set not empty
+    public boolean exists(){
+        try {
+            return rs.isBeforeFirst();
+        } catch (Exception e){ e.printStackTrace(); return false;}
+    }
+
+
     // free resources
     public void close(){
         try{

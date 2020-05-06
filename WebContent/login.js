@@ -39,6 +39,8 @@ function submitLoginForm(formSubmitEvent) {
      */
     formSubmitEvent.preventDefault();
     let loginData  = login_form.serialize();
+
+    // specify that this is a customer login
     loginData += "&user=customer"
 
     $.ajax(

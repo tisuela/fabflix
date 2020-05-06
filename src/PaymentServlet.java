@@ -137,7 +137,6 @@ public class PaymentServlet  extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-
         JsonObject responseJsonObject = new JsonObject();
         if (this.isValidPayment(request, responseJsonObject)){
             responseJsonObject.addProperty("status", "success");
@@ -146,7 +145,6 @@ public class PaymentServlet  extends HttpServlet {
         else{
             responseJsonObject.addProperty("status", "fail");
         }
-
 
         response.getWriter().write(responseJsonObject.toString());
     }
@@ -159,8 +157,6 @@ public class PaymentServlet  extends HttpServlet {
         // Output stream to STDOUT
         PrintWriter out = response.getWriter();
         JsonObject jsonObject = new JsonObject();
-
-
 
         out.write(jsonObject.toString());
         response.setStatus(200);
