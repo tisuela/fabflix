@@ -31,8 +31,6 @@ public class MoviesServlet extends HttpServlet {
      */
 
 
-
-
     // Build query for MYSQL from request parameters
     private MyQuery buildQuery(HttpServletRequest request, Connection dbcon){
 
@@ -57,8 +55,6 @@ public class MoviesServlet extends HttpServlet {
         }
 
         // Add the WHERE conditions from parameters
-
-
 
         // This code block was adapted from:
         // https://www.java4s.com/java-servlet-tutorials/example-on-getparametermap-method-of-servlet-request-object/

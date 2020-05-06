@@ -17,9 +17,12 @@ function handleLoginResult(resultDataString) {
     } else {
         // If login fails, the web page will display 
         // error messages on <div> with id "login_error_message"
+        // Resets reCaptcha
         console.log("show error message");
         console.log(resultDataJson["message"]);
         $("#login_error_message").text(resultDataJson["message"]);
+        grecaptcha.reset();
+
     }
 }
 
@@ -35,12 +38,14 @@ function submitLoginForm(formSubmitEvent) {
      * event handler when the event is triggered.
      */
     formSubmitEvent.preventDefault();
+    let loginData  = login_form.serialize();
+    loginData += "&user=customer"
 
     $.ajax(
         "api/login", {
             method: "POST",
             // Serialize the login form to the data sent by POST request
-            data: login_form.serialize(),
+            data: loginData,
             success: handleLoginResult
         }
     );

@@ -27,7 +27,7 @@ public class MyQuery extends BuildQuery{
 
 
     // builds statement query from query fragments (see BuildQuery)
-    public void buildStatement() {
+    private void buildStatement() {
         try {
             this.statement = dbcon.prepareStatement(this.getQuery());
         } catch (Exception e){ e.printStackTrace();}

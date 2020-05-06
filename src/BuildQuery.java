@@ -23,6 +23,7 @@ public class BuildQuery {
     // WHERE ...
     protected String whereStr = "";
 
+    // ORDER BY ... LIMIT ... etc.
     protected String appendStr = "";
 
     // maps url parameters to the MySQL table column names
@@ -280,8 +281,6 @@ public class BuildQuery {
             offset = String.valueOf( (Integer.parseInt(page) - 1) * Integer.parseInt(results) );
         }
 
-
-
         this.append(String.format(statement, ordering1, sorting1, ordering2, sorting2));
         this.append("LIMIT ?", results, "int");
         this.append("OFFSET ?", offset, "int");
@@ -333,7 +332,6 @@ public class BuildQuery {
                 System.out.println(e.getMessage());
             }
         }
-
     }
 
 

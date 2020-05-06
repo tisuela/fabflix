@@ -17,70 +17,50 @@ public class LoginServlet extends HttpServlet {
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
      */
-    @Resource(name = "jdbc/moviedb")
-    private DataSource dataSource;
+
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
         JsonObject responseJsonObject = new JsonObject();
-        Connection dbcon = null;
+        String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
+        System.out.println("gRecaptchaResponse=" + gRecaptchaResponse);
+
+        // Verify reCAPTCHA
         try {
-            dbcon = dataSource.getConnection();
+            RecaptchaVerifyUtils.verify(gRecaptchaResponse);
+        } catch (Exception e) {
+            String failedReCaptcha = "reCaptcha failed. Please try again";
 
-            // Find the matching customer from the moviedb
-            MyQuery findUserQuery = new MyQuery(dbcon);
-            findUserQuery.setSelectStr("email,password,id");
-            findUserQuery.addFromTables("customers");
-            findUserQuery.addWhereConditions("%s = ?", "email", username);
+            responseJsonObject.addProperty("status", "fail");
+            responseJsonObject.addProperty("message", failedReCaptcha);
+            response.getWriter().write(responseJsonObject.toString());
 
+            // return now to prevent API abuse
+            return;
+        }
 
-            ResultSet userSet = findUserQuery.execute();
+        // Verify username password
+        VerifyPassword verifier = new VerifyPassword();
+        try {
+            if (verifier.verifyCredentials(username, password)){
+                // create user
+                request.getSession().setAttribute("user", new User(verifier.getName(), verifier.getId()));
 
-            String failureMessage = "Failed login attempt. Please verify your username and password";
-            // If user exists (by user ResultSet.isBeforeFirst()), then check password
-            if (userSet.isBeforeFirst()) {
-                // get first result
-                userSet.first();
-
-                // Get password of user found in database
-                String userPassword = userSet.getString("password");
-                int userId = userSet.getInt("id");
-
-                // If password is right, proceed to login
-                if(password.equals(userPassword)){
-                    request.getSession().setAttribute("user", new User(username, userId));
-                    responseJsonObject.addProperty("status", "success");
-                    responseJsonObject.addProperty("message", "success");
-                }
-                // Send error message for incorrect password
-                else{
-                    responseJsonObject.addProperty("status", "fail");
-                    responseJsonObject.addProperty("message", failureMessage);
-                }
-
+                responseJsonObject.addProperty("status", "success");
+                responseJsonObject.addProperty("message", "successful login");
             }
             else{
                 responseJsonObject.addProperty("status", "fail");
-                // Giving users information such as their username is correct but their password is a security risk
-                // so failure messages should be consistent with each other, only to let users know that their login attempt failed.
-                responseJsonObject.addProperty("message", failureMessage);
+                responseJsonObject.addProperty("message", "Incorrect username and/or password");
             }
-
-            // close resources
-            userSet.close();
-            findUserQuery.close();
-            dbcon.close();
 
         } catch (Exception e) {
             e.printStackTrace();
             responseJsonObject.addProperty("status", "fail");
             responseJsonObject.addProperty("message", "Database error");
         }
-
-
-
 
 
         response.getWriter().write(responseJsonObject.toString());

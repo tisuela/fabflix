@@ -51,7 +51,7 @@ function handlePaymentResult(ResultDataString){
 }
 
 
-function submitLoginForm(formSubmitEvent) {
+function submitPaymentForm(formSubmitEvent) {
     console.log("submit payment form");
     /**
      * When users click the submit button, the browser will not direct
@@ -72,4 +72,4 @@ function submitLoginForm(formSubmitEvent) {
 
 // Bind the submit action of the form to a handler function
 populateHeader();
-payment_form.submit(submitLoginForm);
+payment_form.submit(submitPaymentForm);
