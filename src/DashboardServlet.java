@@ -31,6 +31,16 @@ public class DashboardServlet extends HttpServlet {
         return query.exists();
     }
 
+    // Check if movie exists
+    private boolean movieExists(String title, String year, String director, Connection dbcon){
+        MyQuery query = new MyQuery(dbcon, "SELECT * FROM movies");
+        query.addWhereConditions("%s = ?", "title", title);
+        query.addWhereConditions("%s = ?", "year", year);
+        query.addWhereConditions("%s = ?", "director", director);
+        query.execute();
+        return query.exists();
+    }
+
 
     // add new star to database
     private void addStar(HttpServletRequest request, JsonObject responseJson){
@@ -84,6 +94,56 @@ public class DashboardServlet extends HttpServlet {
     }
 
 
+    // add new movie
+    private void addMovie(HttpServletRequest request, JsonObject responseJson){
+        try{
+            String title = request.getParameter("title");
+            String year = request.getParameter("year");
+            String director = request.getParameter("director");
+            String starName = request.getParameter("star_name");
+            String genreName = request.getParameter("genre_name");
+
+            // All parameters are required
+            if (notEmpty(title) && notEmpty(year) && notEmpty(director) && notEmpty(genreName) && notEmpty(starName)){
+                Connection dbcon = dataSource.getConnection();
+
+                // Check if movie already exists
+                if (this.movieExists(title, year, director, dbcon)){
+                    responseJson.addProperty("status", "fail");
+                    responseJson.addProperty("message", "Movie already exists");
+                }
+                // if movie doesn't exist, we're clear to insert
+                else{
+                    PreparedStatement callStatement = dbcon.prepareStatement("CALL add_movie(?, ?, ?, ?, ?)");
+                    callStatement.setString(1, title);
+                    callStatement.setString(2, year);
+                    callStatement.setString(3, director);
+                    callStatement.setString(4, starName);
+                    callStatement.setString(5, genreName);
+
+                    callStatement.execute();
+                    callStatement.close();
+
+                    responseJson.addProperty("status", "success");
+                    responseJson.addProperty("message", "New movie successfully added");
+
+                }
+
+            }
+            else{
+                responseJson.addProperty("status", "fail");
+                responseJson.addProperty("message", "Form incomplete -- all fields are required");
+            }
+
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            responseJson.addProperty("status", "fail");
+            responseJson.addProperty("message", "database error");
+        }
+    }
+
+
     // insert respective data to database from the user-submitted forms
     private void insertToDatabase(HttpServletRequest request, JsonObject responseJson){
         String formType = request.getParameter("form");
@@ -93,13 +153,12 @@ public class DashboardServlet extends HttpServlet {
             this.addStar(request, responseJson);
         }
         else if (formType.equals("add_movie")){
-
+            this.addMovie(request, responseJson);
         }
         else{
             responseJson.addProperty("status", "fail");
             responseJson.addProperty("message", "no form submitted / invalid form");
         }
-
     }
 
 

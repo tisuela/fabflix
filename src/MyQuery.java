@@ -72,7 +72,11 @@ public class MyQuery extends BuildQuery{
     // check if result set not empty
     public boolean exists(){
         try {
-            return rs.isBeforeFirst();
+            boolean result = rs.isBeforeFirst();
+
+            // normally when this is called, it's safe to close after.
+            this.close();
+            return result;
         } catch (Exception e){ e.printStackTrace(); return false;}
     }
 

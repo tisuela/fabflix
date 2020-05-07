@@ -17,24 +17,66 @@
 <h1>Dashboard</h1>
 <h3 id="dashboard_header"></h3>
 
-<form id="add_star_form" method="post" action="#">
+<br>
 
 
-    <label><b>Full name</b></label>
-    <label>
-        <input name="fullName" placeholder="Full Name" type="text">
-    </label>
+<div id = "add_star_div">
+    <h4>Add a New Star</h4>
 
-    <label><b>Birth Year</b></label>
-    <label>
-        <input name="birthYear" placeholder="0000" type="number">
-    </label>
+    <form id="add_star_form" method="post" action="#">
 
-    <br>
-    <input type="submit" value="Add Star">
-</form>
-<div id="add_star_error_message"></div>
+        <label><b>Full name</b></label>
+        <label>
+            <input name="fullName" placeholder="Full Name" type="text">
+        </label>
+        <br>
+        <label><b>Birth Year</b></label>
+        <label>
+            <input name="birthYear" placeholder="0000" type="number">
+        </label>
 
+        <br>
+        <input type="submit" value="Add Star">
+    </form>
+    <div id="add_star_error_message"></div>
+</div>
+<br>
+<div id = "add_movie_div">
+    <h4>Add a New Movie</h4>
+
+    <form id="add_movie_form" method="post" action="#">
+
+        <label><b>Title</b></label>
+        <label>
+            <input name="title" placeholder="Title" type="text">
+        </label>
+        <br>
+        <label><b>Year</b></label>
+        <label>
+            <input name="year" placeholder="0000" type="number">
+        </label>
+        <br>
+        <label><b>Director</b></label>
+        <label>
+            <input name="director" placeholder="Director" type="text">
+        </label>
+        <br>
+        <label><b>Genre</b></label>
+        <label>
+            <input name="genre_name" placeholder="Genre" type="text">
+        </label>
+        <br>
+        <label><b>Star Name</b></label>
+        <label>
+            <input name="star_name" placeholder="Star Name" type="text">
+        </label>
+        <br>
+
+        <input type="submit" value="Add movie">
+    </form>
+
+    <div id="add_movie_error_message"></div>
+</div>
 <br>
 
 
