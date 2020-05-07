@@ -23,7 +23,7 @@ public class DashboardServlet extends HttpServlet {
         return (s != null && !s.equals(""));
     }
 
-    // check if star already exists
+    // check if star already exists (NOT SUPPOSED TO)
     private boolean starExists(String fullName, Connection dbcon){
         MyQuery query = new MyQuery(dbcon, "SELECT * FROM stars");
         query.append("WHERE stars.name = ?", fullName);
@@ -52,8 +52,8 @@ public class DashboardServlet extends HttpServlet {
             if (notEmpty(fullName)) {
                 Connection dbcon = dataSource.getConnection();
 
-                // Check if it already exists
-                if (this.starExists(fullName, dbcon)) {
+                // NOT SUPPOSED TO CHECK IF IT ALREADY EXISTS
+                if (true) {
                     responseJson.addProperty("status", "fail");
                     responseJson.addProperty("message", "star already exists");
                 }
