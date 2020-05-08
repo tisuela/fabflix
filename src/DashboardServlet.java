@@ -126,9 +126,7 @@ public class DashboardServlet extends HttpServlet {
 
                     responseJson.addProperty("status", "success");
                     responseJson.addProperty("message", "New movie successfully added");
-
                 }
-
             }
             else{
                 responseJson.addProperty("status", "fail");
@@ -168,7 +166,6 @@ public class DashboardServlet extends HttpServlet {
         JsonObject responseJsonObject = new JsonObject();
 
         insertToDatabase(request, responseJsonObject);
-
 
         response.getWriter().write(responseJsonObject.toString());
     }

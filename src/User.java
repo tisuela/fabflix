@@ -25,8 +25,6 @@ public class User {
 
     private boolean savedQuery = false;
 
-
-
     public User(String username) {
         this(username, 0);
     }

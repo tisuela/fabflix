@@ -116,7 +116,7 @@ function handleResult(resultData) {
     rowHTML += "<th><ul>";
     let movieGenres = resultData["movie_genres"];
     for(let genresIndex = 0; genresIndex < movieGenres.length; genresIndex++){
-        rowHTML += "<li>" + '<a href="index.html?mode=genre&genre=' + movieStars[genresIndex]["genre_name"] + '">';
+        rowHTML += "<li>" + '<a href="index.html?mode=genre&genre=' + movieGenres[genresIndex]["genre_name"] + '">';
         rowHTML +=  movieGenres[genresIndex]["genre_name"] + "</a>" + "</li>";
     }
     rowHTML += "</ul></th>";
