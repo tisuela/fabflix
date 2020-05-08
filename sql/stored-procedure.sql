@@ -7,6 +7,8 @@
 DROP PROCEDURE IF EXISTS add_movie;
 DROP PROCEDURE IF EXISTS add_star;
 DROP PROCEDURE IF EXISTS add_movie_from_XML;
+DROP PROCEDURE IF EXISTS naive_add_movie_from_XML;
+
 DROP FUNCTION IF EXISTS generate_movie_id;
 DROP FUNCTION IF EXISTS generate_star_id;
 
@@ -150,9 +152,19 @@ BEGIN
     IF NOT EXISTS(SELECT * FROM genres_in_movies WHERE genreId = genre_id AND movieId = movie_id) THEN
         INSERT INTO genres_in_movies VALUES (genre_id, movie_id);
     END IF;
+END $$
 
 
+-- for naive implementation of XML parsing
+CREATE PROCEDURE naive_add_movie_from_XML(IN title VARCHAR(100), IN year INT, IN director VARCHAR(100))
+BEGIN
+    DECLARE movie_id, star_id  VARCHAR(10);
 
+    -- add movie if it doesn't already exist
+    IF NOT EXISTS (SELECT * FROM movies WHERE movies.title = title AND movies.year = year AND movies.director = director) THEN
+        SELECT generate_movie_id() INTO movie_id;
+        INSERT INTO movies VALUES (movie_id, title, year, director);
+    END IF;
 END $$
 
 DELIMITER ;

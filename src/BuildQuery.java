@@ -200,6 +200,26 @@ public class BuildQuery {
         }
     }
 
+    public void addWhereConditions(String template, String columnName, int intValue){
+        String value = String.valueOf(intValue);
+        if (notEmpty(value)){
+            // Check if this is the first argument
+            if(numberOfConditions == 0) {
+                // add "WHERE" to front
+                template = " WHERE " + template;
+            }
+            else{
+                template = " AND " + template;
+            }
+            whereStr += String.format(template, columnName);
+            this.whereValues.add(new HashMap<String, String>(){{
+                put("value", value);
+                put("type", "int");
+            }});
+            numberOfConditions++;
+        }
+    }
+
 
     public void append(String s){
         appendStr += " " + s;

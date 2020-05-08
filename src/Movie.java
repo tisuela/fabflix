@@ -1,19 +1,61 @@
 import java.util.ArrayList;
 import java.util.List;
 
+
+// Helper class for the SAX Parser
+// Also takes care of logging inconsistencies
 public class Movie {
+    // logging
+    private static int numOfMovies = 0;
+    private int numOfThisMovie;
+    private int numOfInvalidMovies = 0;
+
+    private boolean valid = false;
+    private String invalidLog = "";
+
+    // movie info
     private String title = "";
-    private int year = 0;
+    private int year = -1;
     private String director = "";
     private List<String> genres;
 
+
+
     public Movie(){
-        genres = new ArrayList<>();
+        this.genres = new ArrayList<>();
+        this.numOfThisMovie = ++this.numOfMovies;
     }
 
 
     public void addGenre(String genre){
         genres.add(genre);
+    }
+
+
+    public boolean isValid(){
+        // Log inconsistencies
+        if(year < 0){
+            this.invalidLog += "Invalid year ";
+        }
+        if(title.length() < 1){
+            this.invalidLog += "Invalid title ";
+        }
+        if(director.length() < 1){
+            this.invalidLog += "Invalid director ";
+        }
+        if(genres.size() < 1){
+            this.invalidLog += "No genres";
+        }
+
+        // Check if this movie is valid / consistent
+        if(year > 0 && title.length() > 0 && director.length() > 0 && genres.size() > 0){
+            this.valid = true;
+        }
+        else{
+            this.numOfInvalidMovies++;
+        }
+
+        return this.valid;
     }
 
 
@@ -39,6 +81,14 @@ public class Movie {
         this.year = year;
     }
 
+    public void setYear(String year) {
+        try {
+            this.year = Integer.parseInt(year);
+        }
+        catch(NumberFormatException e){
+        }
+    }
+
     public void setDirector(String director) {
         this.director = director;
     }
@@ -55,6 +105,10 @@ public class Movie {
         return director;
     }
 
+    public String getInvalidLog() {
+        return "Movie #" + numOfThisMovie + " is invalid: " + invalidLog;
+    }
+
     public List<String> getGenres() {
         return genres;
     }
@@ -66,8 +120,6 @@ public class Movie {
         test.setYear(2000);
         test.addGenre("poop");
         System.out.println(test);
-
-
     }
 
 }
