@@ -18,6 +18,8 @@ public class Movie {
     private int year = -1;
     private String director = "";
     private List<String> genres;
+    private float rating  = -1;
+    private String fid = ""; // XML film ID
 
 
 
@@ -60,8 +62,8 @@ public class Movie {
 
 
     public String toString(){
-        String result = "Title = %s | Year = %d | Director %s \nGenres:";
-        result = String.format(result, this.title, this.year, this.director);
+        String result = "Title = %s | Year = %d | Director %s | fid %s \nGenres:";
+        result = String.format(result, this.title, this.year, this.director, this.fid);
 
         for (String genre: genres){
             result += "\n   " + genre;
@@ -92,6 +94,35 @@ public class Movie {
     public void setDirector(String director) {
         this.director = director;
     }
+
+    public void setRating(float rating) {
+        this.rating = rating;
+    }
+
+    public void setFid(String fid) {
+        this.fid = fid;
+    }
+
+    public static int getNumOfMovies() {
+        return numOfMovies;
+    }
+
+    public int getNumOfThisMovie() {
+        return numOfThisMovie;
+    }
+
+    public int getNumOfInvalidMovies() {
+        return numOfInvalidMovies;
+    }
+
+    public String getFid() {
+        return fid;
+    }
+
+    public float getRating() {
+        return rating;
+    }
+
 
     public String getTitle() {
         return title;

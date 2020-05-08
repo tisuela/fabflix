@@ -88,7 +88,7 @@ CREATE PROCEDURE add_star(IN name VARCHAR(100), IN birth_year INT)
 BEGIN
     DECLARE id VARCHAR(10);
     SELECT generate_star_id() INTO id;
-    INSERT INTO stars VALUES (id, name, birth_year);
+    INSERT INTO stars (stars.id, stars.name, stars.birthYear) VALUES (id, name, birth_year);
 END $$
 
 

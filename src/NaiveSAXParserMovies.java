@@ -57,7 +57,7 @@ public class NaiveSAXParserMovies extends DefaultHandler {
     }
 
 
-    public void insertGenres(Movie movie){
+    public void insertGenres(Movie movie, String movieId){
 
         for (String genre : movie.getGenres()) {
             try {
@@ -87,7 +87,7 @@ public class NaiveSAXParserMovies extends DefaultHandler {
 
                 // Get IDs
                 String genreId = rs.getString("id");
-                String movieId = this.getMovieId(movie);
+
                 String insertGenresInMoviesStr = "INSERT INTO genres_in_movies VALUES (?, ?)";
 
                 PreparedStatement insertGenreInMoviesStatement = dbcon.prepareStatement(insertGenresInMoviesStr);
@@ -108,17 +108,28 @@ public class NaiveSAXParserMovies extends DefaultHandler {
 
     public void insertMovie(Movie movie){
         try {
+            // Insert movie info to movies and movies_in_xml table. This is to link it with casts.xml
             String insertMovieStr = "CALL naive_add_movie_from_XML(?, ?, ?)";
+            String insertMovieXmlStr = "INSERT INTO movies_in_xml (movieId, xmlId) VALUES (?,?)";
+
             PreparedStatement insertMovieStatement = dbcon.prepareStatement(insertMovieStr);
+            PreparedStatement insertMovieXmlStatement = dbcon.prepareStatement(insertMovieXmlStr);
 
             insertMovieStatement.setString(1, movie.getTitle());
             insertMovieStatement.setInt(2, movie.getYear());
             insertMovieStatement.setString(3, movie.getDirector());
+            insertMovieXmlStatement.setString(2, movie.getFid());
 
-            insertMovieStatement.execute();
-            insertMovieStatement.close();
+            insertMovieStatement.execute(); insertMovieStatement.close();
 
-            this.insertGenres(movie);
+            // get movie id for inserting in the other tables
+            String movieId = this.getMovieId(movie);
+
+            insertMovieXmlStatement.setString(1, movieId);
+            insertMovieXmlStatement.execute();
+            insertMovieXmlStatement.close();
+
+            this.insertGenres(movie, movieId);
 
         } catch(SQLException e){
             e.printStackTrace();
@@ -180,12 +191,13 @@ public class NaiveSAXParserMovies extends DefaultHandler {
                 System.out.println(this.movie.getInvalidLog() + "\n");
             }
         }
+        else if (qName.equalsIgnoreCase("fid")) {
+            this.movie.setFid(tempVal);
+        }
         else if (qName.equalsIgnoreCase("t")) {
-            // create a new instance of employee
             this.movie.setTitle(tempVal);
         }
         else if (qName.equalsIgnoreCase("year")) {
-            // create a new instance of employee
             try {
                 this.movie.setYear(tempVal);
             }
@@ -195,7 +207,6 @@ public class NaiveSAXParserMovies extends DefaultHandler {
             }
         }
         else if (qName.equalsIgnoreCase("cat")) {
-            //create a new instance of employee
             this.movie.addGenre(tempVal);
         }
     }
