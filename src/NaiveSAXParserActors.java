@@ -7,6 +7,8 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class NaiveSAXParserActors extends DefaultHandler {
 
@@ -59,7 +61,37 @@ public class NaiveSAXParserActors extends DefaultHandler {
     }
 
 
-    //Event Handlers
+    private void insertStar(Star star){
+        try {
+            MyQuery starQuery = new MyQuery(dbcon, "SELECT * FROM stars");
+            starQuery.append("WHERE stars.name = ?", star.getName());
+            starQuery.execute();
+
+            // Add if this is a new star
+            if (!starQuery.exists()){
+                String insertStarStr = "CALL add_star(?, ?)";
+                PreparedStatement insertStarStatement = dbcon.prepareStatement(insertStarStr);
+
+                insertStarStatement.setString(1, star.getName());
+
+                if (star.getBirthYear() > 0){
+                    insertStarStatement.setInt(2, star.getBirthYear());
+                }
+                else {
+                    insertStarStatement.setNull(2, java.sql.Types.INTEGER);
+                }
+                insertStarStatement.execute();
+                insertStarStatement.close();
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+
+    // Event Handlers //
+
+
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         //reset
         tempVal = "";
@@ -80,6 +112,7 @@ public class NaiveSAXParserActors extends DefaultHandler {
         // input movie info
         if (qName.equalsIgnoreCase("actor")) {
             if (this.star.isValid()) {
+                insertStar(star);
                 System.out.println(this.star + "\n");
             }
             else{

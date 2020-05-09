@@ -53,7 +53,7 @@ public class DashboardServlet extends HttpServlet {
                 Connection dbcon = dataSource.getConnection();
 
                 // NOT SUPPOSED TO CHECK IF IT ALREADY EXISTS
-                if (true) {
+                if (false) {
                     responseJson.addProperty("status", "fail");
                     responseJson.addProperty("message", "star already exists");
                 }
