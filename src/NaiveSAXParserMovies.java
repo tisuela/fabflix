@@ -19,7 +19,7 @@ public class NaiveSAXParserMovies extends DefaultHandler {
     private String tempVal;
     private Movie movie;
 
-    //to maintain context
+
 
 
     public NaiveSAXParserMovies() {
@@ -37,7 +37,13 @@ public class NaiveSAXParserMovies extends DefaultHandler {
 
     public void run() {
         parseDocument();
+        String stats = String.format("Valid: %d | Invalid: %d | Total %d",
+                movie.getNumOfValidMovies(), movie.getNumOfInvalidMovies(), movie.getNumOfMovies());
+        System.out.println(stats);
     }
+
+
+    // Queries and inserts //
 
 
     public String getMovieId(Movie movie) throws SQLException{
@@ -102,7 +108,6 @@ public class NaiveSAXParserMovies extends DefaultHandler {
                 e.printStackTrace();
             }
         }
-
     }
 
 
@@ -137,6 +142,7 @@ public class NaiveSAXParserMovies extends DefaultHandler {
 
     }
 
+
     private void parseDocument() {
 
         //get a factory
@@ -159,7 +165,9 @@ public class NaiveSAXParserMovies extends DefaultHandler {
     }
 
 
-    //Event Handlers
+    // Event Handlers //
+
+
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         //reset
         tempVal = "";
@@ -170,9 +178,11 @@ public class NaiveSAXParserMovies extends DefaultHandler {
         }
     }
 
+
     public void characters(char[] ch, int start, int length) throws SAXException {
         tempVal = new String(ch, start, length);
     }
+
 
     public void endElement(String uri, String localName, String qName) throws SAXException {
 
@@ -211,9 +221,9 @@ public class NaiveSAXParserMovies extends DefaultHandler {
         }
     }
 
+
     public static void main(String[] args) {
         NaiveSAXParserMovies test = new NaiveSAXParserMovies();
         test.run();
     }
-
 }

@@ -1,9 +1,5 @@
 -- BEFORE RUNNING DO THIS: set global log_bin_trust_function_creators=1;
 
-
-
-
-
 DROP PROCEDURE IF EXISTS add_movie;
 DROP PROCEDURE IF EXISTS add_star;
 DROP PROCEDURE IF EXISTS add_movie_from_XML;
@@ -153,6 +149,10 @@ BEGIN
         INSERT INTO genres_in_movies VALUES (genre_id, movie_id);
     END IF;
 END $$
+
+
+
+
 
 
 -- for naive implementation of XML parsing

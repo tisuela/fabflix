@@ -7,8 +7,9 @@ import java.util.List;
 public class Movie {
     // logging
     private static int numOfMovies = 0;
+    private static int numOfInvalidMovies = 0;
+    private static int numOfValidMovies = 0;
     private int numOfThisMovie;
-    private int numOfInvalidMovies = 0;
 
     private boolean valid = false;
     private String invalidLog = "";
@@ -52,6 +53,7 @@ public class Movie {
         // Check if this movie is valid / consistent
         if(year > 0 && title.length() > 0 && director.length() > 0 && genres.size() > 0){
             this.valid = true;
+            numOfValidMovies++;
         }
         else{
             this.numOfInvalidMovies++;
@@ -123,6 +125,9 @@ public class Movie {
         return rating;
     }
 
+    public static int getNumOfValidMovies() {
+        return numOfValidMovies;
+    }
 
     public String getTitle() {
         return title;
