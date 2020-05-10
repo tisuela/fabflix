@@ -1,9 +1,9 @@
 DROP TABLE IF EXISTS employees, stars_in_xml, movies_in_xml;
 
 CREATE TABLE employees(
-    fullName VARCHAR(100) NOT NULL,
     email VARCHAR(50) NOT NULL,
     password VARCHAR(20) NOT NULL,
+    fullName VARCHAR(100) NOT NULL,
     PRIMARY KEY (email)
 );
 
