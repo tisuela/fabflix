@@ -22,10 +22,12 @@ public class LoginFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        System.out.println("LoginFilter: " + httpRequest.getRequestURI());
+        String currentURI = httpRequest.getRequestURI();
+
+        System.out.println("LoginFilter: " + currentURI);
 
         // Check if this URL is allowed to access without logging in
-        if (this.isUrlAllowedWithoutLogin(httpRequest.getRequestURI()) && !this.requiresEmployee(httpRequest.getRequestURI())) {
+        if (this.isUrlAllowedWithoutLogin(currentURI) && (!this.requiresEmployee(currentURI))) {
             // Keep default action: pass along the filter chain
             System.out.println("filter not needed for this page");
             chain.doFilter(request, response);
@@ -36,19 +38,18 @@ public class LoginFilter implements Filter {
         if (httpRequest.getSession().getAttribute("user") == null) {
             System.out.println("Login filter activated, redirection sent");
             httpResponse.sendRedirect("login.html");
-            return;
-        } else if(this.requiresEmployee(httpRequest.getRequestURI())) {
+        } else if(this.requiresEmployee(currentURI)) {
             if (! httpRequest.getSession().getAttribute("role").equals("employee")) {
                 System.out.println("Dashboard filter activated, redirection sent");
                 httpResponse.sendRedirect("employeeAccess.html");
                 return;
             } else {
-                System.out.println("***************** BALONEY ************");
+                System.out.println("BALONEY");
                 chain.doFilter(request, response);
                 return;
             }
         } else {
-            System.out.println("***************** MACARONI ************");
+            System.out.println("MACARONI");
             chain.doFilter(request, response);
             return;
         }
