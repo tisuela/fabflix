@@ -21,6 +21,7 @@ public class Movie {
     private List<String> genres;
     private float rating  = -1;
     private String fid = ""; // XML film ID
+    private String id = "";
 
 
 
@@ -64,8 +65,8 @@ public class Movie {
 
 
     public String toString(){
-        String result = "Title = %s | Year = %d | Director %s | fid %s \nGenres:";
-        result = String.format(result, this.title, this.year, this.director, this.fid);
+        String result = "Title = %s | Year = %d | Director %s | fid %s | id %s \nGenres:";
+        result = String.format(result, this.title, this.year, this.director, this.fid, this.id);
 
         for (String genre: genres){
             result += "\n   " + genre;
@@ -91,6 +92,10 @@ public class Movie {
         }
         catch(NumberFormatException e){
         }
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void setDirector(String director) {
@@ -135,6 +140,10 @@ public class Movie {
 
     public int getYear() {
         return year;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getDirector() {

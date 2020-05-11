@@ -6,6 +6,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.sql.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ParseActors extends DefaultHandler {
 
@@ -19,6 +21,8 @@ public class ParseActors extends DefaultHandler {
 
     private WriteData writeData;
 
+    private Map<String, Star> stars;
+
     public ParseActors(){
         try {
             String loginUser = "mytestuser";
@@ -31,6 +35,8 @@ public class ParseActors extends DefaultHandler {
             this.setMaxId();
             this.currentId = maxId;
             writeData = new WriteData("stars.txt");
+
+            stars = new HashMap<>();
 
 
         } catch (Exception e){
@@ -57,8 +63,8 @@ public class ParseActors extends DefaultHandler {
         String suffix = this.currentId.substring(2);
         int suffixInt = Integer.parseInt(suffix);
         String newSuffix = String.valueOf(++suffixInt);
-
-        return prefix + newSuffix;
+        this.currentId = prefix + newSuffix;
+        return this.currentId;
     }
 
 
@@ -101,13 +107,15 @@ public class ParseActors extends DefaultHandler {
 
     private void insertStar(Star star){
         try {
-            this.currentId = getNextId();
+            this.getNextId();
 
-            System.out.println("current ID = " + this.currentId);
-            writeData.addField(this.currentId);
+            star.setId(this.currentId);
+            writeData.addField(star.getId());
             writeData.addField(star.getName());
             writeData.addField(String.valueOf(star.getBirthYear()));
             writeData.newLine();
+
+            stars.put(star.getName(), star);
 
 
         } catch (Exception e){
@@ -180,6 +188,15 @@ public class ParseActors extends DefaultHandler {
             e.printStackTrace();
         }
     }
+
+    public Map<String, Star> getStars() {
+        return stars;
+    }
+
+
+
+
+
 
 
     public static void main(String[] args) {
