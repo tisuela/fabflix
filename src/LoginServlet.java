@@ -44,9 +44,10 @@ public class LoginServlet extends HttpServlet {
         // Verify username password
         VerifyPassword verifier = new VerifyPassword();
         try {
-            if (verifier.verifyCredentials(username, password)){
+            if (verifier.verifyCredentials(username, password, "customers")){
                 // create user
                 request.getSession().setAttribute("user", new User(verifier.getName(), verifier.getId()));
+                request.getSession().setAttribute("role", "customer");
 
                 responseJsonObject.addProperty("status", "success");
                 responseJsonObject.addProperty("message", "successful login");
