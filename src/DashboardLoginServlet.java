@@ -34,6 +34,7 @@ public class DashboardLoginServlet extends HttpServlet{
                 responseJsonObject.addProperty("status", "success");
                 responseJsonObject.addProperty("message", "successful employee login");
             } else {
+                System.out.println("Successful employee access attempt");
                 responseJsonObject.addProperty("status", "fail");
                 responseJsonObject.addProperty("message", "Incorrect username and/or password");
             }
