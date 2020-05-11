@@ -44,12 +44,10 @@ public class LoginFilter implements Filter {
                 httpResponse.sendRedirect("employeeAccess.html");
                 return;
             } else {
-                System.out.println("BALONEY");
                 chain.doFilter(request, response);
                 return;
             }
         } else {
-            System.out.println("MACARONI");
             chain.doFilter(request, response);
             return;
         }
