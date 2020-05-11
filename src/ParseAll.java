@@ -34,7 +34,7 @@ public class ParseAll extends DefaultHandler {
         try {
             String loginUser = "mytestuser";
             String loginPasswd = "mypassword";
-            String loginUrl = "jdbc:mysql://localhost:3306/test?AllowLoadLocalInfile=true";
+            String loginUrl = "jdbc:mysql://localhost:3306/moviedb?AllowLoadLocalInfile=true";
 
             Class.forName("com.mysql.jdbc.Driver").newInstance();
             dbcon = DriverManager.getConnection(loginUrl, loginUser, loginPasswd);
@@ -67,7 +67,7 @@ public class ParseAll extends DefaultHandler {
         parseDocument();
         String stats = String.format("Success = %d | Fails = %d | Total = %d",
                 numOfSuccess, numOfFails, numTotal);
-        System.out.println();
+        System.out.println(stats);
 
         writeStarsInMoviesData.close();
 
@@ -151,7 +151,7 @@ public class ParseAll extends DefaultHandler {
             writeStarsInMoviesData.newLine();
 
 
-            System.out.println("added " + movieId + " " + starId + " for " + starName);
+            //System.out.println("added " + movieId + " " + starId + " for " + starName);
             ++numOfSuccess;
             return "success";
         }
@@ -191,7 +191,7 @@ public class ParseAll extends DefaultHandler {
             // Thus, we do insertion
             String result = insertStarsInMovies(movieFid, starName);
 
-            System.out.println(result);
+            //System.out.println(result);
 
 
             numTotal++;

@@ -21,12 +21,18 @@ public class ParseMovies extends DefaultHandler {
     private String tempVal;
     private Movie movie;
     private Map<String, Movie> movies;
+    private Map<String, String> genres;
 
     private WriteData writeMovieData;
     private WriteData writeMovieInXmlData;
+    private WriteData writeGenreData;
+    private WriteData writeGenresInMoviesData;
 
     String maxId;
     String currentId;
+
+    int maxGenreId;
+    int currentGenreId;
 
     private int[] newMovies = null;
 
@@ -35,18 +41,22 @@ public class ParseMovies extends DefaultHandler {
         try {
             String loginUser = "mytestuser";
             String loginPasswd = "mypassword";
-            String loginUrl = "jdbc:mysql://localhost:3306/test?AllowLoadLocalInfile=true";
+            String loginUrl = "jdbc:mysql://localhost:3306/moviedb?AllowLoadLocalInfile=true";
 
             Class.forName("com.mysql.jdbc.Driver").newInstance();
             dbcon = DriverManager.getConnection(loginUrl, loginUser, loginPasswd);
 
             this.setMaxId();
             this.currentId = maxId;
+            this.currentGenreId = maxGenreId;
 
             movies = new HashMap<>();
+            genres = new HashMap<>();
 
             writeMovieData = new WriteData("movies.txt");
             writeMovieInXmlData = new WriteData("movies_in_xml.txt");
+            writeGenreData = new WriteData("genres.txt");
+            writeGenresInMoviesData = new WriteData("genres_in_movies.txt");
 
         } catch (Exception e){
             e.printStackTrace();
@@ -59,10 +69,16 @@ public class ParseMovies extends DefaultHandler {
 
     private void setMaxId(){
         try {
-            MyQuery query = new MyQuery(dbcon, "SELECT max(id) FROM movies");
-            ResultSet rs = query.execute();
-            rs.first();
-            this.maxId = rs.getString("max(id)");
+            MyQuery movieQuery = new MyQuery(dbcon, "SELECT max(id) FROM movies");
+            MyQuery genreQuery = new MyQuery(dbcon, "SELECT max(id) FROM genres");
+            ResultSet movieRs = movieQuery.execute();
+            ResultSet genreRs = genreQuery.execute();
+
+            movieRs.first();
+            genreRs.first();
+
+            this.maxId = movieRs.getString("max(id)");
+            this.maxGenreId = genreRs.getInt("max(id)");
 
         } catch (SQLException e){
             e.printStackTrace();
@@ -75,10 +91,14 @@ public class ParseMovies extends DefaultHandler {
         int suffixInt = Integer.parseInt(suffix);
         String newSuffix = String.valueOf(++suffixInt);
         this.currentId = prefix + newSuffix;
+
         return this.currentId;
     }
 
 
+    private int getNextGenreId(){
+        return ++this.currentGenreId;
+    }
 
 
     public void run() {
@@ -90,9 +110,13 @@ public class ParseMovies extends DefaultHandler {
 
         writeMovieData.close();
         writeMovieInXmlData.close();
+        writeGenreData.close();
+        writeGenresInMoviesData.close();
 
         this.loadMovieData();
         this.loadMovieInXmlData();
+        this.loadGenreData();
+        this.loadGenreInMoviesData();
     }
 
 
@@ -101,13 +125,23 @@ public class ParseMovies extends DefaultHandler {
 
         for (String genre : movie.getGenres()) {
 
+            if (genres.get(genre) == null){
+                genres.put(genre, String.valueOf(this.getNextGenreId()));
+            }
+            String genreId = genres.get(genre);
+            writeGenreData.addField(genreId);
+            writeGenreData.addField(genre);
+            writeGenreData.newLine();
+
+            writeGenresInMoviesData.addField(genreId);
+            writeGenresInMoviesData.addField(movie.getId());
+            writeGenresInMoviesData.newLine();
         }
     }
 
 
     private void insertMovie(Movie movie){
         movies.put(movie.getFid(), movie);
-        System.out.println("put to map");
 
         writeMovieData.addField(movie.getId());
         writeMovieData.addField(movie.getTitle());
@@ -118,6 +152,8 @@ public class ParseMovies extends DefaultHandler {
         writeMovieInXmlData.addField(movie.getId());
         writeMovieInXmlData.addField(movie.getFid());
         writeMovieInXmlData.newLine();
+
+        this.insertGenres(movie);
     }
 
 
@@ -174,10 +210,10 @@ public class ParseMovies extends DefaultHandler {
             // add it to the list
             if (this.movie.isValid()) {
                 this.insertMovie(this.movie);
-                System.out.println(this.movie + "\n");
+                // System.out.println(this.movie + "\n");
             }
             else{
-                System.out.println(this.movie.getInvalidLog() + "\n");
+                // System.out.println(this.movie.getInvalidLog() + "\n");
             }
         }
         else if (qName.equalsIgnoreCase("fid")) {
@@ -230,6 +266,44 @@ public class ParseMovies extends DefaultHandler {
                     " FIELDS TERMINATED BY '" + writeMovieInXmlData.getFieldTerminator() + "'" +
                     " LINES TERMINATED BY '\\n'" +
                     " (@column1, @column2) SET movieId = @column1, xmlId = @column2";
+
+            System.out.println(loadStr);
+
+            Statement loadStatement = dbcon.createStatement();
+            loadStatement.execute(loadStr);
+            loadStatement.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadGenreData(){
+        try {
+            String loadStr = "LOAD DATA LOCAL INFILE '" + writeGenreData.getFileName() + "'" +
+                    " INTO TABLE genres" +
+                    " FIELDS TERMINATED BY '" + writeGenreData.getFieldTerminator() + "'" +
+                    " LINES TERMINATED BY '\\n'" +
+                    " (@column1, @column2) SET id = @column1, name = @column2";
+
+            System.out.println(loadStr);
+
+            Statement loadStatement = dbcon.createStatement();
+            loadStatement.execute(loadStr);
+            loadStatement.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadGenreInMoviesData(){
+        try {
+            String loadStr = "LOAD DATA LOCAL INFILE '" + writeGenresInMoviesData.getFileName() + "'" +
+                    " INTO TABLE genres_in_movies" +
+                    " FIELDS TERMINATED BY '" + writeGenresInMoviesData.getFieldTerminator() + "'" +
+                    " LINES TERMINATED BY '\\n'" +
+                    " (@column1, @column2) SET genreId = @column1, movieId = @column2";
 
             System.out.println(loadStr);
 

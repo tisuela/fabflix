@@ -27,7 +27,7 @@ public class ParseActors extends DefaultHandler {
         try {
             String loginUser = "mytestuser";
             String loginPasswd = "mypassword";
-            String loginUrl = "jdbc:mysql://localhost:3306/test?AllowLoadLocalInfile=true";
+            String loginUrl = "jdbc:mysql://localhost:3306/moviedb?AllowLoadLocalInfile=true";
 
             Class.forName("com.mysql.jdbc.Driver").newInstance();
             dbcon = DriverManager.getConnection(loginUrl, loginUser, loginPasswd);
@@ -148,10 +148,10 @@ public class ParseActors extends DefaultHandler {
         if (qName.equalsIgnoreCase("actor")) {
             if (this.star.isValid()) {
                 insertStar(star);
-                System.out.println(this.star + "\n");
+                //System.out.println(this.star + "\n");
             }
             else{
-                System.out.println(this.star.getInvalidLog() + "\n");
+                //System.out.println(this.star.getInvalidLog() + "\n");
             }
         }
         else if (qName.equalsIgnoreCase("stagename")) {
