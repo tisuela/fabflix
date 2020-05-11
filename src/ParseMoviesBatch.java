@@ -7,7 +7,7 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.sql.*;
 
-public class ParseMovies extends DefaultHandler {
+public class ParseMoviesBatch extends DefaultHandler {
     private Connection dbcon;
     private int numOfSuccess;
     private int numOfFails;
@@ -24,7 +24,7 @@ public class ParseMovies extends DefaultHandler {
     private int[] newMovies = null;
 
 
-    public ParseMovies() {
+    public ParseMoviesBatch() {
         try {
             String loginUser = "mytestuser";
             String loginPasswd = "mypassword";
@@ -217,7 +217,7 @@ public class ParseMovies extends DefaultHandler {
     public static void main(String[] args) {
         long startTime = System.nanoTime();
 
-        ParseMovies test = new ParseMovies();
+        ParseMoviesBatch test = new ParseMoviesBatch();
         test.run();
 
         long endTime = System.nanoTime();

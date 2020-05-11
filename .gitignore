@@ -4,3 +4,5 @@
 */movie-data.sql
 */test.java
 stanford-movies/
+src/*.txt
+*.txt
