@@ -11,7 +11,7 @@ public class UpdateSecurePassword {
 
     /*
      * 
-     * This program updates your existing moviedb customers table to change the
+     * This program updates your existing moviedb customers or employees table to change the
      * plain text passwords to encrypted passwords.
      * 
      * You should only run this program **once**, because this program uses the
@@ -22,12 +22,20 @@ public class UpdateSecurePassword {
      */
     public static void main(String[] args) throws Exception {
 
+        boolean iWantToEncrypt = false;
 
-        // RUN THIS ONLY ONE TIME (change to false)
-        if (false){
-            System.out.println("lol i blocked it from running to prevent accidents -n8");
+
+        // if iWantToEncrypt is true, this will be bypassed
+        // WARNING, DOUBLE ENCRYPTING PASSWORDS WILL LEAD TO BAD THINGS
+        // REMEMBER TO TURN FLAG BACK TO FALSE AFTER RUNNING IT
+        if (! iWantToEncrypt){
+            System.out.println("Safety measures activated: please turn them off to enable encryption");
+
             return;
         }
+
+        String database = "employees";
+        String primaryKey = (database.equals("customers")) ? "id" : "email";
 
         String loginUser = "mytestuser";
         String loginPasswd = "mypassword";
@@ -37,13 +45,13 @@ public class UpdateSecurePassword {
         Connection connection = DriverManager.getConnection(loginUrl, loginUser, loginPasswd);
         Statement statement = connection.createStatement();
 
-        // change the customers table password column from VARCHAR(20) to VARCHAR(128)
-        String alterQuery = "ALTER TABLE customers MODIFY COLUMN password VARCHAR(128)";
+        // change the "database" table password column from VARCHAR(20) to VARCHAR(128)
+        String alterQuery = String.format("ALTER TABLE %s MODIFY COLUMN password VARCHAR(128)", database);
         int alterResult = statement.executeUpdate(alterQuery);
-        System.out.println("altering customers table schema completed, " + alterResult + " rows affected");
+        System.out.println("altering " + database + " table schema completed, " + alterResult + " rows affected");
 
-        // get the ID and password for each customer
-        String query = "SELECT id, password from customers";
+        // get the ID and password for each entry
+        String query = String.format("SELECT %1$s, password from %2$s", primaryKey, database);
 
         ResultSet rs = statement.executeQuery(query);
 
@@ -54,18 +62,17 @@ public class UpdateSecurePassword {
         ArrayList<String> updateQueryList = new ArrayList<>();
 
         System.out.println("encrypting password (this might take a while)");
+        String updateQueryTemplate = "UPDATE %1$s SET password='%2$s' WHERE %3$s='%4$s'";
         while (rs.next()) {
             // get the ID and plain text password from current table
-            String id = rs.getString("id");
+            String id = rs.getString(primaryKey);
             String password = rs.getString("password");
             
             // encrypt the password using StrongPasswordEncryptor
             String encryptedPassword = passwordEncryptor.encryptPassword(password);
 
             // generate the update query
-            String updateQuery = String.format("UPDATE customers SET password='%s' WHERE id=%s;", encryptedPassword,
-                    id);
-            updateQueryList.add(updateQuery);
+            updateQueryList.add(String.format(updateQueryTemplate, database, encryptedPassword, primaryKey, id));
         }
         rs.close();
 
@@ -73,6 +80,7 @@ public class UpdateSecurePassword {
         System.out.println("updating password");
         int count = 0;
         for (String updateQuery : updateQueryList) {
+            System.out.println("update query: " + updateQuery);
             int updateResult = statement.executeUpdate(updateQuery);
             count += updateResult;
         }

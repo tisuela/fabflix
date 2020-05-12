@@ -1,9 +1,5 @@
-let login_form = $("#login_form");
+let employee_access_form = $("#employee_access_form");
 
-/**
- * Handle the data returned by LoginServlet
- * @param resultDataString jsonObject
- */
 function handleLoginResult(resultDataString) {
     let resultDataJson = JSON.parse(resultDataString);
 
@@ -13,23 +9,16 @@ function handleLoginResult(resultDataString) {
 
     // If login succeeds, it will redirect the user to main-page.html
     if (resultDataJson["status"] === "success") {
-        window.location.replace("main-page.html");
-    } else {
-        // If login fails, the web page will display 
+        window.location.replace("_dashboard.html");
+    }else {
+        // If login fails, the web page will display
         // error messages on <div> with id "login_error_message"
-        // Resets reCaptcha
         console.log("show error message");
         console.log(resultDataJson["message"]);
-        $("#login_error_message").text(resultDataJson["message"]);
-        grecaptcha.reset();
-
+        $("#employee_login_error_message").text(resultDataJson["message"]);
     }
 }
 
-/**
- * Submit the form content with POST method
- * @param formSubmitEvent
- */
 function submitLoginForm(formSubmitEvent) {
     console.log("submit login form");
     /**
@@ -38,10 +27,10 @@ function submitLoginForm(formSubmitEvent) {
      * event handler when the event is triggered.
      */
     formSubmitEvent.preventDefault();
-    let loginData  = login_form.serialize();
-    
+    let loginData  = employee_access_form.serialize();
+
     $.ajax(
-        "api/login", {
+        "api/employeeAccess", {
             method: "POST",
             // Serialize the login form to the data sent by POST request
             data: loginData,
@@ -50,6 +39,4 @@ function submitLoginForm(formSubmitEvent) {
     );
 }
 
-// Bind the submit action of the form to a handler function
-login_form.submit(submitLoginForm);
-
+employee_access_form.submit(submitLoginForm);

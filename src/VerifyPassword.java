@@ -19,7 +19,7 @@ public class VerifyPassword {
 	 * 
 	 */
 
-	public boolean verifyCredentials(String email, String password) throws Exception {
+	public boolean verifyCredentials(String email, String password, String database) throws Exception {
 		String loginUser = "mytestuser";
 		String loginPasswd = "mypassword";
 		String loginUrl = "jdbc:mysql://localhost:3306/moviedb";
@@ -27,7 +27,9 @@ public class VerifyPassword {
 		Class.forName("com.mysql.jdbc.Driver").newInstance();
 		Connection dbcon = DriverManager.getConnection(loginUrl, loginUser, loginPasswd);
 
-		MyQuery query = new MyQuery(dbcon, "SELECT * from customers");
+		System.out.println(String.format("Querying database: %s", database));
+
+		MyQuery query = new MyQuery(dbcon, String.format("SELECT * from %s", database));
 		query.append("where email = ?", email);
 		ResultSet rs = query.execute();
 
@@ -35,7 +37,7 @@ public class VerifyPassword {
 		if (rs.next()) {
 		    // get the encrypted password from the database
 			String encryptedPassword = rs.getString("password");
-			id = rs.getInt("id");
+			id = (database.equals("customers")) ? rs.getInt("id") : -1;
 			name = email;
 			
 			// use the same encryptor to compare the user input password with encrypted password stored in DB

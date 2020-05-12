@@ -1,3 +1,4 @@
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import javax.annotation.Resource;
@@ -6,10 +7,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
+import javax.xml.transform.Result;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.Enumeration;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
 
 @WebServlet(name = "DashboardServlet", urlPatterns = "/api/dashboard")
 public class DashboardServlet extends HttpServlet {
@@ -170,5 +175,86 @@ public class DashboardServlet extends HttpServlet {
         response.getWriter().write(responseJsonObject.toString());
     }
 
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        PrintWriter out = response.getWriter();
+
+        try {
+            System.out.println("GET attempt");
+            // Get a connection from dataSource
+            Connection connection = dataSource.getConnection();
+
+            // the following codeblock has code adapted from:
+            // https://www.progress.com/blogs/jdbc-tutorial-extracting-database-metadata-via-jdbc-driver
+
+            DatabaseMetaData md = connection.getMetaData();
+
+            JsonArray resultSet = new JsonArray();
+
+            ResultSet tables = md.getTables(null, null, null, new String[]{"TABLE"});
+
+            // Get the table names
+            while (tables.next()) {
+                // create the table entry to hold the information about the table
+                JsonObject tableEntry = new JsonObject();
+                String tableName = tables.getString("TABLE_NAME");
+                // Store the table name
+                tableEntry.addProperty("tableName", tableName);
+                JsonArray tableColumns = new JsonArray();
+
+                // for each table, get the columns associated with it
+                ResultSet columns = md.getColumns(null, null, tableName, null);
+                while (columns.next()) {
+                    JsonObject columnEntry = new JsonObject();
+                    String columnName = columns.getString("COLUMN_NAME");
+                    String datatype = columns.getString("TYPE_NAME");
+                    String dataSize = columns.getString("COLUMN_SIZE");
+
+                    columnEntry.addProperty("columnName", columnName);
+                    columnEntry.addProperty("dataType", datatype);
+                    columnEntry.addProperty("dataSize", dataSize);
+
+                    tableColumns.add(columnEntry);
+                }
+                // store the column data into the tableEntry
+                tableEntry.add("columns", tableColumns);
+
+                // store the table entry to the result set
+                resultSet.add(tableEntry);
+            }
+
+            // End code block
+
+            JsonObject resultJson = new JsonObject();
+            resultJson.add("tables", resultSet);
+
+            /*
+            ResultJson format:
+                { tables: array of tableEntries }
+            tableEntry format:
+                { tableName: string (table name),
+                    columns: array of columnEntry
+                }
+            columnEntry format:
+                { columnName: string,
+                    dataType: string,
+                }
+             */
+
+            out.write(resultJson.toString());
+            // set response status to 200 (OK)
+            response.setStatus(200);
+
+            System.out.println("Get finished");
+
+        } catch (Exception e) {
+            // write error message JSON object to output
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("errorMessage", e.getMessage());
+            out.write(jsonObject.toString());
+
+            // set reponse status to 500 (Internal Server Error)
+            response.setStatus(500);
+        }
+    }
 
 }
