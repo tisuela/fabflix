@@ -24,7 +24,7 @@ public class UpdateSecurePassword {
 
 
         // RUN THIS ONLY ONE TIME (change to false)
-        if (true){
+        if (false){
             System.out.println("lol i blocked it from running to prevent accidents -n8");
             return;
         }
