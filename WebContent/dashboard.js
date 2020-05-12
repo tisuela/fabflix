@@ -106,7 +106,68 @@ function submitAddMovieForm(formSubmitEvent) {
     );
 }
 
+function genMetaDataTableRow(columnEntry){
+    let row = document.createElement("tr");
+
+    // Add cells
+    let nameCell = row.insertCell(-1);
+    let typeCell = row.insertCell(-1);
+    let sizeCell = row.insertCell(-1);
+
+    nameCell.innerHTML = columnEntry["columnName"];
+    typeCell.innerHTML = columnEntry["dataType"];
+    sizeCell.innerHTML = columnEntry["dataSize"];
+
+    return row;
+}
+
+function genColumnHead(){
+    let tableHead = document.createElement("THEAD");
+    let titles = document.createElement("tr");
+    let titleCell = titles.insertCell(-1);
+    let typeCell = titles.insertCell(-1);
+    let sizeCell = titles.insertCell(-1);
+
+    titleCell.innerHTML = "FIELD";
+    typeCell.innerHTML  = "TYPE";
+    sizeCell.innerHTML  = "SIZE";
+
+    tableHead.appendChild(titles);
+
+    return tableHead;
+}
+
+function handleMetaData(resultJSON) {
+    let metadata = $("#metadata");
+    let tables = resultJSON["tables"];
+
+    for(let i = 0; i < tables.length; i++){
+        let table = document.createElement("TABLE");
+        let tableTitle = document.createElement("caption");
+        tableTitle.innerHTML = tables[i]["tableName"];
+        table.appendChild(tableTitle);
+        //table.className = "table table-striped";
+        table.appendChild(genColumnHead());
+        let tableBody = document.createElement("TBODY");
+        table.appendChild(tableBody);
+        let columns = tables[i]["columns"];
+
+        for(let c = 0; c < columns.length; c++){
+            tableBody.appendChild(genMetaDataTableRow(columns[c]));
+        }
+        metadata.append(table);
+        metadata.append("<br>")
+    }
+}
+
 // Bind the submit action of the form to a handler function
 populateHeader();
 add_star_form.submit(submitAddStarForm);
 add_movie_form.submit(submitAddMovieForm);
+console.log("Now going to populate metadata");
+jQuery.ajax({
+    dataType: "json", // Setting return data type
+    method: "GET", // Setting request method
+    url: "api/dashboard",
+    success: (resultData) => handleMetaData(resultData)
+});
