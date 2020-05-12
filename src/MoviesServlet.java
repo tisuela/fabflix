@@ -98,6 +98,8 @@ public class MoviesServlet extends HttpServlet {
             // Perform the query
             ResultSet rs = query.execute();
 
+            System.out.println(query.getStatement());
+
             int resultSetCount = 0;
 
             JsonArray jsonArray = new JsonArray();

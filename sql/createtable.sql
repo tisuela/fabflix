@@ -1,4 +1,5 @@
 -- For the movies DB�
+set foreign_key_checks = 0;
 
 DROP TABLE IF EXISTS movies, stars, stars_in_movies, genres, genres_in_movies, customers, sales, creditcards, ratings;
 
@@ -86,7 +87,7 @@ CREATE TABLE ratings(
 
 
 
-
+set foreign_key_checks = 1;
 
 
 

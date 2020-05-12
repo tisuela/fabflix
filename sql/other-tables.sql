@@ -16,9 +16,10 @@ CREATE TABLE stars_in_xml(
 );
 
 CREATE TABLE movies_in_xml(
-     movieId varchar(10) NOT NULL,
-     xmlId varchar(10) NOT NULL,
+    movieId varchar(10) NOT NULL,
+    xmlId varchar(10) NOT NULL,
 
-     FOREIGN KEY (movieId) REFERENCES movies(id),
-     PRIMARY KEY (xmlId)
+    FOREIGN KEY (movieId) REFERENCES movies(id),
+    PRIMARY KEY (movieId, xmlId)
+
 );

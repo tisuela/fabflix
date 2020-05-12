@@ -11,6 +11,7 @@ public class Star {
     // star info
     private String name;
     private int birthYear = -1;
+    private String id;
 
 
     public Star(){
@@ -32,8 +33,8 @@ public class Star {
 
 
     public String toString(){
-        String result = "Name: %s | Birth year: %d | Number: %d";
-        result = String.format(result, name, birthYear, numOfThisStar);
+        String result = "Name: %s | Birth year: %d | Number: %d | id %s";
+        result = String.format(result, name, birthYear, numOfThisStar, id);
         return result;
     }
 
@@ -59,6 +60,18 @@ public class Star {
 
     public int getNumOfThisStar() {
         return numOfThisStar;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public static void setNumOfStars(int numOfStars) {
+        Star.numOfStars = numOfStars;
     }
 
     public String getName() {

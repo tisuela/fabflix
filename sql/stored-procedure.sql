@@ -3,6 +3,8 @@
 DROP PROCEDURE IF EXISTS add_movie;
 DROP PROCEDURE IF EXISTS add_star;
 DROP PROCEDURE IF EXISTS add_movie_from_XML;
+DROP PROCEDURE IF EXISTS add_genre_from_XML;
+DROP PROCEDURE IF EXISTS add_genre_from_XML_by_movie_xmlId;
 DROP PROCEDURE IF EXISTS naive_add_movie_from_XML;
 
 DROP FUNCTION IF EXISTS generate_movie_id;
@@ -122,19 +124,37 @@ END $$
 
 
 -- for XML parsing
-CREATE PROCEDURE add_movie_from_XML(IN title VARCHAR(100), IN year INT, IN director VARCHAR(100),  IN genre_name VARCHAR(32))
+CREATE PROCEDURE add_movie_from_XML(IN title VARCHAR(100), IN year INT, IN director VARCHAR(100), IN xml_id VARCHAR(10))
 BEGIN
-    DECLARE movie_id, star_id  VARCHAR(10);
-    DECLARE genre_id INT;
+    DECLARE movie_id  VARCHAR(10);
 
     -- add movie if it doesn't already exist
     IF NOT EXISTS (SELECT * FROM movies WHERE movies.title = title AND movies.year = year AND movies.director = director) THEN
         SELECT generate_movie_id() INTO movie_id;
         INSERT INTO movies VALUES (movie_id, title, year, director);
+        -- INSERT INTO movies_in_xml (movieId, xmlId) VALUES (movie_id, xml_id);
     END IF;
 
-    -- get movie ID
-    SELECT movies.id into movie_id FROM movies WHERE movies.title = title AND movies.year = year AND movies.director = director;
+
+    -- add movie to XML table, and assert no duplicates with xml ID
+    IF NOT EXISTS (SELECT * FROM movies_in_xml WHERE xmlId = xml_id) THEN
+        -- get movie ID again, in case this movie already exists
+        SELECT movies.id INTO movie_id FROM movies WHERE movies.title = title AND movies.year = year AND movies.director = director;
+        INSERT INTO movies_in_xml (movieId, xmlId) VALUES (movie_id, xml_id);
+    END IF;
+
+
+
+
+
+END $$
+
+
+
+CREATE PROCEDURE add_genre_from_XML(IN title VARCHAR(100), IN year INT, IN director VARCHAR(100), IN genre_name VARCHAR(32))
+BEGIN
+    DECLARE genre_id INT;
+    DECLARE movie_id VARCHAR(10);
 
     -- create new genre if it doesn't exist
     IF NOT EXISTS (SELECT * FROM genres WHERE genres.name = genre_name) THEN
@@ -144,13 +164,41 @@ BEGIN
     -- get genre ID
     SELECT DISTINCT genres.id INTO genre_id FROM genres WHERE genres.name = genre_name;
 
-    -- Check for duplicates, then insert movie ID and genre ID to genres_in_movies
-    IF NOT EXISTS(SELECT * FROM genres_in_movies WHERE genreId = genre_id AND movieId = movie_id) THEN
-        INSERT INTO genres_in_movies VALUES (genre_id, movie_id);
+    -- check if movie exists and get the movie ID
+    IF EXISTS (SELECT * FROM movies WHERE movies.title = title AND movies.year = year AND movies.director = director) THEN
+        SELECT movies.id INTO movie_id FROM movies WHERE movies.title = title AND movies.year = year AND movies.director = director;
+        -- Check for duplicates, then insert movie ID and genre ID to genres_in_movies
+        IF NOT EXISTS(SELECT * FROM genres_in_movies WHERE genreId = genre_id AND movieId = movie_id) THEN
+            INSERT INTO genres_in_movies VALUES (genre_id, movie_id);
+        END IF;
     END IF;
 END $$
 
 
+CREATE PROCEDURE add_genre_from_XML_by_movie_xmlId(IN movie_xmlId VARCHAR(10), IN genre_name VARCHAR(32))
+BEGIN
+    DECLARE genre_id INT;
+    DECLARE movie_id VARCHAR(10);
+
+    -- create new genre if it doesn't exist
+    IF NOT EXISTS (SELECT * FROM genres WHERE genres.name = genre_name) THEN
+        INSERT INTO genres (genres.name) VALUES (GENRE_name);
+    END IF;
+
+    -- get genre ID
+    SELECT DISTINCT genres.id INTO genre_id FROM genres WHERE genres.name = genre_name;
+
+    IF EXISTS (SELECT movies.id FROM movies_in_xml JOIN movies ON movies.id = movies_in_xml.movieId WHERE xmlId = movie_xmlId) THEN
+        -- get movie ID
+        SELECT DISTINCT movies.id INTO movie_id FROM movies_in_xml JOIN movies ON movies.id = movies_in_xml.movieId WHERE xmlId = movie_xmlId;
+
+        -- Check for duplicates, then insert movie ID and genre ID to genres_in_movies
+        IF NOT EXISTS(SELECT * FROM genres_in_movies WHERE genreId = genre_id AND movieId = movie_id) THEN
+            INSERT INTO genres_in_movies (genreId, movieId) VALUES (genre_id, movie_id);
+        END IF;
+    END IF;
+
+END $$
 
 
 

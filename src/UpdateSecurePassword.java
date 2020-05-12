@@ -24,11 +24,13 @@ public class UpdateSecurePassword {
 
         boolean iWantToEncrypt = false;
 
+
         // if iWantToEncrypt is true, this will be bypassed
         // WARNING, DOUBLE ENCRYPTING PASSWORDS WILL LEAD TO BAD THINGS
         // REMEMBER TO TURN FLAG BACK TO FALSE AFTER RUNNING IT
         if (! iWantToEncrypt){
             System.out.println("Safety measures activated: please turn them off to enable encryption");
+
             return;
         }
 
