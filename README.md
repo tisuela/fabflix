@@ -1,10 +1,4 @@
-## CS 122B Project 2
-
-By:
-Nathaniel Louis Crisostomo Tisuela 
-Garfield Tsui
-
-## CS 122B Project 2
+## CS 122B Project 3
 
 By:
 Nathaniel Louis Crisostomo Tisuela 
