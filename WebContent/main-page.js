@@ -26,15 +26,20 @@ function submitSearchForm(formSubmitEvent) {
 
 }
 
-function genreBrowse(){
-    let result = '';
-    let genres = ["Action", "Adult", "Adventure", "Animation", "Biography", "Comedy", "Crime",
-        "Documentary", "Drama", "Family", "Fantasy", "History", "Horror", "Music", "Musical",
-        "Mystery", "Reality-TV", "Romance", "Sci-Fi", "Sport", "Thriller", "War", "Western"]
-    for(const genre of genres){
-        result += "<a href='index.html?mode=genre&genre=" + genre + "'>" + genre + "</a> ";
+function generateGenreLink(genre){
+    return "<a href='index.html?mode=genre&genre=" + genre + "'>" + genre + "</a> ";
+}
+
+function handleGenres(resultJSON){
+    let browseGenres = $("#browse-genres");
+
+    let genres = resultJSON["genres"];
+
+    for(let i = 0; i < genres.length; i++){
+        let genreName = genres[i]["name"];
+        let genreLink = generateGenreLink(genreName);
+        browseGenres.append(genreLink);
     }
-    return result;
 }
 
 function titleBrowse(){
@@ -62,8 +67,13 @@ function createCheckoutButton(){
 createCheckoutButton();
 // Bind the submit action of the form to a handler function
 search_form.submit(submitSearchForm);
-let browseGenres = $("#browse-genres");
-browseGenres.append(genreBrowse());
+
+jQuery.ajax({
+    dataType: "json", // Setting return data type
+    method: "GET", // Setting request method
+    url: "api/genres", // Setting request url, which is mapped by GenreServlet
+    success: (resultData) => handleGenres(resultData) // Setting callback function to handle data returned successfully by the GenreServlet
+});
 let browseTitles = $("#browse-titles");
 browseTitles.append(titleBrowse());
 

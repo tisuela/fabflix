@@ -103,10 +103,14 @@ function genreBrowse(){
 function titleBrowse(){
     let result = "";
     let titles = "0123456789abcdefghijklmnopqrstuvwxyz*";
+
+    let banner = $("#browse-categories");
+
     for(let i = 0; i < titles.length; i++){
         let character = titles.charAt(i);
         result += "<a href='index.html?mode=title&title=" + character + "'>" + character + "</a> ";
     }
+    banner.append(result);
     return result;
 }
 
@@ -175,6 +179,22 @@ function addGenres(cell, genresJson){
     cellHTML += "</ul>";
     cell.innerHTML = cellHTML;
     return cell;
+}
+
+function generateGenreLink(genre){
+    return "<a href='index.html?mode=genre&genre=" + genre + "'>" + genre + "</a> ";
+}
+
+function handleGenres(resultJSON){
+    let browseGenres = $("#browse-categories");
+
+    let genres = resultJSON["genres"];
+
+    for(let i = 0; i < genres.length; i++){
+        let genreName = genres[i]["name"];
+        let genreLink = generateGenreLink(genreName);
+        browseGenres.append(genreLink);
+    }
 }
 
 
@@ -266,7 +286,23 @@ function handleMovieResult(resultJson) {
 
 let query = getParameters();
 setSortButtons();
-setBrowseCategories();
+
+let searchParams = new URLSearchParams(window.location.search);
+let mode = searchParams.get("mode");
+if(mode){
+    if(mode === "title"){
+        titleBrowse();
+    }
+    if(mode === "genre"){
+        jQuery.ajax({
+            dataType: "json", // Setting return data type
+            method: "GET", // Setting request method
+            url: "api/genres", // Setting request url, which is mapped by GenreServlet
+            success: (resultData) => handleGenres(resultData) // Setting callback function to handle data returned successfully by the GenreServlet
+        });
+
+    }
+}
 
 // Makes the HTTP GET request and registers on success callback function handleStarResult
 jQuery.ajax({
