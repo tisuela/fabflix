@@ -43,9 +43,20 @@ No technologies were used beyond the ones supported by the class
 
 ## PreparedStatements
 
+    Used in:
+    MyQuery (module by us) - https://github.com/UCI-Chenli-teaching/cs122b-spring20-team-99/blob/master/src/MyQuery.java
+    SingleMovieServlet     - https://github.com/UCI-Chenli-teaching/cs122b-spring20-team-99/blob/master/src/SingleMovieServlet.java
+    SingleStarServlet      - https://github.com/UCI-Chenli-teaching/cs122b-spring20-team-99/blob/master/src/SingleStarServlet.java
+    
+
 ## XML Optimization Strategies
+    
+    Used batch statements and used load data from local file statement
 
 ## Inconsistency Report
+The inconsistency report was printed out on the video.
+
+Timestamp: 
 
 ## Contributions
 Nathaniel:
