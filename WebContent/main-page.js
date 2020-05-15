@@ -105,8 +105,10 @@ function handleLookupAjaxSuccess(data, query, doneCallback) {
  */
 function handleSelectSuggestion(suggestion) {
     // TODO: jump to the specific result page based on the selected suggestion
-
     console.log("you select " + suggestion["value"] + " with ID " + suggestion["data"]["movie_id"])
+    let url = "single-movie.html?id=";
+    url += suggestion["data"]["movie_id"];
+    window.location.replace(url);
 }
 
 
@@ -140,7 +142,9 @@ $('#autocomplete').autocomplete({
  */
 function handleNormalSearch(query) {
     console.log("doing normal search with query: " + query);
-    // TODO: you should do normal search here
+    let url = "index.html?title="; // use fulltext here?
+    url += query;
+    window.location.replace(url);
 }
 
 
