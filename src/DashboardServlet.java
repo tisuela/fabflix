@@ -82,7 +82,7 @@ public class DashboardServlet extends HttpServlet {
                     callStatement.close();
 
                     responseJson.addProperty("status", "success");
-                    responseJson.addProperty("message", "successfully added");
+                    responseJson.addProperty("message", "successfully added ");
                 }
             }
             else{

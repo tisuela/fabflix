@@ -22,7 +22,7 @@ public class UpdateSecurePassword {
      */
     public static void main(String[] args) throws Exception {
 
-        boolean iWantToEncrypt = false;
+        boolean iWantToEncrypt = true;
 
 
         // if iWantToEncrypt is true, this will be bypassed
@@ -34,7 +34,7 @@ public class UpdateSecurePassword {
             return;
         }
 
-        String database = "employees";
+        String database = "customers";
         String primaryKey = (database.equals("customers")) ? "id" : "email";
 
         String loginUser = "mytestuser";

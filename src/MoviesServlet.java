@@ -23,6 +23,10 @@ import java.util.Set;
 public class MoviesServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
+    // to determine what kind of search this is
+    private boolean isAutocomplete = false;
+    private boolean isFulltext = false;
+
     // Create a dataSource which registered in web.xml
     @Resource(name = "jdbc/moviedb")
     private DataSource dataSource;
@@ -48,15 +52,20 @@ public class MoviesServlet extends HttpServlet {
         query.addFromTables("JOIN (stars JOIN stars_in_movies ON id = starId) ON movies_with_rating.id = stars_in_movies.movieId");
         query.addFromTables("JOIN (genres JOIN genres_in_movies ON id = genreId) ON movies_with_rating.id = genres_in_movies.movieId");
 
-        // NOT FULLY IMPLEMENTED: Check if we should use the saved query
+        // NOT FULLY IMPLEMENTED: saving query under the user
         User user = (User) request.getSession().getAttribute("user");
-        if (user.hasSavedQuery() && request.getParameter("use_saved_query") != null && request.getParameter("use_saved_query").equals("true")) {
-            query.addParameters(user.getSavedQueryParameters());
+
+        // Get title
+        String title = request.getParameter("title");
+
+        // Check what type of search this is
+        if (isFulltext && this.notEmpty(title)){
+            query.addWhereConditions("MATCH (%s) AGAINST (?)", "title", title + "*");
         }
-        else{
-            user.setSavedQueryParameters(request.getParameterMap());
+        else {
             query.addParameters(request.getParameterMap());
         }
+        user.setSavedQueryParameters(request.getParameterMap());
 
         // Add the WHERE conditions from parameters
 
@@ -92,6 +101,16 @@ public class MoviesServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         try {
+            // Check parameters for the type of search this is
+            String autocomplete = request.getParameter("autocomplete");
+            String fulltext = request.getParameter("fulltext");
+
+            if (this.notEmpty(fulltext)){
+                isFulltext = true;
+            }
+            if (this.notEmpty(autocomplete)){
+                isAutocomplete = true;
+            }
 
             // Get a connection from dataSource
             Connection dbcon = dataSource.getConnection();
@@ -102,7 +121,7 @@ public class MoviesServlet extends HttpServlet {
             // Perform the query
             ResultSet rs = query.execute();
 
-            System.out.println(query.getStatement());
+            System.out.println("movie servlet statement = " + query.getStatement());
 
             int resultSetCount = 0;
 
@@ -110,6 +129,7 @@ public class MoviesServlet extends HttpServlet {
             JsonObject jsonObject = new JsonObject();
             // JSON Array with all movie entries
             JsonArray jsonArray = new JsonArray();
+
 
             // Iterate through each row of rs
             while (rs.next()) {
@@ -120,10 +140,10 @@ public class MoviesServlet extends HttpServlet {
                 String movie_director = rs.getString("director");
                 String movie_rating = rs.getString("rating");
 
-                String autocomplete = request.getParameter("autocomplete");
+
 
                 // search param is on? then do this stuff, otherwise skip
-                if (!this.notEmpty(autocomplete)) {
+                if (!isAutocomplete) {
                     // Movie stars and genres will be stored as arrays
                     JsonArray jsonStars = new JsonArray();
                     JsonArray jsonGenres = new JsonArray();

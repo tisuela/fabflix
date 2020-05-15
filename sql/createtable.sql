@@ -7,7 +7,8 @@ CREATE TABLE movies(
 	id varchar(10) PRIMARY KEY,
 	title varchar(100) NOT NULL,
 	year integer NOT NULL,
-	director varchar(100) NOT NULL
+	director varchar(100) NOT NULL,
+	FULLTEXT (title)
 );
 
 

@@ -56,7 +56,7 @@ public class SingleMovieServlet extends HttpServlet {
 			starsQuery.append("GROUP BY all_stars.starId ORDER BY totalMovies DESC, stars.name ASC");
 
 
-
+			System.out.println(starsQuery);
 			// Build movie query
 			MyQuery movieQuery = new MyQuery(dbcon);
 			movieQuery.setSelectStr("*");

@@ -4,7 +4,7 @@
     <groupId>edu.uci.ics</groupId>
     <artifactId>cs122b-spring20-project1-api-example</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>pom</packaging>
 
     <dependencies>
         <dependency>
