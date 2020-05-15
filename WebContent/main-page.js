@@ -83,16 +83,17 @@ function createCheckoutButton(){
 function handleLookupAjaxSuccess(data, query, doneCallback) {
     console.log("lookup ajax successful")
 
-    // parse the string into JSON
-    var jsonData = JSON.parse(data);
-    console.log(jsonData)
+    console.log(data)
+
+    // Extract the data to be used by the autocomplete library
+    let movieData = data["movies"];
 
     // TODO: if you want to cache the result into a global variable you can do it here
 
     // call the callback function provided by the autocomplete library
     // add "{suggestions: jsonData}" to satisfy the library response format according to
     //   the "Response Format" section in documentation
-    doneCallback( { suggestions: jsonData } );
+    doneCallback( { suggestions: movieData } );
 }
 
 
@@ -105,7 +106,7 @@ function handleLookupAjaxSuccess(data, query, doneCallback) {
 function handleSelectSuggestion(suggestion) {
     // TODO: jump to the specific result page based on the selected suggestion
 
-    console.log("you select " + suggestion["value"] + " with ID " + suggestion["data"]["heroID"])
+    console.log("you select " + suggestion["value"] + " with ID " + suggestion["data"]["movie_id"])
 }
 
 
@@ -142,14 +143,6 @@ function handleNormalSearch(query) {
     // TODO: you should do normal search here
 }
 
-// bind pressing enter key to a handler function
-$('#autocomplete').keypress(function(event) {
-    // keyCode 13 is the enter key
-    if (event.keyCode == 13) {
-        // pass the value of the input box to the handler function
-        handleNormalSearch($('#autocomplete').val())
-    }
-})
 
 
 /*
@@ -171,7 +164,7 @@ function handleLookup(query, doneCallback) {
         "method": "GET",
         // generate the request url from the query.
         // escape the query string to avoid errors caused by special characters
-        "url": "api/movies?autocomplete=true&title=" + escape(query),
+        "url": "api/autocomplete?title=" + escape(query),
         "success": function(data) {
             // pass the data, query, and doneCallback function into the success handler
             handleLookupAjaxSuccess(data, query, doneCallback)
@@ -193,6 +186,15 @@ browseTitles.append(titleBrowse());
 createCheckoutButton();
 // Bind the submit action of the form to a handler function
 search_form.submit(submitSearchForm);
+
+// bind pressing enter key to a handler function
+$('#autocomplete').keypress(function(event) {
+    // keyCode 13 is the enter key
+    if (event.keyCode == 13) {
+        // pass the value of the input box to the handler function
+        handleNormalSearch($('#autocomplete').val())
+    }
+})
 
 jQuery.ajax({
     dataType: "json", // Setting return data type

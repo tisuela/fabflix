@@ -355,13 +355,17 @@ public class BuildQuery {
     }
 
 
-    // --- Getters and Setters --- //
-
-
-    public void setSelectStr(String selectStr) {
+    public void addSelectStr(String selectStr) {
         this.selectStr += selectStr;
-        // is it correct to += here or is just equal?
     }
+
+
+    // --- Getters and Setters --- //
+    public void setSelectStr(String selectStr) {
+        this.selectStr = selectStr;
+    }
+
+
 
     public void setFromStr(String fromStr) {
         this.fromStr = fromStr;
@@ -409,7 +413,7 @@ public class BuildQuery {
         System.out.println("running utilities.BuildQuery Main");
 
         BuildQuery query = new BuildQuery();
-        query.setSelectStr("*");
+        query.addSelectStr("*");
         query.addFromTables("movies_with_rating");
         query.addWhereConditions("%s LIKE \"%%%s%%\"","movies_with_ratings.title", "a");
         query.addWhereConditions("%s LIKE \"%%%s%%\"","stars.name", "a");

@@ -60,13 +60,13 @@ public class SingleMovieServlet extends HttpServlet {
 			System.out.println(starsQuery);
 			// Build movie query
 			MyQuery movieQuery = new MyQuery(dbcon);
-			movieQuery.setSelectStr("*");
+			movieQuery.addSelectStr("*");
 			movieQuery.addFromTables("movies");
 			movieQuery.addWhereConditions(matchId, "id", id);
 
 			// Build genre query
 			MyQuery genreQuery = new MyQuery(dbcon);
-			genreQuery.setSelectStr("*");
+			genreQuery.addSelectStr("*");
 			genreQuery.addFromTables("genres JOIN genres_in_movies ON genres.id = genreId");
 			genreQuery.addWhereConditions(matchId, "movieId", id);
 			genreQuery.append("ORDER BY genres.name ASC");

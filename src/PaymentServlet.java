@@ -42,7 +42,7 @@ public class PaymentServlet  extends HttpServlet {
             String equalsStr = "%1$s = ?";
 
             MyQuery cardQuery = new MyQuery(dbcon);
-            cardQuery.setSelectStr("*");
+            cardQuery.addSelectStr("*");
             cardQuery.addFromTables("creditcards");
             cardQuery.addWhereConditions(equalsStr, "creditcards.id", creditCardNumber);
             cardQuery.addWhereConditions(equalsStr, "creditcards.expiration", expirationDate);
