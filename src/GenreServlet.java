@@ -1,5 +1,6 @@
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import utilities.MyQuery;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletException;
@@ -12,7 +13,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.util.ArrayList;
 
 
 @WebServlet(name = "GenreServlet", urlPatterns = "/api/genres")

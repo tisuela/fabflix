@@ -1,7 +1,8 @@
-import org.jasypt.util.password.StrongPasswordEncryptor;
+package utilities;
 
-import javax.annotation.Resource;
-import javax.sql.DataSource;
+import org.jasypt.util.password.StrongPasswordEncryptor;
+import utilities.MyQuery;
+
 import java.sql.*;
 
 public class VerifyPassword {

@@ -1,6 +1,8 @@
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+import utilities.Movie;
+import utilities.MyQuery;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;

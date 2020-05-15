@@ -32,7 +32,7 @@ No technologies were used beyond the ones supported by the class
 ## PreparedStatements
 
     Used in:
-    MyQuery (module by us) - https://github.com/UCI-Chenli-teaching/cs122b-spring20-team-99/blob/master/src/MyQuery.java
+    utilities.MyQuery (module by us) - https://github.com/UCI-Chenli-teaching/cs122b-spring20-team-99/blob/master/src/utilities.MyQuery.java
     SingleMovieServlet     - https://github.com/UCI-Chenli-teaching/cs122b-spring20-team-99/blob/master/src/SingleMovieServlet.java
     SingleStarServlet      - https://github.com/UCI-Chenli-teaching/cs122b-spring20-team-99/blob/master/src/SingleStarServlet.java
     

@@ -1,5 +1,7 @@
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import utilities.MyQuery;
+import utilities.User;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletException;
@@ -143,7 +145,7 @@ public class MoviesServlet extends HttpServlet {
 
                 // search param is on? then do this stuff, otherwise skip
                 if (!isAutocomplete) {
-                    // Movie stars and genres will be stored as arrays
+                    // utilities.Movie stars and genres will be stored as arrays
                     JsonArray jsonStars = new JsonArray();
                     JsonArray jsonGenres = new JsonArray();
 

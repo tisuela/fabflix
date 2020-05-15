@@ -11,6 +11,15 @@
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
 
+    <!-- include jQuery-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- Bootstrap -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+
+
     <title>Main Page</title>
 
 </head>
@@ -21,17 +30,27 @@
 <div id="checkout-button"></div>
 <div id="cart_result"></div>
 
+
+<div class="container">
+    <input type="text" name="title" id="autocomplete"
+           class="autocomplete-searchbox form-control"
+           placeholder="Search Movies"/>
+</div>
+
+<br>
+<br>
+
 <form id="search_form" method="post" action="#">
 
 
     <label><b>Title</b></label>
     <label>
-        <input name="title" placeholder="Enter Movie Title" type="text">
+        <input name="title" placeholder="Enter utilities.Movie Title" type="text">
     </label>
 
     <label><b>Year</b></label>
     <label>
-        <input name="year" placeholder="Enter Movie Year" type="text">
+        <input name="year" placeholder="Enter utilities.Movie Year" type="text">
     </label>
 
     <label><b>Director</b></label>
@@ -39,9 +58,9 @@
         <input name="director" placeholder="Enter Director's name" type="text">
     </label>
 
-    <label><b>Star's name</b></label>
+    <label><b>utilities.Star's name</b></label>
     <label>
-        <input name="starName" placeholder="Enter Star's name" type="text">
+        <input name="starName" placeholder="Enter utilities.Star's name" type="text">
     </label>
 
 
@@ -55,15 +74,11 @@
 <h3 id ='browse-titles'></h3>
 
 
-<!-- include jQuery-->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-
-<!-- Bootstrap -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 <!-- include our own JS file -->
 <script src="./main-page.js"></script>
 
+<!-- include our own css -->
+<link rel="stylesheet" href="main-page.css">
 
 
 </body>

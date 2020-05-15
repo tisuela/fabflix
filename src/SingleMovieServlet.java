@@ -1,5 +1,6 @@
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import utilities.MyQuery;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletException;

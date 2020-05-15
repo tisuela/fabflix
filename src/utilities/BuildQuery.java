@@ -1,4 +1,4 @@
-// import javax.servlet.http.HttpServletRequest;
+package utilities;// import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -406,7 +406,7 @@ public class BuildQuery {
 
     // For testing
     public static void main(String[] args){
-        System.out.println("running BuildQuery Main");
+        System.out.println("running utilities.BuildQuery Main");
 
         BuildQuery query = new BuildQuery();
         query.setSelectStr("*");

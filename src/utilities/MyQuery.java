@@ -1,14 +1,16 @@
-
+package utilities;
 /* Queries can be made and executed through this class
  * Replaces ExecuteQuery
  */
+
+import utilities.BuildQuery;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Map;
 
-public class MyQuery extends BuildQuery{
+public class MyQuery extends BuildQuery {
     private Connection dbcon;
 
     // We use prepared statements for versatility and better performance
@@ -26,7 +28,7 @@ public class MyQuery extends BuildQuery{
     }
 
 
-    // builds statement query from query fragments (see BuildQuery)
+    // builds statement query from query fragments (see utilities.BuildQuery)
     private void buildStatement() {
         try {
             this.statement = dbcon.prepareStatement(this.getQuery());

@@ -1,3 +1,5 @@
+package utilities;
+
 public class Star {
     // logging
     private static int numOfStars = 0;

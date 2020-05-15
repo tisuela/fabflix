@@ -1,3 +1,5 @@
+package utilities;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -151,7 +153,7 @@ public class Movie {
     }
 
     public String getInvalidLog() {
-        return "Movie #" + numOfThisMovie + " is invalid: " + invalidLog;
+        return "utilities.Movie #" + numOfThisMovie + " is invalid: " + invalidLog;
     }
 
     public List<String> getGenres() {

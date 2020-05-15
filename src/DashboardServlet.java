@@ -1,5 +1,6 @@
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import utilities.MyQuery;
 
 import javax.annotation.Resource;
 import javax.servlet.annotation.WebServlet;
@@ -7,12 +8,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
-import javax.xml.transform.Result;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.util.Enumeration;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 
@@ -115,7 +114,7 @@ public class DashboardServlet extends HttpServlet {
                 // Check if movie already exists
                 if (this.movieExists(title, year, director, dbcon)){
                     responseJson.addProperty("status", "fail");
-                    responseJson.addProperty("message", "Movie already exists");
+                    responseJson.addProperty("message", "utilities.Movie already exists");
                 }
                 // if movie doesn't exist, we're clear to insert
                 else{

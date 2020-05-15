@@ -1,6 +1,10 @@
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+import utilities.Movie;
+import utilities.MyQuery;
+import utilities.Star;
+import utilities.WriteData;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
