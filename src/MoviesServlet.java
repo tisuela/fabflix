@@ -125,11 +125,8 @@ public class MoviesServlet extends HttpServlet {
 
             int resultSetCount = 0;
 
-            // Main JSON to be returned
-            JsonObject jsonObject = new JsonObject();
             // JSON Array with all movie entries
-            JsonArray jsonArray = new JsonArray();
-
+            JsonArray moviesJSON = new JsonArray();
 
             // Iterate through each row of rs
             while (rs.next()) {
@@ -140,7 +137,8 @@ public class MoviesServlet extends HttpServlet {
                 String movie_director = rs.getString("director");
                 String movie_rating = rs.getString("rating");
 
-
+                // movieEntry to be returned
+                JsonObject jsonMovie = new JsonObject();
 
                 // search param is on? then do this stuff, otherwise skip
                 if (!isAutocomplete) {
@@ -201,21 +199,21 @@ public class MoviesServlet extends HttpServlet {
                         System.out.println(e.getMessage());
                     }
 
-                    jsonObject.add("movie_genres", jsonGenres);
-                    jsonObject.add("movie_stars", jsonStars);
+                    jsonMovie.add("movie_genres", jsonGenres);
+                    jsonMovie.add("movie_stars", jsonStars);
                 }
 
                 // Create a JsonObject based on the data we retrieve from rs
-                jsonObject.addProperty("movie_id", movie_id);
-                jsonObject.addProperty("movie_title", movie_title);
-                jsonObject.addProperty("movie_year", movie_year);
-                jsonObject.addProperty("movie_director", movie_director);
-                jsonObject.addProperty("movie_rating", movie_rating);
-                jsonArray.add(jsonObject);
+                jsonMovie.addProperty("movie_id", movie_id);
+                jsonMovie.addProperty("movie_title", movie_title);
+                jsonMovie.addProperty("movie_year", movie_year);
+                jsonMovie.addProperty("movie_director", movie_director);
+                jsonMovie.addProperty("movie_rating", movie_rating);
+                moviesJSON.add(jsonMovie);
             }
 
             JsonObject resultSet = new JsonObject();
-            resultSet.add("movies", jsonArray);
+            resultSet.add("movies", moviesJSON);
             resultSet.addProperty("resultCount", resultSetCount);
 
             // write JSON string to output
