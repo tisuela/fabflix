@@ -105,10 +105,10 @@ public class MoviesServlet extends HttpServlet {
             String autocomplete = request.getParameter("autocomplete");
             String fulltext = request.getParameter("fulltext");
 
-            if (this.notEmpty(fulltext)){
+            if (this.notEmpty(fulltext) && fulltext.equals("true")){
                 isFulltext = true;
             }
-            if (this.notEmpty(autocomplete)){
+            if (this.notEmpty(autocomplete) && autocomplete.equals("true")){
                 isAutocomplete = true;
             }
 
@@ -130,6 +130,7 @@ public class MoviesServlet extends HttpServlet {
 
             // Iterate through each row of rs
             while (rs.next()) {
+                System.out.println("Looking through moviesServlet result set");
                 resultSetCount++;
                 String movie_id = rs.getString("id");
                 String movie_title = rs.getString("title");
@@ -204,6 +205,7 @@ public class MoviesServlet extends HttpServlet {
                 }
 
                 // Create a JsonObject based on the data we retrieve from rs
+                System.out.println("adding title to json " + movie_title);
                 jsonMovie.addProperty("movie_id", movie_id);
                 jsonMovie.addProperty("movie_title", movie_title);
                 jsonMovie.addProperty("movie_year", movie_year);
