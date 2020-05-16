@@ -1,16 +1,5 @@
 let search_form = $("#search_form");
-
-/**
- * Handle the data returned by LoginServlet
- * @param resultDataString jsonObject
- */
-
-
-/**
- * Submit the form content with POST method
- * @param formSubmitEvent
- */
-
+let autocompleteCachePrefix = "autocompleteCache_";
 
 // --- FORMS --- //
 
@@ -80,15 +69,19 @@ function createCheckoutButton(){
  * data is the JSON data string you get from your Java Servlet
  *
  */
-function handleLookupAjaxSuccess(data, query, doneCallback) {
+function handleLookupAjaxSuccess(data, query, doneCallback, isCached) {
     console.log("lookup ajax successful")
-
     console.log(data)
 
     // Extract the data to be used by the autocomplete library
     let movieData = data["movies"];
 
-    // TODO: if you want to cache the result into a global variable you can do it here
+    // IF this result is not cached already, cache it
+    if (!isCached) {
+        // Cache the result (JSON must be a string to be stored in localStorage)
+        localStorage.setItem(autocompleteCachePrefix + query, JSON.stringify(data));
+        console.log("Cache query result");
+    }
 
     // call the callback function provided by the autocomplete library
     // add "{suggestions: jsonData}" to satisfy the library response format according to
@@ -104,8 +97,9 @@ function handleLookupAjaxSuccess(data, query, doneCallback) {
  * You can redirect to the page you want using the suggestion data.
  */
 function handleSelectSuggestion(suggestion) {
-    // TODO: jump to the specific result page based on the selected suggestion
     console.log("you select " + suggestion["value"] + " with ID " + suggestion["data"]["movie_id"])
+
+    // Redirect to the movie page
     let url = "single-movie.html?id=";
     url += suggestion["data"]["movie_id"];
     window.location.replace(url);
@@ -113,36 +107,11 @@ function handleSelectSuggestion(suggestion) {
 
 
 /*
- * This statement binds the autocomplete library with the input box element and
- *   sets necessary parameters of the library.
- *
- * The library documentation can be find here:
- *   https://github.com/devbridge/jQuery-Autocomplete
- *   https://www.devbridge.com/sourcery/components/jquery-autocomplete/
- *
- */
-// $('#autocomplete') is to find element by the ID "autocomplete"
-$('#autocomplete').autocomplete({
-    // documentation of the lookup function can be found under the "Custom lookup function" section
-    lookup: function (query, doneCallback) {
-        handleLookup(query, doneCallback)
-    },
-    onSelect: function(suggestion) {
-        handleSelectSuggestion(suggestion)
-    },
-    // set delay time
-    deferRequestBy: 300,
-    // there are some other parameters that you might want to use to satisfy all the requirements
-    // TODO: add other parameters, such as minimum characters
-});
-
-
-/*
  * do normal full text search if no suggestion is selected
  */
 function handleNormalSearch(query) {
     console.log("doing normal search with query: " + query);
-    let url = "index.html?title="; // use fulltext here?
+    let url = "index.html?fulltext=true&title="; // use fulltext
     url += query;
     window.location.replace(url);
 }
@@ -160,24 +129,30 @@ function handleLookup(query, doneCallback) {
     console.log("autocomplete initiated")
     console.log("sending AJAX request to backend Java Servlet")
 
-    // TODO: if you want to check past query results first, you can do it here
+    let cachedQuery = localStorage.getItem(autocompleteCachePrefix + query);
+    if (cachedQuery == null) {
+        // sending the HTTP GET request to the Java Servlet endpoint hero-suggestion
+        // with the query data
+        jQuery.ajax({
+            "method": "GET",
+            // generate the request url from the query.
+            // escape the query string to avoid errors caused by special characters
+            "url": "api/autocomplete?title=" + escape(query),
+            "success": function (data) {
+                // pass the data, query, and doneCallback function into the success handler
+                handleLookupAjaxSuccess(data, query, doneCallback, false)
+            },
+            "error": function (errorData) {
+                console.log("lookup ajax error")
+                console.log(errorData)
+            }
+        });
+    }
+    else {
+        console.log("Using cached query");
+        handleLookupAjaxSuccess(JSON.parse(cachedQuery), query, doneCallback, true);
+    }
 
-    // sending the HTTP GET request to the Java Servlet endpoint hero-suggestion
-    // with the query data
-    jQuery.ajax({
-        "method": "GET",
-        // generate the request url from the query.
-        // escape the query string to avoid errors caused by special characters
-        "url": "api/autocomplete?title=" + escape(query),
-        "success": function(data) {
-            // pass the data, query, and doneCallback function into the success handler
-            handleLookupAjaxSuccess(data, query, doneCallback)
-        },
-        "error": function(errorData) {
-            console.log("lookup ajax error")
-            console.log(errorData)
-        }
-    })
 }
 
 
@@ -205,5 +180,31 @@ jQuery.ajax({
     method: "GET", // Setting request method
     url: "api/genres", // Setting request url, which is mapped by GenreServlet
     success: (resultData) => handleGenres(resultData) // Setting callback function to handle data returned successfully by the GenreServlet
+});
+
+
+
+/*
+ * This statement binds the autocomplete library with the input box element and
+ *   sets necessary parameters of the library.
+ *
+ * The library documentation can be find here:
+ *   https://github.com/devbridge/jQuery-Autocomplete
+ *   https://www.devbridge.com/sourcery/components/jquery-autocomplete/
+ *
+ */
+// $('#autocomplete') is to find element by the ID "autocomplete"
+$('#autocomplete').autocomplete({
+    // documentation of the lookup function can be found under the "Custom lookup function" section
+    lookup: function (query, doneCallback) {
+        handleLookup(query, doneCallback)
+    },
+    onSelect: function(suggestion) {
+        handleSelectSuggestion(suggestion)
+    },
+    // set delay time
+    deferRequestBy: 300,
+    // set minimum char to trigger autosuggest
+    minChars: 3
 });
 

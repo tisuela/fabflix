@@ -34,20 +34,17 @@ public class AutocompleteServlet extends HttpServlet {
     }
 
     // Build query for MYSQL from request parameters
-    private MyQuery buildQuery(HttpServletRequest request, Connection dbcon){
+    private MyQuery buildQuery(HttpServletRequest request, Connection dbcon, String title){
         MyQuery query = new MyQuery(dbcon);
         query.addSelectStr("title, year, director, movies_with_rating.id, rating");
 
         // add FROM conditions
         query.addFromTables("movies_with_rating");
 
-        // Get title
-        String title = request.getParameter("title");
-
         // Check what type of search this is
         // query.addSelectStr();  // should be in select statement (later problem lol).... but maybe not?
         query.addWhereConditions("MATCH (%s) AGAINST (? IN BOOLEAN MODE)", "title", title + "*");
-        query.append("LIMIT 15");
+        query.append("LIMIT 10");
 
         // Need this so that the back button for single-movie works. We can change the behavior of this (maybe go to index.html)
         request.getSession().setAttribute("movieState", "main-page.html");
@@ -118,13 +115,17 @@ public class AutocompleteServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         try {
+            // Get title
+            String title = request.getParameter("title");
+
+
             // --- Query execution --- //
 
             // Get a connection from dataSource
             Connection dbcon = dataSource.getConnection();
 
             // Build query
-            MyQuery query = buildQuery(request, dbcon);
+            MyQuery query = buildQuery(request, dbcon, title);
 
             // Perform the query
             ResultSet rs = query.execute();
@@ -135,6 +136,7 @@ public class AutocompleteServlet extends HttpServlet {
 
             // write JSON string to output
             JsonObject resultSet =  doAutoComplete(dbcon, rs);
+            resultSet.addProperty("query", title);
             out.write(resultSet.toString());
 
             // set response status to 200 (OK)
