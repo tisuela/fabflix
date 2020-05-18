@@ -46,7 +46,7 @@ public class ConfirmationServlet  extends HttpServlet {
            HashMap<String, Integer> cart = new HashMap<String, Integer>(user.getCart());
            for(String id: cart.keySet()){
                // Get set
-               MyQuery query = new MyQuery(dbcon, "SELECT * FROM movies JOIN sales ON movies.id = sales.movieId");
+               MyQuery query = new MyQuery(dbcon, "SELECT * FROM movies JOIN sales ON movies.id = sales.movieId JOIN transactions ON saleId = sales.id");
                query.addWhereConditions("%s = ?", "movies.id", id);
                query.addWhereConditions("%s = ?", "transactionId", transactionId);
                ResultSet movieSet = query.execute();

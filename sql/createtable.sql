@@ -70,8 +70,6 @@ CREATE TABLE sales(
 	customerId INT NOT NULL,
 	movieId VARCHAR(10) NOT NULL,
 	saleDate DATE NOT NULL,
-	transactionId VARCHAR(20),
-	quantity INT,
 
 	FOREIGN KEY (customerId) REFERENCES customers(id),
 	FOREIGN KEY (movieId) REFERENCES movies(id)

@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS employees, stars_in_xml, movies_in_xml;
+DROP TABLE IF EXISTS employees, stars_in_xml, movies_in_xml, transactions;
 
 CREATE TABLE employees(
     email VARCHAR(50) NOT NULL,
@@ -22,4 +22,12 @@ CREATE TABLE movies_in_xml(
     FOREIGN KEY (movieId) REFERENCES movies(id),
     PRIMARY KEY (movieId, xmlId)
 
+);
+
+CREATE TABLE transactions(
+    transactionId INT NOT NULL,
+    saleId INT NOT NULL,
+    quantity INT NOT NULL,
+
+    PRIMARY KEY (transactionId, saleId)
 );

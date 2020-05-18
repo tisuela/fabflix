@@ -1,11 +1,12 @@
 -- BEFORE RUNNING DO THIS: set global log_bin_trust_function_creators=1;
-
+set global log_bin_trust_function_creators=1;
 DROP PROCEDURE IF EXISTS add_movie;
 DROP PROCEDURE IF EXISTS add_star;
 DROP PROCEDURE IF EXISTS add_movie_from_XML;
 DROP PROCEDURE IF EXISTS add_genre_from_XML;
 DROP PROCEDURE IF EXISTS add_genre_from_XML_by_movie_xmlId;
 DROP PROCEDURE IF EXISTS naive_add_movie_from_XML;
+DROP PROCEDURE IF EXISTS add_transaction;
 
 DROP FUNCTION IF EXISTS generate_movie_id;
 DROP FUNCTION IF EXISTS generate_star_id;
@@ -213,6 +214,20 @@ BEGIN
         SELECT generate_movie_id() INTO movie_id;
         INSERT INTO movies VALUES (movie_id, title, year, director);
     END IF;
+END $$
+
+
+-- payment / sales / transaction --
+
+-- for making a payment (sale and transaction)
+CREATE PROCEDURE add_transaction(IN customerId INT, IN movieId VARCHAR(10), IN saleDate DATE, IN quantity INT, IN transactionId INT)
+BEGIN
+    DECLARE saleId INT;
+    INSERT INTO sales (sales.customerId, sales.movieId, sales.saleDate) VALUES (customerId, movieId, saleDate);
+    SELECT max(sales.id) INTO saleId FROM sales;
+
+    INSERT INTO transactions (transactions.transactionId, transactions.saleId) VALUES  (transactionId, saleId);
+
 END $$
 
 DELIMITER ;

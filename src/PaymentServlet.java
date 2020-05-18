@@ -99,40 +99,36 @@ public class PaymentServlet  extends HttpServlet {
 
             HashMap<String, Integer> cart = user.getCart();
 
-            MyQuery latestSaleIdQuery = new MyQuery(dbcon, "SELECT * FROM sales ORDER BY sales.id DESC");
-            latestSaleIdQuery.append("LIMIT ?", 3);
-            ResultSet latestSales = latestSaleIdQuery.execute();
-            int latestId = 0;
-            if (latestSales.isBeforeFirst()){
-                latestSales.first();
-                latestId = latestSales.getInt("sales.id");
+            MyQuery maxIdQuery = new MyQuery(dbcon, "SELECT max(id) as maxId FROM sales");
+            ResultSet rs = maxIdQuery.execute();
+            int transactionId = 0;
 
+            // set transaction ID by getting max sales ID
+            if (rs.isBeforeFirst()){
+                rs.first();
+                transactionId = rs.getInt("maxId") + 1;
             }
 
-            // id to be set for this transaction; all the sales made here found via this
-            String transactionId = String.valueOf(latestId + 1);
-
+            // make payment for all movies
             for(String movieId: cart.keySet()){
-
-                PreparedStatement ps = dbcon.prepareStatement("INSERT INTO sales (customerId, movieId, saleDate, quantity, transactionId) VALUES (?, ?, ?, ?, ?)");
+                // records sales & transaction
+                PreparedStatement ps = dbcon.prepareStatement("CALL add_transaction(?, ?, ?, ?, ?)");
                 ps.setInt(1, user.getId());
                 ps.setString(2, movieId);
                 ps.setDate(3, sqlDate);
                 ps.setInt(4, cart.get(movieId));
-                ps.setString(5, transactionId);
+                ps.setInt(5, transactionId);
                 ps.executeUpdate();
                 ps.close();
             }
 
             responseJsonObject.addProperty("transactionId", transactionId);
-            latestSaleIdQuery.close();
             dbcon.close();
 
         } catch (Exception e) {
             e.printStackTrace();
             responseJsonObject.addProperty("message", "Database error");
             responseJsonObject.addProperty("status", "fail");
-
         }
     }
 
