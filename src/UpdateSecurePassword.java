@@ -22,7 +22,7 @@ public class UpdateSecurePassword {
      */
     public static void main(String[] args) throws Exception {
 
-        boolean iWantToEncrypt = true;
+        boolean iWantToEncrypt = false;
 
 
         // if iWantToEncrypt is true, this will be bypassed
