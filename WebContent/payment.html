@@ -6,47 +6,53 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+    <!-- Bootstrap -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- include our own css -->
+    <link rel="stylesheet" href="dark-form.css">
 
     <title>Payment</title>
 </head>
 <body>
 
-<h1>Payment</h1>
-<h3 id="payment_header"></h3>
 
-<form id="payment_form" method="post" action="#">
+<div class="header">
+    <h1>Payment</h1>
+    <h3 id="payment_header"></h3>
+</div>
 
-
-    <label><b>First Name</b></label>
-    <label>
-        <input name="firstName" placeholder="First Name" type="text">
-    </label>
-
-    <label><b>Last Name</b></label>
-    <label>
-        <input name="lastName" placeholder="Last Name" type="text">
-    </label>
-
-    <label><b>Credit Card Number</b></label>
-    <label>
-        <input name="creditCardNumber" placeholder="0000 0000 0000 0000" type="text">
-    </label>
-
-    <label><b>Expiration Date</b></label>
-    <label>
-        <input name="expirationDate" placeholder="Year-Month-Day" type="text">
-    </label>
+<div class="container">
+    <form id="payment_form" method="post" action="#">
 
 
-    <br>
-    <input type="submit" value="Pay">
-</form>
-<div id="payment_error_message"></div>
+        <label>
+            <input name="firstName" placeholder="First Name" type="text">
+        </label>
 
-<br>
+        <label>
+            <input name="lastName" placeholder="Last Name" type="text">
+        </label>
+
+        <label>
+            <input name="creditCardNumber" placeholder="0000 0000 0000 0000" type="text">
+        </label>
+
+        <label>
+            <input name="expirationDate" placeholder="Year-Month-Day" type="text">
+        </label>
+
+
+        <br>
+        <input type="submit" value="Pay">
+    </form>
+    <div id="payment_error_message"></div>
+</div>
 
 
 
@@ -54,9 +60,7 @@
 <!-- include jQuery-->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-<!-- Bootstrap -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
 <!-- include our own JS file -->
 <script src="./payment.js"></script>
 </body>
