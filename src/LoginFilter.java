@@ -35,7 +35,7 @@ public class LoginFilter implements Filter {
         }
 
         // Redirect to login page if the "user" attribute doesn't exist in session
-        if (httpRequest.getSession().getAttribute("user") == null) {
+        if (httpRequest.getSession().getAttribute("user") == null && false) { // remove "&& false" to enable login. got tired of relogging in smh.
             System.out.println("Login filter activated, redirection sent");
             httpResponse.sendRedirect("login.html");
         } else if(this.requiresEmployee(currentURI)) {
