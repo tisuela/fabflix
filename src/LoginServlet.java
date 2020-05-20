@@ -1,4 +1,5 @@
 import com.google.gson.JsonObject;
+import utilities.MyUtils;
 import utilities.User;
 import utilities.VerifyPassword;
 
@@ -18,24 +19,35 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
+        String platform = request.getParameter("platform");
 
         JsonObject responseJsonObject = new JsonObject();
-        String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
-        System.out.println("gRecaptchaResponse=" + gRecaptchaResponse);
 
-        // Verify reCAPTCHA
-        try {
-            RecaptchaVerifyUtils.verify(gRecaptchaResponse);
-        } catch (Exception e) {
-            String failedReCaptcha = "reCaptcha failed. Please try again";
+        // Check if they are logging in on mobile or desktop
+        if (MyUtils.notEmpty(platform) && platform.equals("mobile")){
 
-            responseJsonObject.addProperty("status", "fail");
-            responseJsonObject.addProperty("message", failedReCaptcha);
-            response.getWriter().write(responseJsonObject.toString());
-
-            // return now to prevent API abuse
-            return;
         }
+        // if desktop, do reCaptcha
+        else{
+            String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
+            System.out.println("gRecaptchaResponse=" + gRecaptchaResponse);
+
+            // Verify reCAPTCHA
+            try {
+                RecaptchaVerifyUtils.verify(gRecaptchaResponse);
+            } catch (Exception e) {
+                String failedReCaptcha = "reCaptcha failed. Please try again";
+
+                responseJsonObject.addProperty("status", "fail");
+                responseJsonObject.addProperty("message", failedReCaptcha);
+                response.getWriter().write(responseJsonObject.toString());
+
+                // return now to prevent API abuse
+                return;
+            }
+        }
+
+
 
         // Verify username password
         VerifyPassword verifier = new VerifyPassword();
