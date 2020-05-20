@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- include jQuery-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- Bootstrap -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- include our own css -->
+    <link rel="stylesheet" href="dark-form.css">
+
+    <title>Login to Fablix</title>
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+
+</head>
+<body>
+<h2>Login to Fablix</h2>
+<!-- Set the method to POST to avoid showing the username/password in the URL
+     The default action is disabled to allow your own implementation. -->
+
+<div class="container">
+    <form id="login_form" method="post" action="#">
+
+        <label>
+            <input name="username" placeholder="Enter Username" type="text">
+        </label>
+        <br>
+        <label>
+            <input name="password" placeholder="Enter Password" type="password">
+        </label>
+        <br>
+        <input type="submit" value="Login">
+        <div id="recaptcha" class="g-recaptcha" data-sitekey="6LdyIfIUAAAAAGXzdh5SoUbUfNejnB2srjCa8Eov"></div>
+    </form>
+
+    <div id="login_error_message"></div>
+</div>
+
+<!-- include our own JS file -->
+<script src="./login.js"></script>
+
+</body>
+</html>

@@ -11,6 +11,10 @@ DROP PROCEDURE IF EXISTS add_transaction;
 DROP FUNCTION IF EXISTS generate_movie_id;
 DROP FUNCTION IF EXISTS generate_star_id;
 
+<<<<<<< HEAD
+=======
+SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
+>>>>>>> parent of e568783... Web: Project restructure
 DELIMITER $$
 
 -- Helper functions for creating IDs --
