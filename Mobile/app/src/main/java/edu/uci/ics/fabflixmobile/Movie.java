@@ -26,4 +26,12 @@ public class Movie {
     public short getYear() {
         return year;
     }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getDirector() {
+        return director;
+    }
 }

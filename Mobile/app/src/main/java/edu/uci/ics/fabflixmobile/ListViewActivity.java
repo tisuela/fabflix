@@ -21,6 +21,8 @@ import java.util.ArrayList;
 
 public class ListViewActivity extends Activity {
     private String url = "http://tisuela-tower:8080/fabflix_war/api/";
+
+    // set adapter as class attribute so we can update it later
     private MovieListViewAdapter adapter;
 
 
@@ -32,10 +34,8 @@ public class ListViewActivity extends Activity {
         // Needs to be declared final
         final ArrayList<Movie> movies = new ArrayList<>();
         this.getMovies(movies);
-        movies.add(new Movie("The terminal", (short) 2004));
-        System.out.println("movies length in onCreate = " + movies.size());
-        adapter = new MovieListViewAdapter(movies, this);
 
+        adapter = new MovieListViewAdapter(movies, this);
         ListView listView = findViewById(R.id.list);
         listView.setAdapter(adapter);
 
@@ -64,7 +64,9 @@ public class ListViewActivity extends Activity {
                 try {
                     JSONObject responseJson = new JSONObject(response);
                     parseMoviesJson(responseJson, movies);
-                    System.out.println("movies length in getMovies = " + movies.size());
+
+                    // update adapter once this finishes
+                    adapter.notifyDataSetChanged();
 
                 } catch (JSONException e){
                     Log.d("ListView.error", e.toString());
@@ -103,9 +105,7 @@ public class ListViewActivity extends Activity {
             // Insert into movie object and array
             movies.add(new Movie(id, title, year, director));
         }
-        System.out.println("movies length in parse = " + movies.size());
-        // update adapter
-        adapter.notifyDataSetChanged();
+
     }
 
 
