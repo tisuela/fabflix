@@ -38,7 +38,7 @@ public class Login extends ActionBarActivity {
          * In Android, localhost is the address of the device or the emulator.
          * To connect to your machine, you need to use the below IP address
          * **/
-        url = "http://tisuela-tower:8080/cs122b_spring20_project1_api_example_war/api/";
+        url = "http://tisuela-tower:8080/fabflix_war/api/";
 
         //assign a listener to call a function to handle the user request when clicking a button
         loginButton.setOnClickListener(new View.OnClickListener() {
@@ -60,6 +60,7 @@ public class Login extends ActionBarActivity {
             public void onResponse(String response) {
                 //TODO should parse the json response to redirect to appropriate functions.
                 Log.d("login.success", response);
+
                 //initialize the activity(page)/destination
                 Intent listPage = new Intent(Login.this, ListViewActivity.class);
                 //without starting the activity/page, nothing would happen
