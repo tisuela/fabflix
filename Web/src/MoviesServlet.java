@@ -89,7 +89,11 @@ public class MoviesServlet extends HttpServlet {
         }
         // end code block
 
-        request.getSession().setAttribute("movieState", "index.html?" + url.substring(0, url.length()-1));
+        try {
+            request.getSession().setAttribute("movieState", "index.html?" + url.substring(0, url.length() - 1));
+        } catch (StringIndexOutOfBoundsException e){
+            // ignore when no query is made
+        }
 
         return query;
 
@@ -97,6 +101,7 @@ public class MoviesServlet extends HttpServlet {
 
 
     // run the request for index.html
+    // {"movies": Json array of movies, "resultCount": int count}
     private JsonObject doIndexPage(Connection dbcon, ResultSet rs) throws SQLException {
         int resultSetCount = 0;
 
@@ -115,7 +120,7 @@ public class MoviesServlet extends HttpServlet {
             // movieEntry to be returned
             JsonObject jsonMovie = new JsonObject();
 
-            // utilities.Movie stars and genres will be stored as arrays
+            // Movie stars and genres will be stored as arrays
             JsonArray jsonStars = new JsonArray();
             JsonArray jsonGenres = new JsonArray();
 
@@ -184,6 +189,8 @@ public class MoviesServlet extends HttpServlet {
             jsonMovie.addProperty("movie_rating", movie_rating);
             moviesJSON.add(jsonMovie);
         }
+
+        // {"movies": Json array of movies, "resultCount": int count}
 
         JsonObject resultSet = new JsonObject();
         resultSet.add("movies", moviesJSON);
