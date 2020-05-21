@@ -89,11 +89,9 @@ public class MoviesServlet extends HttpServlet {
         }
         // end code block
 
-        try {
-            request.getSession().setAttribute("movieState", "index.html?" + url.substring(0, url.length() - 1));
-        } catch (StringIndexOutOfBoundsException e){
-            // ignore when no query is made
-        }
+
+        request.getSession().setAttribute("movieState", "index.html?" + url.substring(0, url.length() - 1));
+
 
         return query;
 
