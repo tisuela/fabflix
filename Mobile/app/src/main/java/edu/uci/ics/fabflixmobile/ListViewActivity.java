@@ -39,6 +39,7 @@ public class ListViewActivity extends Activity {
         ListView listView = findViewById(R.id.list);
         listView.setAdapter(adapter);
 
+        // Lead user to single-movies using this listener
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -89,11 +90,14 @@ public class ListViewActivity extends Activity {
 
     // inserts moviesJson into array list of movies
     public void parseMoviesJson(JSONObject moviesJson, ArrayList<Movie> movies) throws JSONException {
-        // movieJSON = {"movies": JSONArray of movies, "resultCount": int count}
+        // moviesJSON = {"movies": JSONArray of movies, "resultCount": int count}
         JSONArray moviesArray = moviesJson.getJSONArray("movies");
 
         // iterate over movies
         for (int i = 0; i < moviesArray.length(); ++i){
+            /* movieJSON = {"movie_title": String, "movie_year": String, "movie_director": String,
+             * "movie_genres": JSONArray of JSONObjects, "movie_stars": JSONArray of JSONObjects}
+             */
             JSONObject movieJson = moviesArray.getJSONObject(i);
 
             // Extract JSON data
@@ -102,8 +106,16 @@ public class ListViewActivity extends Activity {
             Short year = (short) Integer.parseInt(movieJson.getString("movie_year"));
             String director = movieJson.getString("movie_director");
 
+            Movie movie = new Movie(id, title, year, director);
+            JSONArray genresArray = movieJson.getJSONArray("movie_genres");
+            for (int g = 0; g < genresArray.length(); ++g){
+                JSONObject genreJson = genresArray.getJSONObject(g);
+                String genreName = genreJson.getString("genre_name");
+                movie.addGenre(genreName);
+            }
+
             // Insert into movie object and array
-            movies.add(new Movie(id, title, year, director));
+            movies.add(movie);
         }
 
     }
