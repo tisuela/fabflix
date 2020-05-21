@@ -14,6 +14,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,13 +61,28 @@ public class Login extends ActionBarActivity {
         final StringRequest loginRequest = new StringRequest(Request.Method.POST, url + "login", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                //TODO should parse the json response to redirect to appropriate functions.
-                Log.d("login.success", response);
 
-                //initialize the activity(page)/destination
-                Intent listPage = new Intent(Login.this, ListViewActivity.class);
-                //without starting the activity/page, nothing would happen
-                startActivity(listPage);
+                try {
+                    if (isValidLogin(response)) {
+
+                        Log.d("login.success", response);
+
+                        //initialize the activity(page)/destination
+                        Intent listPage = new Intent(Login.this, ListViewActivity.class);
+                        //without starting the activity/page, nothing would happen
+                        startActivity(listPage);
+                    }
+                    // bad credentials
+                    else {
+                        Log.d("login.failed", response);
+                        message.setText("Invalid credentials");
+                    }
+                } catch (JSONException e){
+                    // response is not following expected format
+                    Log.d("login.json.error", response);
+                    message.setText("Database Error");
+                }
+
             }
         },
                 new Response.ErrorListener() {
@@ -72,6 +90,7 @@ public class Login extends ActionBarActivity {
                     public void onErrorResponse(VolleyError error) {
                         // error
                         Log.d("login.error", error.toString());
+                        message.setText("Application Error");
                     }
                 }) {
             @Override
@@ -90,4 +109,17 @@ public class Login extends ActionBarActivity {
         queue.add(loginRequest);
 
     }
+
+
+    // Checks response to see if login is valid
+    private boolean isValidLogin(String response) throws JSONException {
+        boolean isValid = false;
+        JSONObject loginJson = new JSONObject(response);
+
+        String status = loginJson.getString("status");
+        if (status.equals("success")) isValid = true;
+
+        return isValid;
+    }
+
 }
