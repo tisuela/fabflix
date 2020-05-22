@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.Button;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -20,20 +21,24 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class ListViewActivity extends Activity {
-    private String url = "http://tisuela-tower:8080/fabflix_war/api/";
+    private String url = "http://10.0.2.2:8080/fabflix/api/";
 
     // set adapter as class attribute so we can update it later
     private MovieListViewAdapter adapter;
 
+    private int resultCount = -1;
+    private int currentPage = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.listview);
+        Button prevButton = findViewById(R.id.prev);
+        Button nextButton = findViewById(R.id.next);
 
         // Needs to be declared final
         final ArrayList<Movie> movies = new ArrayList<>();
-        this.getMovies(movies);
+        this.getMovies(movies, 1);
 
         adapter = new MovieListViewAdapter(movies, this);
         ListView listView = findViewById(R.id.list);
@@ -48,16 +53,41 @@ public class ListViewActivity extends Activity {
                 Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
             }
         });
+
+        // to do:
+        // button disabling https://www.mysamplecode.com/2011/10/android-enable-disable-button.html
+        // use resultCount to determine if disable or enable next
+        // same with prev but check if currentPage == 1 to disable
+        // use currentPage to also generate the next page # to be called
+        // eg prevButton will have prevPage = currentPage-1;
+        // then call this.getMovies(movies, prevPage);
+
+
+        prevButton.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View view){
+            };
+        });
+
+        nextButton.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View view){
+            }}
+        );
     }
 
     // calls API for movies and inserts into ArrayList
-    public void getMovies(ArrayList<Movie> movies) {
+    public void getMovies(ArrayList<Movie> movies, int page) {
+
+        movies.clear();
 
         // Use the same network queue across our application
         final RequestQueue queue = NetworkManager.sharedManager(this).queue;
 
+        String params = String.format("movies?results=20&pageNum=%d", page);
+
         //request type is POST
-        final StringRequest moviesRequest = new StringRequest(Request.Method.GET, url + "movies", new Response.Listener<String>() {
+        final StringRequest moviesRequest = new StringRequest(Request.Method.GET, url + params, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Log.d("ListView.success", response);
