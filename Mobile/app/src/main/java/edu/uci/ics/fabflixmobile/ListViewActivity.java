@@ -21,7 +21,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class ListViewActivity extends Activity {
-    private String url = "http://10.0.2.2:8080/fabflix/api/";
+    private String url = "http://tisuela-tower:8080/fabflix/api/";
 
     // set adapter as class attribute so we can update it later
     private MovieListViewAdapter adapter;
@@ -38,7 +38,7 @@ public class ListViewActivity extends Activity {
 
         // Needs to be declared final
         final ArrayList<Movie> movies = new ArrayList<>();
-        this.getMovies(movies, 1);
+        this.getMovies(movies, currentPage);
 
         adapter = new MovieListViewAdapter(movies, this);
         ListView listView = findViewById(R.id.list);
@@ -66,12 +66,18 @@ public class ListViewActivity extends Activity {
         prevButton.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view){
+                if (currentPage > 0) {
+                    currentPage--;
+                    getMovies(movies, currentPage);
+                }
             };
         });
 
         nextButton.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view){
+                currentPage++;
+                getMovies(movies, currentPage);
             }}
         );
     }
@@ -95,6 +101,7 @@ public class ListViewActivity extends Activity {
                 try {
                     JSONObject responseJson = new JSONObject(response);
                     parseMoviesJson(responseJson, movies);
+
 
                     // update adapter once this finishes
                     adapter.notifyDataSetChanged();
