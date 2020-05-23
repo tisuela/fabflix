@@ -25,6 +25,10 @@ public class Movie {
         this("", title, year, "");
     }
 
+    public Movie(){
+        this("", "", (short)0, "");
+    }
+
     public void addGenre(String genre){
         this.genres.add(genre);
     }
@@ -59,5 +63,19 @@ public class Movie {
         return result;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setYear(short year) {
+        this.year = year;
+    }
+
+    public void setDirector(String director) {
+        this.director = director;
+    }
 }

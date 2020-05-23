@@ -12,9 +12,13 @@ import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.View;
+import android.widget.Adapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -27,16 +31,19 @@ import java.util.List;
 public class SingleMovieActivity extends AppCompatActivity {
     private final List<Star> stars = new ArrayList<>();
     private final Movie movie = new Movie();
+    private SingleMovieAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.singlemovie);
-        movie.setTitle("supperino"); // test
+
+        adapter = new SingleMovieAdapter(stars);
+        RecyclerView starListView = findViewById(R.id.star_list);
+        starListView.setAdapter(adapter);
+        starListView.setLayoutManager(new LinearLayoutManager(this));
+
         this.getStars(stars, "tt0468569");
-
-
-
 
     }
 
@@ -71,9 +78,11 @@ public class SingleMovieActivity extends AppCompatActivity {
                     parseMovieJson(responseJson);
                     parseStarsJson(responseJson, stars);
 
+                    // now that we have the data, set the header
+                    setHeader();
 
                     // update adapter once this finishes
-                    //this.notifyDataSetChanged();
+                    adapter.notifyDataSetChanged();
 
                 } catch (JSONException e){
                     Log.d("SingleMovie.error", e.toString());
@@ -133,7 +142,6 @@ public class SingleMovieActivity extends AppCompatActivity {
             String year = starJson.getString("star_dob");
 
             Star star = new Star(id, name, year);
-
 
             // Insert into movie object and array
             stars.add(star);

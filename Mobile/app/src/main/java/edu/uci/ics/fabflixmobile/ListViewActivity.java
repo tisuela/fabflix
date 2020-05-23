@@ -55,10 +55,10 @@ public class ListViewActivity extends Activity {
                 Movie movie = movies.get(position);
                 String message = String.format("Clicked on position: %d, title: %s, %d", position, movie.getTitle(), movie.getYear());
                 Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-                //initialize the activity(page)/destination
-                // Intent SingleMoviePage = new Intent(ListViewActivity.this, SingleMovieActivity.class);
+                // initialize the activity(page)/destination
+                Intent SingleMoviePage = new Intent(ListViewActivity.this, SingleMovieActivity.class);
                 //without starting the activity/page, nothing would happen
-                // startActivity(SingleMoviePage);
+                startActivity(SingleMoviePage);
             }
         });
 
