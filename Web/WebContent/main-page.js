@@ -80,7 +80,7 @@ function handleLookupAjaxSuccess(data, query, doneCallback, isCached) {
     if (!isCached) {
         // Cache the result (JSON must be a string to be stored in localStorage)
         localStorage.setItem(autocompleteCachePrefix + query, JSON.stringify(data));
-        console.log("Cache query result");
+        console.log("Caching query result");
     }
 
     // call the callback function provided by the autocomplete library
@@ -131,6 +131,7 @@ function handleLookup(query, doneCallback) {
 
     let cachedQuery = localStorage.getItem(autocompleteCachePrefix + query);
     if (cachedQuery == null) {
+        console.log("No cached query, performing lookup")
         // sending the HTTP GET request to the Java Servlet endpoint hero-suggestion
         // with the query data
         jQuery.ajax({
