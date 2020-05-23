@@ -27,6 +27,9 @@ public class ListViewActivity extends Activity {
     // set adapter as class attribute so we can update it later
     private MovieListViewAdapter adapter;
 
+    // Needs to be declared final
+    final ArrayList<Movie> movies = new ArrayList<>();
+
     private int resultCount;
     private int currentPage;
 
@@ -34,31 +37,33 @@ public class ListViewActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.listview);
-        Button prevButton = findViewById(R.id.prev);
-        Button nextButton = findViewById(R.id.next);
 
         this.currentPage = 1;
         this.resultCount = -1;
 
-        // Needs to be declared final
-        final ArrayList<Movie> movies = new ArrayList<>();
+        // populate list of movies
         this.getMovies(movies, currentPage);
 
-        adapter = new MovieListViewAdapter(movies, this);
         ListView listView = findViewById(R.id.list);
+        adapter = new MovieListViewAdapter(movies, this);
         listView.setAdapter(adapter);
+
+        this.setListListeners(listView);
+
+    }
+
+
+    public void setListListeners(ListView listView){
+        // get buttons
+        Button prevButton = findViewById(R.id.prev);
+        Button nextButton = findViewById(R.id.next);
 
         // Lead user to single-movies using this listener
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Movie movie = movies.get(position);
-                String message = String.format("Clicked on position: %d, title: %s, %d", position, movie.getTitle(), movie.getYear());
-                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-                // initialize the activity(page)/destination
-                Intent SingleMoviePage = new Intent(ListViewActivity.this, SingleMovieActivity.class);
-                //without starting the activity/page, nothing would happen
-                startActivity(SingleMoviePage);
+                openSingleMovieActivity(movie);
             }
         });
 
@@ -87,6 +92,19 @@ public class ListViewActivity extends Activity {
         );
     }
 
+
+
+    public void openSingleMovieActivity(Movie movie) {
+        Bundle bundle = new Bundle();
+        bundle.putString("movieId", movie.getId());
+        Intent intent = new Intent(this, SingleMovieActivity.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
+    }
+
+
+    // --- API calls & JSON parsing --- //
+
     // calls API for movies and inserts into ArrayList
     public void getMovies(ArrayList<Movie> movies, int page) {
 
@@ -106,7 +124,6 @@ public class ListViewActivity extends Activity {
                 try {
                     JSONObject responseJson = new JSONObject(response);
                     parseMoviesJson(responseJson, movies);
-
 
                     // update adapter once this finishes
                     adapter.notifyDataSetChanged();
