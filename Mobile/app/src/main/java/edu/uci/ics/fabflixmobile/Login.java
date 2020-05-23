@@ -1,7 +1,8 @@
 package edu.uci.ics.fabflixmobile;
 
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
+import androidx.appcompat.app.AppCompatActivity;
+// import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -20,7 +21,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Login extends ActionBarActivity {
+public class Login extends AppCompatActivity {
 
     private EditText username;
     private EditText password;
@@ -41,7 +42,7 @@ public class Login extends ActionBarActivity {
          * In Android, localhost is the address of the device or the emulator.
          * To connect to your machine, you need to use the below IP address
          * **/
-        url = "http://tisuela-tower:8080/fabflix/api/";
+        url = Constants.url;
 
         //assign a listener to call a function to handle the user request when clicking a button
         loginButton.setOnClickListener(new View.OnClickListener() {

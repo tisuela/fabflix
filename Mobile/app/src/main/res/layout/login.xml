@@ -10,7 +10,7 @@
             android:layout_width = "wrap_content"
             android:layout_height = "wrap_content"
             android:text = "Fabflix"
-            android:id = "@+id/title"
+            android:id = "@+id/singleMovieTitle"
             android:layout_centerHorizontal = "true"
             android:textColor = "@color/red"
             android:textSize = "35dp" />
@@ -22,7 +22,7 @@
             android:hint = "Username"
             android:focusable = "true"
             android:layout_marginTop = "46dp"
-            android:layout_below = "@+id/title"
+            android:layout_below = "@+id/singleMovieTitle"
             android:layout_alignParentLeft = "true"
             android:layout_alignParentStart = "true"
             android:layout_alignParentRight = "true"

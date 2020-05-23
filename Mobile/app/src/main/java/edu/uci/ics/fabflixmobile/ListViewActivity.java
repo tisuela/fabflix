@@ -1,6 +1,7 @@
 package edu.uci.ics.fabflixmobile;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -21,7 +22,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class ListViewActivity extends Activity {
-    private String url = "http://tisuela-tower:8080/fabflix/api/";
+    private String url = Constants.url;
 
     // set adapter as class attribute so we can update it later
     private MovieListViewAdapter adapter;
@@ -51,6 +52,10 @@ public class ListViewActivity extends Activity {
                 Movie movie = movies.get(position);
                 String message = String.format("Clicked on position: %d, title: %s, %d", position, movie.getTitle(), movie.getYear());
                 Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                //initialize the activity(page)/destination
+                Intent SingleMoviePage = new Intent(ListViewActivity.this, SingleMovieActivity.class);
+                //without starting the activity/page, nothing would happen
+                startActivity(SingleMoviePage);
             }
         });
 

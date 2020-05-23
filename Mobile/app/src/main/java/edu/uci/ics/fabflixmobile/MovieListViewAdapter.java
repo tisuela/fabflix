@@ -1,8 +1,9 @@
 package edu.uci.ics.fabflixmobile;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +27,7 @@ public class MovieListViewAdapter extends ArrayAdapter<Movie> {
 
         Movie movie = movies.get(position);
 
-        TextView titleView = view.findViewById(R.id.title);
+        TextView titleView = view.findViewById(R.id.singleMovieTitle);
         TextView yearView = view.findViewById(R.id.year);
         TextView directorView = view.findViewById(R.id.director);
         TextView genreView = view.findViewById(R.id.genres);
