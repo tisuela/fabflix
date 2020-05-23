@@ -22,13 +22,13 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class ListViewActivity extends Activity {
-    private String url = Constants.url;
+    private String url = Constants.localUrl;
 
     // set adapter as class attribute so we can update it later
     private MovieListViewAdapter adapter;
 
-    private int resultCount = -1;
-    private int currentPage = 1;
+    private int resultCount;
+    private int currentPage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +36,9 @@ public class ListViewActivity extends Activity {
         setContentView(R.layout.listview);
         Button prevButton = findViewById(R.id.prev);
         Button nextButton = findViewById(R.id.next);
+
+        this.currentPage = 1;
+        this.resultCount = -1;
 
         // Needs to be declared final
         final ArrayList<Movie> movies = new ArrayList<>();
@@ -53,27 +56,21 @@ public class ListViewActivity extends Activity {
                 String message = String.format("Clicked on position: %d, title: %s, %d", position, movie.getTitle(), movie.getYear());
                 Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
                 //initialize the activity(page)/destination
-                Intent SingleMoviePage = new Intent(ListViewActivity.this, SingleMovieActivity.class);
+                // Intent SingleMoviePage = new Intent(ListViewActivity.this, SingleMovieActivity.class);
                 //without starting the activity/page, nothing would happen
-                startActivity(SingleMoviePage);
+                // startActivity(SingleMoviePage);
             }
         });
-
-        // to do:
-        // button disabling https://www.mysamplecode.com/2011/10/android-enable-disable-button.html
-        // use resultCount to determine if disable or enable next
-        // same with prev but check if currentPage == 1 to disable
-        // use currentPage to also generate the next page # to be called
-        // eg prevButton will have prevPage = currentPage-1;
-        // then call this.getMovies(movies, prevPage);
-
 
         prevButton.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view){
-                if (currentPage > 0) {
-                    currentPage--;
-                    getMovies(movies, currentPage);
+                if (currentPage > 1) {
+                    int previousPage = currentPage - 1;
+                    if(previousPage > 0) {
+                        currentPage = previousPage;
+                        getMovies(movies, previousPage);
+                    }
                 }
             };
         });
@@ -81,8 +78,11 @@ public class ListViewActivity extends Activity {
         nextButton.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view){
-                currentPage++;
-                getMovies(movies, currentPage);
+                int nextPage = currentPage + 1;
+                if(resultCount == 20) {
+                    currentPage = nextPage;
+                    getMovies(movies, nextPage);
+                }
             }}
         );
     }
@@ -95,7 +95,7 @@ public class ListViewActivity extends Activity {
         // Use the same network queue across our application
         final RequestQueue queue = NetworkManager.sharedManager(this).queue;
 
-        String params = String.format("movies?results=20&pageNum=%d", page);
+        String params = String.format("movies?title=term&results=20&pageNum=%d", page);
 
         //request type is POST
         final StringRequest moviesRequest = new StringRequest(Request.Method.GET, url + params, new Response.Listener<String>() {
@@ -134,6 +134,7 @@ public class ListViewActivity extends Activity {
     public void parseMoviesJson(JSONObject moviesJson, ArrayList<Movie> movies) throws JSONException {
         // moviesJSON = {"movies": JSONArray of movies, "resultCount": int count}
         JSONArray moviesArray = moviesJson.getJSONArray("movies");
+        resultCount = moviesJson.getInt("resultCount");
 
         // iterate over movies
         for (int i = 0; i < moviesArray.length(); ++i){
