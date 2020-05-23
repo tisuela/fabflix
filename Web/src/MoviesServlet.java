@@ -62,7 +62,7 @@ public class MoviesServlet extends HttpServlet {
 
         // Check what type of search this is
         if (isFulltext && this.notEmpty(title)){
-            query.addWhereConditions("MATCH (%s) AGAINST (?)", "title", title + "*");
+            query.addWhereConditions("MATCH (%s) AGAINST (? IN BOOLEAN MODE)", "title", "+" + title + "*");
         }
         else {
             query.addParameters(request.getParameterMap());

@@ -43,7 +43,7 @@ public class AutocompleteServlet extends HttpServlet {
 
         // Check what type of search this is
         // query.addSelectStr();  // should be in select statement (later problem lol).... but maybe not?
-        query.addWhereConditions("MATCH (%s) AGAINST (? IN BOOLEAN MODE)", "title", title + "*");
+        query.addWhereConditions("MATCH (%s) AGAINST (? IN BOOLEAN MODE)", "title", "+" + title + "*");
         query.append("LIMIT 10");
 
         // Need this so that the back button for single-movie works. We can change the behavior of this (maybe go to index.html)
