@@ -35,6 +35,9 @@ import java.util.List;
 public class SingleMovieActivity extends AppCompatActivity {
     private final List<Star> stars = new ArrayList<>();
     private final Movie movie = new Movie();
+
+    // the saved search input to go back to ListViewActivity
+    private String searchInput;
     private SingleMovieAdapter adapter;
 
     @Override
@@ -46,6 +49,7 @@ public class SingleMovieActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         String movieId = bundle.getString("movieId");
+        searchInput = bundle.getString("searchInput");
         this.movie.setId(movieId);
 
         RecyclerView starListView = findViewById(R.id.star_list);
@@ -103,20 +107,20 @@ public class SingleMovieActivity extends AppCompatActivity {
 
     // goes back to search activity
     public void openSearchActivity(){
-        //TODO implement SearchActivity
+        //initialize the activity(page)/destination
+        Intent searchPage = new Intent(SingleMovieActivity.this, SearchActivity.class);
+        //without starting the activity/page, nothing would happen
+        startActivity(searchPage);
     }
 
     // goes back to ListViewActivity (movie list)
     public void openListViewActivity(){
 
-        /* TODO bundle saved query
-         (which we still need to implement)
+
         Bundle bundle = new Bundle();
-        bundle.putString("query", query);
+        bundle.putString("searchInput", searchInput);
         Intent intent = new Intent(this, ListViewActivity.class);
         intent.putExtras(bundle);
-         */
-        Intent intent = new Intent(this, ListViewActivity.class);
         startActivity(intent);
     }
 

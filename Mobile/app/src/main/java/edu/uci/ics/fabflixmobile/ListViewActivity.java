@@ -102,6 +102,7 @@ public class ListViewActivity extends Activity {
     public void openSingleMovieActivity(Movie movie) {
         Bundle bundle = new Bundle();
         bundle.putString("movieId", movie.getId());
+        bundle.putString("searchInput", searchInput);
         Intent intent = new Intent(this, SingleMovieActivity.class);
         intent.putExtras(bundle);
         startActivity(intent);
