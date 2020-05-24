@@ -27,7 +27,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ListViewActivity" /> <!-- By default Android supports only HTTPS connection. To enable HTTP, the below line is needed -->
+        <activity android:name=".ListViewActivity" />
+        <activity android:name=".SearchActivity"/>
+        <!-- By default Android supports only HTTPS connection. To enable HTTP, the below line is needed -->
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
