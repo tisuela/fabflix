@@ -29,7 +29,7 @@
             android:text="Search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/login"
+            android:id="@+id/searchButton"
             android:layout_below="@+id/searchBox"
             android:layout_centerHorizontal="true"/>
 
