@@ -32,17 +32,22 @@ public class ListViewActivity extends Activity {
 
     private int resultCount;
     private int currentPage;
+    private String searchInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.listview);
 
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        this.searchInput = bundle.getString("searchInput");
+
         this.currentPage = 1;
         this.resultCount = -1;
 
         // populate list of movies
-        this.getMovies(movies, currentPage);
+        this.getMovies(movies, searchInput, currentPage);
 
         ListView listView = findViewById(R.id.list);
         adapter = new MovieListViewAdapter(movies, this);
@@ -74,7 +79,7 @@ public class ListViewActivity extends Activity {
                     int previousPage = currentPage - 1;
                     if(previousPage > 0) {
                         currentPage = previousPage;
-                        getMovies(movies, previousPage);
+                        getMovies(movies, searchInput, previousPage);
                     }
                 }
             };
@@ -86,7 +91,7 @@ public class ListViewActivity extends Activity {
                 int nextPage = currentPage + 1;
                 if(resultCount == 20) {
                     currentPage = nextPage;
-                    getMovies(movies, nextPage);
+                    getMovies(movies, searchInput, nextPage);
                 }
             }}
         );
@@ -106,14 +111,14 @@ public class ListViewActivity extends Activity {
     // --- API calls & JSON parsing --- //
 
     // calls API for movies and inserts into ArrayList
-    public void getMovies(ArrayList<Movie> movies, int page) {
+    public void getMovies(ArrayList<Movie> movies, String input, int page) {
 
         movies.clear();
 
         // Use the same network queue across our application
         final RequestQueue queue = NetworkManager.sharedManager(this).queue;
 
-        String params = String.format("movies?title=term&results=20&pageNum=%d", page);
+        String params = String.format("movies?fulltext=true&title=%1$s&results=20&pageNum=%2$d", input, page);
 
         //request type is POST
         final StringRequest moviesRequest = new StringRequest(Request.Method.GET, url + params, new Response.Listener<String>() {
