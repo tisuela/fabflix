@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android = "http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height = "match_parent">
+    <TextView
+            android:layout_width = "wrap_content"
+            android:layout_height = "wrap_content"
+            android:text = "Fabflix Search"
+            android:id = "@+id/searchTitle"
+            android:layout_centerHorizontal = "true"
+            android:textColor = "@color/red"
+            android:textSize = "35sp" />
+
+    <EditText
+            android:layout_width = "wrap_content"
+            android:layout_height = "wrap_content"
+            android:id = "@+id/searchBox"
+            android:hint = "Enter Title Here"
+            android:gravity="center_horizontal"
+            android:focusable = "true"
+            android:layout_marginTop = "46dp"
+            android:layout_below = "@+id/searchTitle"
+            android:layout_alignParentLeft = "true"
+            android:layout_alignParentStart = "true"
+            android:layout_alignParentRight = "true"
+            android:layout_alignParentEnd = "true" />
+
+    <Button
+            android:text="Search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/login"
+            android:layout_below="@+id/searchBox"
+            android:layout_centerHorizontal="true"/>
+
+</RelativeLayout>
