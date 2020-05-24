@@ -24,16 +24,18 @@
 </head>
 <body>
 
-
-<h1>Movies</h1>
-<h2><a href="main-page.html">Back to Home</a></h2>
-<br>
-<h1 id = 'browse-categories'></h1>
-<br>
+<div class="header">
+  <h1>Movies</h1>
+  <h2><a href="main-page.html">Back to Home</a></h2>
+  <br>
+  <h1 id = 'browse-categories'></h1>
+  </div>
 <h1 id = 'sorting-buttons'> Sort By: </h1>
 <h1 id = "checkout-button"> </h1>
+  
+  <label for="Count">Results Per Page:</label>
 
-<label for="Count">Results Per Page:</label>
+
 <select id="Count" onChange="changedRPP()">
     <option selected="selected">Value</option>
     <option value=10>10</option>

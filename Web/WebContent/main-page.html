@@ -23,7 +23,9 @@
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
     <!-- include our own css -->
+    <link rel="stylesheet" href="dark-form.css">
     <link rel="stylesheet" href="dark-search.css">
+
 
 
 
@@ -31,24 +33,21 @@
 </head>
 <body>
 
-    <h1>Home</h1>
+    <div class="header">
+        <h1>Home</h1>
+        <div id="checkout-button"></div>
+    </div>
 
-    <div id="checkout-button"></div>
 
-    <h3>Search</h3>
     <div class="container">
-
         <input type="text" name="title" id="autocomplete"
                class="autocomplete-searchbox form-control"
                placeholder="Search Movies"/>
     </div>
 
-    <h3>Advanced Search</h3>
+    <br>
+    <br>
     <div class="container">
-
-        <br>
-        <br>
-
         <form id="search_form" method="post" class= "search-form" action="#">
 
 
@@ -59,21 +58,20 @@
             <label>
                 <input name="year" placeholder="Movie Year" type="text">
             </label>
-
+            <br>
             <label>
                 <input name="director" placeholder="Director's name" type="text">
             </label>
 
-
             <label>
                 <input name="starName" placeholder="Star's name" type="text">
             </label>
-
-
             <br>
             <input type="submit" value="Search">
         </form>
     </div>
+    <br>
+    <br>
     <br>
 
     <div class="container">

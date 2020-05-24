@@ -4,8 +4,19 @@ form input[type=text] {
     background-color: #161422;
     border: transparent;
     border: 8px solid #161422;
+    margin: 8px;
     color: white;
 }
+
+.header {
+
+  padding: 60px;
+  text-align: center;
+  background: black;
+  color: white;
+  font-size: 30px; 
+  margin-bottom: 1%;
+  }
 
 
 
@@ -25,6 +36,7 @@ input[type=submit]{
     border: 2px solid #ffb667; /* Border thickness, line style, and color */
     border-radius: 5px; /* Adds curve to border corners */
     text-transform: uppercase; /* Make letters uppercase */
+    width: 20%;
 
 }
 
@@ -32,7 +44,7 @@ input[type=submit]:hover{
     color: #fffb00;
 }
 
-a {
-    color: #ffb667;
-}
-
+.container{
+           text-align: center;
+           
+           }

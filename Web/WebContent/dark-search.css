@@ -1,41 +1,6 @@
 
+/* Used by main-page, where our search bar is */
 
-form input[type=text] {
-    background-color: #161422;
-    border: transparent;
-    border: 8px solid #161422;
-    color: white;
-}
-
-
-
-html, body {
-    height: 100%;
-    width: 100%;
-    margin: 0;
-    background-color: #222222;
-    color: white;
-}
-
-h3 {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-h4 {
-    margin: 15px;
-}
-
-label {
-    width: 30%;
-    margin: 8px 0;
-    box-sizing: border-box;
-    color: white;
-}
-
-
-input[type=submit],
 input[type=button]{
 
     color: #ffb667; /* Text color */
@@ -46,7 +11,6 @@ input[type=button]{
 
 }
 
-input[type=submit]:hover,
 input[type=button]:hover,
 a:hover {
     color: #fffb00;
@@ -66,18 +30,14 @@ a {
 
 
 
-.container {
-    height: 20%;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+
 
 .autocomplete-searchbox {
     height: 50px;
     width: 600px;
     background-color: #161422;
+    align-items: center;
+  
 }
 
 .autocomplete-searchbox:focus {
