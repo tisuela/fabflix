@@ -76,7 +76,14 @@ public class SingleMovieActivity extends AppCompatActivity {
      */
     private void setHeader(){
         TextView movieTitle = findViewById(R.id.single_movie_title);
+        TextView movieYear = findViewById(R.id.single_movie_year);
+        TextView movieDirector = findViewById(R.id.single_movie_director);
+        TextView movieGenres = findViewById(R.id.single_movie_genres);
+
         movieTitle.setText(movie.getTitle());
+        movieYear.setText("Released " + movie.getYear());
+        movieDirector.setText("Directed by " + movie.getDirector());
+        movieGenres.setText(movie.getGenresStr());
     }
 
 

@@ -173,11 +173,21 @@ public class ListViewActivity extends Activity {
             String director = movieJson.getString("movie_director");
 
             Movie movie = new Movie(id, title, year, director);
+
+            // get genres
             JSONArray genresArray = movieJson.getJSONArray("movie_genres");
             for (int g = 0; g < genresArray.length(); ++g){
                 JSONObject genreJson = genresArray.getJSONObject(g);
                 String genreName = genreJson.getString("genre_name");
                 movie.addGenre(genreName);
+            }
+
+            // get stars
+            JSONArray starsArray = movieJson.getJSONArray("movie_stars");
+            for (int g = 0; g < starsArray.length(); ++g){
+                JSONObject starJson = starsArray.getJSONObject(g);
+                String starName = starJson.getString("star_name");
+                movie.addStar(starName);
             }
 
             // Insert into movie object and array

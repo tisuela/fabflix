@@ -11,6 +11,7 @@ public class Movie {
     private short year;
     private String director;
     private List<String> genres;
+    private List<String> stars;
 
 
     public Movie (String id, String title, short year, String director){
@@ -19,6 +20,7 @@ public class Movie {
         this.year = year;
         this.director = director;
         genres = new ArrayList<String>();
+        stars = new ArrayList<String>();
     }
 
     public Movie(String title, short year) {
@@ -31,6 +33,10 @@ public class Movie {
 
     public void addGenre(String genre){
         this.genres.add(genre);
+    }
+
+    public void addStar(String star){
+        this.stars.add(star);
     }
 
 
@@ -62,6 +68,17 @@ public class Movie {
         }
         return result;
     }
+
+
+    // return stars as one String
+    public String getStarsStr(){
+        String result = "";
+        for (String star: stars){
+            result += star + " ";
+        }
+        return result;
+    }
+
 
     public void setId(String id) {
         this.id = id;
