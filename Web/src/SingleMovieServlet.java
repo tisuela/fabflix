@@ -27,6 +27,15 @@ public class SingleMovieServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
+
+	/* JSON output:
+	 * jsonObject = {
+	 * 			"movie_title": str,
+	 * 			"movie_year": str,
+	 * 			"movie_director": str,
+	 * 			"movie_id": str, "movie_stars": {
+	 * 				
+	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 

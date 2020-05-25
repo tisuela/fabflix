@@ -262,7 +262,7 @@ public class BuildQuery {
 
 
     // adds ordering/sorting parameters to query
-    private void addOrdering(Map<String,String[]> parameters){
+    public void addOrdering(Map<String,String[]> parameters){
         // By default, we will have things in order of Rating Descending, Title Ascending
         String ordering1 = "rating";
         String sorting1  = "DESC";

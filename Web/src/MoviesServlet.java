@@ -68,8 +68,10 @@ public class MoviesServlet extends HttpServlet {
             for(String keyword: keywords){
                 keywordQuery += "+" + keyword + "*" + " ";
             }
-
             query.addWhereConditions("MATCH (%s) AGAINST (? IN BOOLEAN MODE)", "title", keywordQuery);
+
+            // add sorting, offset, and result limit
+            query.addOrdering(request.getParameterMap());
         }
         else {
             query.addParameters(request.getParameterMap());
@@ -211,6 +213,9 @@ public class MoviesServlet extends HttpServlet {
 
         // Output stream to STDOUT
         PrintWriter out = response.getWriter();
+
+        // RESET boolean flags
+        isFulltext = false;
 
         try {
             // Check parameters for the type of search this is

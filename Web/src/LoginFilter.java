@@ -69,6 +69,8 @@ public class LoginFilter implements Filter {
     public void init(FilterConfig fConfig) {
         allowedURIs.add("login.html");
         allowedURIs.add("login.js");
+        allowedURIs.add("dark-form.css");
+        allowedURIs.add("recaptcha.css");
         allowedURIs.add("api/login");
         protectedURIs.add("_dashboard.html");
         protectedURIs.add("dashboard.js");
