@@ -8,22 +8,15 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.View;
-import android.widget.Adapter;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -144,7 +137,7 @@ public class SingleMovieActivity extends AppCompatActivity {
         String params = String.format("single-movie?id=%s", movieId);
 
         //request type is POST
-        final StringRequest starsRequest = new StringRequest(Request.Method.GET, Constants.localUrl + params, new Response.Listener<String>() {
+        final StringRequest starsRequest = new StringRequest(Request.Method.GET, Constants.url + params, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Log.d("SingleMovie.success", response);

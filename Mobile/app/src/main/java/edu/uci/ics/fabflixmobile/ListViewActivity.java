@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 import android.widget.Button;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -22,7 +21,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class ListViewActivity extends Activity {
-    private String url = Constants.localUrl;
+    private String url = Constants.url;
 
     // set adapter as class attribute so we can update it later
     private MovieListViewAdapter adapter;
