@@ -6,3 +6,4 @@
 stanford-movies/
 src/*.txt
 *.txt
+target
