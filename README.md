@@ -1,4 +1,4 @@
-## CS 122B Project 3
+## CS 122B Project 4
 
 By:
 Nathaniel Louis Crisostomo Tisuela 
@@ -11,6 +11,8 @@ project 1 demo: https://www.youtube.com/watch?v=5nVmqSMmUgQ
 project 2 demo: https://youtu.be/iyrqFT7_ZKA
 
 project 3 demo: https://www.youtube.com/watch?v=rOGeSoHD6IM&feature=youtu.be
+
+project 4 demo: https://www.youtube.com/watch?v=UFR_u9AHc3c
 
 ## Deployment
 
@@ -29,43 +31,17 @@ the database you wish to encrypt.
 No technologies were used beyond the ones supported by the class
 (CSS, JS, Java, HTML)
 
-## PreparedStatements
-
-    Used in:
-    utilities.MyQuery (module by us) - https://github.com/UCI-Chenli-teaching/cs122b-spring20-team-99/blob/master/src/utilities.MyQuery.java
-    SingleMovieServlet     - https://github.com/UCI-Chenli-teaching/cs122b-spring20-team-99/blob/master/src/SingleMovieServlet.java
-    SingleStarServlet      - https://github.com/UCI-Chenli-teaching/cs122b-spring20-team-99/blob/master/src/SingleStarServlet.java
-    
-
-## XML Optimization Strategies
-    
-    Naive implementations took over 30 minutes in totality
-    Files are: NaiveSAXParser....java 
-    
-    I implemented batch inserts using stored procedures (in stored-procedure.sql) for ParseMoviesBatch.java. For that single file, it took 5 minutes. The naive implementation (NaiveSaxParserMovies.java) took about ten minutes.
-    
-    Lastly I implemented LOAD DATA statements (ParseActors.java, ParseMovies.java, ParseAll.java). Exact performance (nanoseconds) is in the video (when I display the inconsistency report). This improvement cut it down to about 5 seconds. 
-
-
-## Inconsistency Report
-The inconsistency report was printed out on the video.
-
-Timestamp:  11:23 https://youtu.be/rOGeSoHD6IM?t=683
-
 ## Contributions
 Nathaniel:
 
-    prepared statements
-    stored procedures
-    xml parsing
-    HTTPS
-    recaptcha
+    autocomplete front end
+    implementation of Movie list view
+    single movie page and activity
 
 Garfield:
 
-    dashboard metadata tables and styling
-    employee login page
-    access to dashboard for employees only
-    
-    password encryption and verifcation for both customers and employees database
+    autocomplete back end
+    pagination on Movie list view
+    search page and activity
+
 
