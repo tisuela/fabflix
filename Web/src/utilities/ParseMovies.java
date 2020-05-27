@@ -41,7 +41,7 @@ public class ParseMovies extends DefaultHandler {
 
     public ParseMovies() {
         try {
-            dbcon = MyUtils.getConnection();
+            dbcon = MyUtils.getConnectionNoPool();
 
             this.setMaxId();
             this.currentId = maxId;

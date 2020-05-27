@@ -5,6 +5,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
 // for commonly used functions
@@ -38,6 +39,17 @@ public class MyUtils {
         if (dbcon == null)
             System.out.println("getConnection: dbcon is null.");
 
+        return dbcon;
+    }
+
+
+    public static Connection getConnectionNoPool() throws SQLException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+        String loginUser = "mytestuser";
+        String loginPasswd = "mypassword";
+        String loginUrl = "jdbc:mysql://localhost:3306/moviedb?AllowLoadLocalInfile=true";
+
+        Class.forName("com.mysql.jdbc.Driver").newInstance();
+        Connection dbcon = DriverManager.getConnection(loginUrl, loginUser, loginPasswd);
         return dbcon;
     }
 }

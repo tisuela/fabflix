@@ -39,7 +39,7 @@ public class UpdateSecurePassword {
         String primaryKey = (database.equals("customers")) ? "id" : "email";
 
 
-        Connection connection = MyUtils.getConnection();
+        Connection connection = MyUtils.getConnectionNoPool();
         Statement statement = connection.createStatement();
 
         // change the "database" table password column from VARCHAR(20) to VARCHAR(128)

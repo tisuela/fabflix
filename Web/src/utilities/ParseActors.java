@@ -27,7 +27,7 @@ public class ParseActors extends DefaultHandler {
 
     public ParseActors(){
         try {
-            dbcon = MyUtils.getConnection();
+            dbcon = MyUtils.getConnectionNoPool();
 
             this.setMaxId();
             this.currentId = maxId;

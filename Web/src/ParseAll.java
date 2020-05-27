@@ -3,6 +3,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 import utilities.*;
 
+import javax.naming.Context;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
@@ -31,9 +32,12 @@ public class ParseAll extends DefaultHandler {
     WriteData writeStarsInMoviesData;
 
 
+
+
     public ParseAll(){
         try {
-            dbcon = MyUtils.getConnection();
+
+            dbcon = MyUtils.getConnectionNoPool();
 
 
             // run the two other parsers
