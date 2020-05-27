@@ -1,5 +1,6 @@
 import org.jasypt.util.password.PasswordEncryptor;
 import org.jasypt.util.password.StrongPasswordEncryptor;
+import utilities.MyUtils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -37,12 +38,8 @@ public class UpdateSecurePassword {
         String database = "customers";
         String primaryKey = (database.equals("customers")) ? "id" : "email";
 
-        String loginUser = "mytestuser";
-        String loginPasswd = "mypassword";
-        String loginUrl = "jdbc:mysql://localhost:3306/moviedb";
 
-        Class.forName("com.mysql.jdbc.Driver").newInstance();
-        Connection connection = DriverManager.getConnection(loginUrl, loginUser, loginPasswd);
+        Connection connection = MyUtils.getConnection();
         Statement statement = connection.createStatement();
 
         // change the "database" table password column from VARCHAR(20) to VARCHAR(128)

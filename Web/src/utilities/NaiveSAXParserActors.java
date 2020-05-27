@@ -1,77 +1,36 @@
+package utilities;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-import utilities.MyQuery;
-import utilities.Star;
-import utilities.WriteData;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
-import java.sql.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
-public class ParseActors extends DefaultHandler {
+public class NaiveSAXParserActors extends DefaultHandler {
 
     private Connection dbcon;
 
     private Star star;
     String tempVal;
 
-    String maxId;
-    String currentId;
-
-    private WriteData writeData;
-
-    private Map<String, Star> stars;
-
-    public ParseActors(){
+    public NaiveSAXParserActors(){
         try {
             String loginUser = "mytestuser";
             String loginPasswd = "mypassword";
-            String loginUrl = "jdbc:mysql://localhost:3306/moviedb?AllowLoadLocalInfile=true";
+            String loginUrl = "jdbc:mysql://localhost:3306/moviedb";
 
             Class.forName("com.mysql.jdbc.Driver").newInstance();
             dbcon = DriverManager.getConnection(loginUrl, loginUser, loginPasswd);
-            //dbcon.setAllowLoadLocalInfile(true);
-            this.setMaxId();
-            this.currentId = maxId;
-            writeData = new WriteData("stars.txt");
-
-            stars = new HashMap<>();
-
-
         } catch (Exception e){
             e.printStackTrace();
         }
     }
-
-    // --- generating new IDs --- //
-
-    private void setMaxId(){
-        try {
-            MyQuery query = new MyQuery(dbcon, "SELECT max(id) FROM stars");
-            ResultSet rs = query.execute();
-            rs.first();
-            this.maxId = rs.getString("max(id)");
-
-        } catch (SQLException e){
-            e.printStackTrace();
-        }
-    }
-
-    private String getNextId(){
-        String prefix = this.currentId.substring(0,2);
-        String suffix = this.currentId.substring(2);
-        int suffixInt = Integer.parseInt(suffix);
-        String newSuffix = String.valueOf(++suffixInt);
-        this.currentId = prefix + newSuffix;
-        return this.currentId;
-    }
-
-
-    // --- running the parser --- //
 
 
     public void run() {
@@ -79,10 +38,6 @@ public class ParseActors extends DefaultHandler {
         String stats = String.format("Valid: %d | Invalid: %d | Total %d",
                 star.getNumOfValidStars(), star.getNumOfInvalidStars(), star.getNumOfStars());
         System.out.println(stats);
-        writeData.close();
-
-        // after everything is done, load data
-        this.loadData();
     }
 
 
@@ -110,18 +65,27 @@ public class ParseActors extends DefaultHandler {
 
     private void insertStar(Star star){
         try {
-            this.getNextId();
+            MyQuery starQuery = new MyQuery(dbcon, "SELECT * FROM stars");
+            starQuery.append("WHERE stars.name = ?", star.getName());
+            starQuery.execute();
 
-            star.setId(this.currentId);
-            writeData.addField(star.getId());
-            writeData.addField(star.getName());
-            writeData.addField(String.valueOf(star.getBirthYear()));
-            writeData.newLine();
+            // Add if this is a new star
+            if (!starQuery.exists()){
+                String insertStarStr = "CALL add_star(?, ?)";
+                PreparedStatement insertStarStatement = dbcon.prepareStatement(insertStarStr);
 
-            stars.put(star.getName(), star);
+                insertStarStatement.setString(1, star.getName());
 
-
-        } catch (Exception e){
+                if (star.getBirthYear() > 0){
+                    insertStarStatement.setInt(2, star.getBirthYear());
+                }
+                else {
+                    insertStarStatement.setNull(2, java.sql.Types.INTEGER);
+                }
+                insertStarStatement.execute();
+                insertStarStatement.close();
+            }
+        } catch (SQLException e){
             e.printStackTrace();
         }
     }
@@ -151,10 +115,10 @@ public class ParseActors extends DefaultHandler {
         if (qName.equalsIgnoreCase("actor")) {
             if (this.star.isValid()) {
                 insertStar(star);
-                //System.out.println(this.star + "\n");
+                System.out.println(this.star + "\n");
             }
             else{
-                //System.out.println(this.star.getInvalidLog() + "\n");
+                System.out.println(this.star.getInvalidLog() + "\n");
             }
         }
         else if (qName.equalsIgnoreCase("stagename")) {
@@ -172,39 +136,11 @@ public class ParseActors extends DefaultHandler {
     }
 
 
-    // --- loading the data from file --- //
-
-    private void loadData(){
-        try {
-            String loadStr = "LOAD DATA LOCAL INFILE '" + writeData.getFileName() + "'" +
-                    " INTO TABLE stars" +
-                    " FIELDS TERMINATED BY '" + writeData.getFieldTerminator() + "'" +
-                    " LINES TERMINATED BY '\\n'";
-
-            System.out.println(loadStr);
-
-            Statement loadStatement = dbcon.createStatement();
-            loadStatement.execute(loadStr);
-            loadStatement.close();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public Map<String, Star> getStars() {
-        return stars;
-    }
-
-
-
-
-
-
-
     public static void main(String[] args) {
-        ParseActors test = new ParseActors();
+        NaiveSAXParserActors test = new NaiveSAXParserActors();
         test.run();
     }
+
+
 
 }

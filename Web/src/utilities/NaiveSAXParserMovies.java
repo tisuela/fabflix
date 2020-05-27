@@ -1,32 +1,30 @@
+package utilities;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-import utilities.Movie;
-import utilities.MyQuery;
 
+import javax.annotation.Resource;
+import javax.sql.DataSource;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.sql.*;
 
-public class ParseMoviesBatch extends DefaultHandler {
-    private Connection dbcon;
-    private int numOfSuccess;
-    private int numOfFails;
-    private int numTotal;
-    private int batch = 100;
-    private int numMovieInserts = 0;
+public class NaiveSAXParserMovies extends DefaultHandler {
+
+    @Resource(name = "jdbc/moviedb")
+    private DataSource dataSource;
+    private Connection dbcon = null;
 
     private String currentDirector;
     private String tempVal;
     private Movie movie;
 
-    private PreparedStatement insertMovieStatement;
-    private  PreparedStatement insertGenreStatement;
-    private int[] newMovies = null;
 
 
-    public ParseMoviesBatch() {
+
+    public NaiveSAXParserMovies() {
         try {
             String loginUser = "mytestuser";
             String loginPasswd = "mypassword";
@@ -34,16 +32,6 @@ public class ParseMoviesBatch extends DefaultHandler {
 
             Class.forName("com.mysql.jdbc.Driver").newInstance();
             dbcon = DriverManager.getConnection(loginUrl, loginUser, loginPasswd);
-
-            // prepare batch insert statements
-            dbcon.setAutoCommit(false);
-
-            String insertMovieStr = "CALL add_movie_from_XML(?, ?, ?, ?)";
-            String insertGenreStr = "CALL add_genre_from_XML_by_movie_id(?,?)";
-
-            insertMovieStatement = dbcon.prepareStatement(insertMovieStr);
-            insertGenreStatement = dbcon.prepareStatement(insertGenreStr);
-
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -51,10 +39,6 @@ public class ParseMoviesBatch extends DefaultHandler {
 
     public void run() {
         parseDocument();
-
-        // execute batches
-        this.doBatches();
-
         String stats = String.format("Valid: %d | Invalid: %d | Total %d",
                 movie.getNumOfValidMovies(), movie.getNumOfInvalidMovies(), movie.getNumOfMovies());
         System.out.println(stats);
@@ -63,25 +47,8 @@ public class ParseMoviesBatch extends DefaultHandler {
 
     // Queries and inserts //
 
-    private void doBatches(){
-        try {
-            System.out.println("Executing batches");
-            newMovies = insertMovieStatement.executeBatch();
-            dbcon.commit();
-            //insertGenreStatement.executeBatch();
-            //dbcon.commit();
-            insertMovieStatement.close();
-           insertGenreStatement.close();
-            dbcon.close();
-            System.out.println("Successfully executed batches, new movies = " + newMovies.length);
 
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-
-    private String getMovieId(Movie movie) throws SQLException {
+    public String getMovieId(Movie movie) throws SQLException{
         String id = "";
         MyQuery query = new MyQuery(dbcon, "SELECT * FROM movies");
         query.addWhereConditions(" %s = ?", "title", movie.getTitle());
@@ -98,37 +65,32 @@ public class ParseMoviesBatch extends DefaultHandler {
     }
 
 
-    private void insertGenres(Movie movie){
-
-        for (String genre : movie.getGenres()) {
-            try {
-                insertGenreStatement.setString(1, movie.getFid());
-                insertGenreStatement.setString(2, genre);
-                insertGenreStatement.addBatch();
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
 
-    private void insertMovie(Movie movie){
+    public void insertMovie(Movie movie){
         try {
             // Insert movie info to movies and movies_in_xml table. This is to link it with casts.xml
+            String insertMovieStr = "CALL naive_add_movie_from_XML(?, ?, ?)";
+            String insertMovieXmlStr = "INSERT INTO movies_in_xml (movieId, xmlId) VALUES (?,?)";
+
+            PreparedStatement insertMovieStatement = dbcon.prepareStatement(insertMovieStr);
+            PreparedStatement insertMovieXmlStatement = dbcon.prepareStatement(insertMovieXmlStr);
 
             insertMovieStatement.setString(1, movie.getTitle());
             insertMovieStatement.setInt(2, movie.getYear());
             insertMovieStatement.setString(3, movie.getDirector());
-            insertMovieStatement.setString(4, movie.getFid());
-            insertMovieStatement.addBatch();
+            insertMovieXmlStatement.setString(2, movie.getFid());
 
-            //this.insertGenres(movie);
-            numMovieInserts++;
-            if (numMovieInserts % batch == 0){
-                System.out.println("Executing movie batch");
-                insertMovieStatement.executeBatch();
-            }
+            insertMovieStatement.execute(); insertMovieStatement.close();
+
+            // get movie id for inserting in the other tables
+            String movieId = this.getMovieId(movie);
+
+            insertMovieXmlStatement.setString(1, movieId);
+            insertMovieXmlStatement.execute();
+            insertMovieXmlStatement.close();
+
+
 
         } catch(SQLException e){
             e.printStackTrace();
@@ -217,13 +179,8 @@ public class ParseMoviesBatch extends DefaultHandler {
 
 
     public static void main(String[] args) {
-        long startTime = System.nanoTime();
 
-        ParseMoviesBatch test = new ParseMoviesBatch();
+        NaiveSAXParserMovies test = new NaiveSAXParserMovies();
         test.run();
-
-        long endTime = System.nanoTime();
-        long elapsedTime = endTime - startTime;
-        System.out.println("Execution time: " + elapsedTime);
     }
 }

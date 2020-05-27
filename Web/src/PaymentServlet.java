@@ -1,13 +1,14 @@
 import com.google.gson.JsonObject;
 import utilities.MyQuery;
+import utilities.MyUtils;
 import utilities.User;
 
-import javax.annotation.Resource;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.sql.DataSource;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -21,12 +22,7 @@ public class PaymentServlet  extends HttpServlet {
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
      */
-    @Resource(name = "jdbc/moviedb")
-    private DataSource dataSource;
 
-    private boolean notEmpty(String s){
-        return (s != null && !s.equals(""));
-    }
 
     // Checks if payment is valid and puts info into json object
     private boolean isValidPayment(HttpServletRequest request, JsonObject responseJsonObject){
@@ -37,7 +33,7 @@ public class PaymentServlet  extends HttpServlet {
             String creditCardNumber = request.getParameter("creditCardNumber");
             String expirationDate = request.getParameter("expirationDate");
 
-            Connection dbcon = dataSource.getConnection();
+            Connection dbcon = MyUtils.getConnection();
 
             String equalsStr = "%1$s = ?";
 
@@ -55,7 +51,7 @@ public class PaymentServlet  extends HttpServlet {
             User user = (User) request.getSession().getAttribute("user");
 
             // Check if there is no matching card and that there are items in cart
-            if (!cardSet.isBeforeFirst() || !notEmpty(creditCardNumber) || !notEmpty(expirationDate)){
+            if (!cardSet.isBeforeFirst() || !MyUtils.notEmpty(creditCardNumber) || !MyUtils.notEmpty(expirationDate)){
                 responseJsonObject.addProperty("message", "Invalid Payment Information");
                 return false;
             }
@@ -68,9 +64,8 @@ public class PaymentServlet  extends HttpServlet {
                 return false;
             }
 
-
-            dbcon.close();
             cardQuery.close();
+            dbcon.close();
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -90,7 +85,7 @@ public class PaymentServlet  extends HttpServlet {
             String expirationDate = request.getParameter("expirationDate");
 
 
-            Connection dbcon = dataSource.getConnection();
+            Connection dbcon = MyUtils.getConnection();
 
             Date date = new Date();
             java.sql.Date sqlDate = new java.sql.Date(date.getTime());
@@ -123,6 +118,7 @@ public class PaymentServlet  extends HttpServlet {
             }
 
             responseJsonObject.addProperty("transactionId", transactionId);
+            maxIdQuery.close();
             dbcon.close();
 
         } catch (Exception e) {

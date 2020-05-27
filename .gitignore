@@ -3,7 +3,6 @@
 *.iml
 */movie-data.sql
 */test.java
-stanford-movies/
-src/*.txt
+stanford-movies
 *.txt
 target

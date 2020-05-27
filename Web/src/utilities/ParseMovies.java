@@ -1,9 +1,8 @@
+package utilities;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-import utilities.Movie;
-import utilities.MyQuery;
-import utilities.WriteData;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
@@ -42,12 +41,7 @@ public class ParseMovies extends DefaultHandler {
 
     public ParseMovies() {
         try {
-            String loginUser = "mytestuser";
-            String loginPasswd = "mypassword";
-            String loginUrl = "jdbc:mysql://localhost:3306/moviedb?AllowLoadLocalInfile=true";
-
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            dbcon = DriverManager.getConnection(loginUrl, loginUser, loginPasswd);
+            dbcon = MyUtils.getConnection();
 
             this.setMaxId();
             this.currentId = maxId;
@@ -120,6 +114,12 @@ public class ParseMovies extends DefaultHandler {
         this.loadMovieInXmlData();
         this.loadGenreData();
         this.loadGenreInMoviesData();
+
+        try {
+            dbcon.close();
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 
 

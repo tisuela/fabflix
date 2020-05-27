@@ -3,6 +3,9 @@ package utilities;
 import org.jasypt.util.password.StrongPasswordEncryptor;
 import utilities.MyQuery;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.sql.DataSource;
 import java.sql.*;
 
 public class VerifyPassword {
@@ -20,17 +23,13 @@ public class VerifyPassword {
 	 * 
 	 */
 
-	public boolean verifyCredentials(String email, String password, String database) throws Exception {
-		String loginUser = "mytestuser";
-		String loginPasswd = "mypassword";
-		String loginUrl = "jdbc:mysql://localhost:3306/moviedb";
+	public boolean verifyCredentials(String email, String password, String table) throws Exception {
 
-		Class.forName("com.mysql.jdbc.Driver").newInstance();
-		Connection dbcon = DriverManager.getConnection(loginUrl, loginUser, loginPasswd);
+		Connection dbcon = MyUtils.getConnection();
 
-		System.out.println(String.format("Querying database: %s", database));
+		System.out.println(String.format("Querying table: %s", table));
 
-		MyQuery query = new MyQuery(dbcon, String.format("SELECT * from %s", database));
+		MyQuery query = new MyQuery(dbcon, String.format("SELECT * from %s", table));
 		query.append("where email = ?", email);
 		ResultSet rs = query.execute();
 
@@ -38,7 +37,7 @@ public class VerifyPassword {
 		if (rs.next()) {
 		    // get the encrypted password from the database
 			String encryptedPassword = rs.getString("password");
-			id = (database.equals("customers")) ? rs.getInt("id") : -1;
+			id = (table.equals("customers")) ? rs.getInt("id") : -1;
 			name = email;
 			
 			// use the same encryptor to compare the user input password with encrypted password stored in DB

@@ -1,15 +1,15 @@
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import utilities.MyQuery;
+import utilities.MyUtils;
 import utilities.User;
 
-import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.sql.DataSource;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -22,9 +22,7 @@ public class ConfirmationServlet  extends HttpServlet {
     // important, just google this if u don't get it
     private static final long serialVersionUID = 2L;
 
-    // mySql resource
-    @Resource(name = "jdbc/moviedb")
-    private DataSource dataSource;
+
 
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -37,7 +35,7 @@ public class ConfirmationServlet  extends HttpServlet {
            JsonObject jsonObject = new JsonObject();
            JsonArray moviesArray = new JsonArray();
            User user = (User) request.getSession().getAttribute("user");
-           Connection dbcon = dataSource.getConnection();
+           Connection dbcon = MyUtils.getConnection();
 
            String transactionId = request.getParameter("transaction_id");
 
@@ -81,6 +79,8 @@ public class ConfirmationServlet  extends HttpServlet {
            user.emptyCart();
            user.setTotalPrice(0);
            jsonObject.addProperty("errorMessage","success");
+
+           dbcon.close();
            out.write(jsonObject.toString());
            response.setStatus(200);
        } catch (Exception e){

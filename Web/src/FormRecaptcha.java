@@ -1,6 +1,8 @@
 
 /* A servlet to display the contents of the MySQL movieDB database */
 
+import utilities.MyUtils;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -43,9 +45,7 @@ public class FormRecaptcha extends HttpServlet {
             return;
         }
 
-        String loginUser = "mytestuser";
-        String loginPasswd = "mypassword";
-        String loginUrl = "jdbc:mysql://localhost:3306/moviedbexample";
+
 
         response.setContentType("text/html"); // Response mime type
 
@@ -53,7 +53,7 @@ public class FormRecaptcha extends HttpServlet {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
 
             // Create a new connection to database
-            Connection dbCon = DriverManager.getConnection(loginUrl, loginUser, loginPasswd);
+            Connection dbCon = MyUtils.getConnection();
 
             // Declare a new statement
             Statement statement = dbCon.createStatement();

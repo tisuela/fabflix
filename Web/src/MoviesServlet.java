@@ -1,15 +1,15 @@
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import utilities.MyQuery;
+import utilities.MyUtils;
 import utilities.User;
 
-import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.sql.DataSource;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -29,17 +29,12 @@ public class MoviesServlet extends HttpServlet {
     // to determine what kind of search this is
     private boolean isFulltext = false;
 
-    // Create a dataSource which registered in web.xml
-    @Resource(name = "jdbc/moviedb")
-    private DataSource dataSource;
 
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
      */
 
-    private boolean notEmpty(String s){
-        return (s != null && !s.equals(""));
-    }
+
 
     // Build query for MYSQL from request parameters
     private MyQuery buildQuery(HttpServletRequest request, Connection dbcon){
@@ -61,7 +56,7 @@ public class MoviesServlet extends HttpServlet {
         String title = request.getParameter("title");
 
         // Check what type of search this is
-        if (isFulltext && this.notEmpty(title)){
+        if (isFulltext && MyUtils.notEmpty(title)){
 
             String[] keywords = title.split(" ");
             String keywordQuery = "";
@@ -220,7 +215,7 @@ public class MoviesServlet extends HttpServlet {
         try {
             // Check parameters for the type of search this is
             String fulltext = request.getParameter("fulltext");
-            if (this.notEmpty(fulltext) && fulltext.equals("true")){
+            if (MyUtils.notEmpty(fulltext) && fulltext.equals("true")){
                 isFulltext = true;
             }
 
@@ -228,7 +223,7 @@ public class MoviesServlet extends HttpServlet {
             // --- Query execution --- //
 
             // Get a connection from dataSource
-            Connection dbcon = dataSource.getConnection();
+            Connection dbcon = MyUtils.getConnection();
 
             // Build query
             MyQuery query = buildQuery(request, dbcon);

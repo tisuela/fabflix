@@ -1,13 +1,14 @@
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import utilities.MyQuery;
+import utilities.MyUtils;
 
-import javax.annotation.Resource;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.sql.DataSource;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -20,8 +21,6 @@ public class DashboardServlet extends HttpServlet {
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
      */
-    @Resource(name = "jdbc/moviedb")
-    private DataSource dataSource;
 
     private boolean notEmpty(String s){
         return (s != null && !s.equals(""));
@@ -54,7 +53,7 @@ public class DashboardServlet extends HttpServlet {
 
             // Check if full name specified
             if (notEmpty(fullName)) {
-                Connection dbcon = dataSource.getConnection();
+                Connection dbcon = MyUtils.getConnection();
 
                 // NOT SUPPOSED TO CHECK IF IT ALREADY EXISTS
                 if (false) {
@@ -79,6 +78,7 @@ public class DashboardServlet extends HttpServlet {
 
                     callStatement.execute();
                     callStatement.close();
+                    dbcon.close();
 
                     responseJson.addProperty("status", "success");
                     responseJson.addProperty("message", "successfully added ");
@@ -109,12 +109,12 @@ public class DashboardServlet extends HttpServlet {
 
             // All parameters are required
             if (notEmpty(title) && notEmpty(year) && notEmpty(director) && notEmpty(genreName) && notEmpty(starName)){
-                Connection dbcon = dataSource.getConnection();
+                Connection dbcon = MyUtils.getConnection();
 
                 // Check if movie already exists
                 if (this.movieExists(title, year, director, dbcon)){
                     responseJson.addProperty("status", "fail");
-                    responseJson.addProperty("message", "utilities.Movie already exists");
+                    responseJson.addProperty("message", "Movie already exists");
                 }
                 // if movie doesn't exist, we're clear to insert
                 else{
@@ -127,6 +127,7 @@ public class DashboardServlet extends HttpServlet {
 
                     callStatement.execute();
                     callStatement.close();
+                    dbcon.close();
 
                     responseJson.addProperty("status", "success");
                     responseJson.addProperty("message", "New movie successfully added");
@@ -180,7 +181,7 @@ public class DashboardServlet extends HttpServlet {
         try {
             System.out.println("GET attempt");
             // Get a connection from dataSource
-            Connection connection = dataSource.getConnection();
+            Connection connection = MyUtils.getConnection();
 
             // the following codeblock has code adapted from:
             // https://www.progress.com/blogs/jdbc-tutorial-extracting-database-metadata-via-jdbc-driver
@@ -225,6 +226,9 @@ public class DashboardServlet extends HttpServlet {
 
             JsonObject resultJson = new JsonObject();
             resultJson.add("tables", resultSet);
+
+            tables.close();
+            connection.close();
 
             /*
             ResultJson format:

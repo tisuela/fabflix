@@ -1,15 +1,14 @@
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import utilities.MyQuery;
+import utilities.MyUtils;
 import utilities.User;
 
-import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -23,9 +22,6 @@ public class CartServlet extends HttpServlet {
     // important, just google this if u don't get it
     private static final long serialVersionUID = 2L;
 
-    // mySql resource
-    @Resource(name = "jdbc/moviedb")
-    private DataSource dataSource;
 
     private int totalPrice = 0;
 
@@ -61,7 +57,7 @@ public class CartServlet extends HttpServlet {
         try{
             JsonObject jsonObject = new JsonObject();
             JsonArray moviesArray = new JsonArray();
-            Connection dbcon = dataSource.getConnection();
+            Connection dbcon = MyUtils.getConnection();
 
             // Get user object, since user object stores the cart
             User user = (User)request.getSession().getAttribute("user");

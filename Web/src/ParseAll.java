@@ -1,10 +1,7 @@
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-import utilities.Movie;
-import utilities.MyQuery;
-import utilities.Star;
-import utilities.WriteData;
+import utilities.*;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
@@ -36,12 +33,7 @@ public class ParseAll extends DefaultHandler {
 
     public ParseAll(){
         try {
-            String loginUser = "mytestuser";
-            String loginPasswd = "mypassword";
-            String loginUrl = "jdbc:mysql://localhost:3306/moviedb?AllowLoadLocalInfile=true";
-
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            dbcon = DriverManager.getConnection(loginUrl, loginUser, loginPasswd);
+            dbcon = MyUtils.getConnection();
 
 
             // run the two other parsers
@@ -77,7 +69,11 @@ public class ParseAll extends DefaultHandler {
 
         this.loadData();
 
-
+        try {
+            dbcon.close();
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
 
     }
 
