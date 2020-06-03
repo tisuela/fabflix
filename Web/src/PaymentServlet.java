@@ -33,7 +33,7 @@ public class PaymentServlet  extends HttpServlet {
             String creditCardNumber = request.getParameter("creditCardNumber");
             String expirationDate = request.getParameter("expirationDate");
 
-            Connection dbcon = MyUtils.getConnection();
+            Connection dbcon = MyUtils.getReadConnection();
 
             String equalsStr = "%1$s = ?";
 
@@ -85,7 +85,7 @@ public class PaymentServlet  extends HttpServlet {
             String expirationDate = request.getParameter("expirationDate");
 
 
-            Connection dbcon = MyUtils.getConnection();
+            Connection dbcon = MyUtils.getWriteConnection();
 
             Date date = new Date();
             java.sql.Date sqlDate = new java.sql.Date(date.getTime());

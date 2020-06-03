@@ -49,7 +49,7 @@ public class SingleMovieServlet extends HttpServlet {
 		try {
 
 			// Get a connection from dataSource
-			Connection dbcon = MyUtils.getConnection();
+			Connection dbcon = MyUtils.getReadConnection();
 
 			String matchId = "%s = ?";
 

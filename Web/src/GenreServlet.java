@@ -29,7 +29,7 @@ public class GenreServlet extends HttpServlet{
 
         try {
             // Get a connection from dataSource
-            Connection dbcon = MyUtils.getConnection();
+            Connection dbcon = MyUtils.getReadConnection();
 
             // Build query
             MyQuery query = new MyQuery(dbcon,"SELECT name FROM genres ORDER BY name ASC");

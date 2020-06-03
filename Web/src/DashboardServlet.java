@@ -53,7 +53,7 @@ public class DashboardServlet extends HttpServlet {
 
             // Check if full name specified
             if (notEmpty(fullName)) {
-                Connection dbcon = MyUtils.getConnection();
+                Connection dbcon = MyUtils.getWriteConnection();
 
                 // NOT SUPPOSED TO CHECK IF IT ALREADY EXISTS
                 if (false) {
@@ -109,7 +109,7 @@ public class DashboardServlet extends HttpServlet {
 
             // All parameters are required
             if (notEmpty(title) && notEmpty(year) && notEmpty(director) && notEmpty(genreName) && notEmpty(starName)){
-                Connection dbcon = MyUtils.getConnection();
+                Connection dbcon = MyUtils.getWriteConnection();
 
                 // Check if movie already exists
                 if (this.movieExists(title, year, director, dbcon)){
@@ -181,7 +181,7 @@ public class DashboardServlet extends HttpServlet {
         try {
             System.out.println("GET attempt");
             // Get a connection from dataSource
-            Connection connection = MyUtils.getConnection();
+            Connection connection = MyUtils.getReadConnection();
 
             // the following codeblock has code adapted from:
             // https://www.progress.com/blogs/jdbc-tutorial-extracting-database-metadata-via-jdbc-driver

@@ -223,7 +223,7 @@ public class MoviesServlet extends HttpServlet {
             // --- Query execution --- //
 
             // Get a connection from dataSource
-            Connection dbcon = MyUtils.getConnection();
+            Connection dbcon = MyUtils.getReadConnection();
 
             // Build query
             MyQuery query = buildQuery(request, dbcon);

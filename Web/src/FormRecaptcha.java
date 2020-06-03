@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
@@ -53,7 +52,7 @@ public class FormRecaptcha extends HttpServlet {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
 
             // Create a new connection to database
-            Connection dbCon = MyUtils.getConnection();
+            Connection dbCon = MyUtils.getReadConnection();
 
             // Declare a new statement
             Statement statement = dbCon.createStatement();

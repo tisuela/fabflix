@@ -1,11 +1,7 @@
 package utilities;
 
 import org.jasypt.util.password.StrongPasswordEncryptor;
-import utilities.MyQuery;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.sql.DataSource;
 import java.sql.*;
 
 public class VerifyPassword {
@@ -25,7 +21,7 @@ public class VerifyPassword {
 
 	public boolean verifyCredentials(String email, String password, String table) throws Exception {
 
-		Connection dbcon = MyUtils.getConnection();
+		Connection dbcon = MyUtils.getReadConnection();
 
 		System.out.println(String.format("Querying table: %s", table));
 

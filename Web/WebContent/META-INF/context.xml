@@ -4,7 +4,16 @@
 
     <!-- Defines a Data Source Connecting to localhost moviedb -->
     <!-- master: 172.31.57.216 -->
-    <Resource name="jdbc/moviedb"
+    <Resource name="jdbc/moviedb_read"
+              auth="Container"
+              driverClassName="com.mysql.jdbc.Driver"
+              type="javax.sql.DataSource"
+              maxTotal="100" maxIdle="30" maxWaitMillis="10000"
+              username="mytestuser"
+              password="mypassword"
+              url="jdbc:mysql://localhost:3306/moviedb?autoReconnect=true&amp;useSSL=false&amp;AllowLoadLocalInfile=true&amp;cachePrepStmts=true"/>
+
+    <Resource name="jdbc/moviedb_write"
               auth="Container"
               driverClassName="com.mysql.jdbc.Driver"
               type="javax.sql.DataSource"

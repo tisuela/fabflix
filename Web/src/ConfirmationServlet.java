@@ -35,7 +35,7 @@ public class ConfirmationServlet  extends HttpServlet {
            JsonObject jsonObject = new JsonObject();
            JsonArray moviesArray = new JsonArray();
            User user = (User) request.getSession().getAttribute("user");
-           Connection dbcon = MyUtils.getConnection();
+           Connection dbcon = MyUtils.getReadConnection();
 
            String transactionId = request.getParameter("transaction_id");
 

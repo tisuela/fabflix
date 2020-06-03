@@ -57,7 +57,7 @@ public class CartServlet extends HttpServlet {
         try{
             JsonObject jsonObject = new JsonObject();
             JsonArray moviesArray = new JsonArray();
-            Connection dbcon = MyUtils.getConnection();
+            Connection dbcon = MyUtils.getReadConnection();
 
             // Get user object, since user object stores the cart
             User user = (User)request.getSession().getAttribute("user");
