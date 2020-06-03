@@ -229,7 +229,7 @@ BEGIN
     INSERT INTO sales (sales.customerId, sales.movieId, sales.saleDate) VALUES (customerId, movieId, saleDate);
     SELECT max(sales.id) INTO saleId FROM sales;
 
-    INSERT INTO transactions (transactions.transactionId, transactions.saleId) VALUES  (transactionId, saleId);
+    INSERT INTO transactions (transactions.transactionId, transactions.saleId, transactions.quantity) VALUES  (transactionId, saleId, quantity);
 
 END $$
 
