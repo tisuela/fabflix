@@ -33,7 +33,6 @@ public class ParseAll extends DefaultHandler {
 
 
 
-
     public ParseAll(){
         try {
 
@@ -50,6 +49,7 @@ public class ParseAll extends DefaultHandler {
             e.printStackTrace();
         }
     }
+
 
     private void runActorsAndMovies(){
         ParseMovies parseMovies = new ParseMovies();

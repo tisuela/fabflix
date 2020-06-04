@@ -38,17 +38,27 @@ public class ParseMovies extends DefaultHandler {
 
     private int[] newMovies = null;
 
+    // to decode genres from XML, described in the stanford page
+    private Map<String, String> genreCodes;
+
+
+
 
     public ParseMovies() {
         try {
             dbcon = MyUtils.getConnectionNoPool();
 
             this.setMaxId();
+            this.initGenreCodes();
+
+
             this.currentId = maxId;
             this.currentGenreId = maxGenreId;
 
             movies = new HashMap<>();
             genres = new HashMap<>();
+
+            getExistingGenres();
 
             writeMovieData = new WriteData("movies.txt");
             writeMovieInXmlData = new WriteData("movies_in_xml.txt");
@@ -59,6 +69,61 @@ public class ParseMovies extends DefaultHandler {
             e.printStackTrace();
         }
     }
+
+
+    private void initGenreCodes(){
+        genreCodes = new HashMap<String, String>() {{
+            put("susp", "Thriller");
+            put("cnr", "Crime");
+            put("dram", "Drama");
+            put("dram>", "Drama");
+            put("dramd", "Drama");
+            put("dramn", "Drama");
+            put("west", "Western");
+            put("s.f.", "Science Fiction");
+            put("advt", "Adventure");
+            put("horr", "Horror");
+            put("romt", "Romantic");
+            put("comd", "Comedy");
+            put("musc", "Musical");
+            put("docu", "Documentary");
+            put("porn", "Adult");
+            put("adctx", "Adult");
+            put("kinky", "Adult");
+            put("porb", "Adult");
+            put("noir", "Black");
+            put("biop", "Biography");
+            put("tv", "TV Show");
+            put("tvs", "TV Show");
+            put("tvm", "TV Show");
+            put("act", "Action");
+            put("actn", "Action");
+            put("adct", "Action");
+        }};
+    }
+
+
+    // save existing genres to the genres map (prevents duplicates)
+    private void getExistingGenres(){
+        genres = new HashMap<>();
+        MyQuery query = new MyQuery(dbcon, "SELECT * from genres");
+
+
+        try {
+            ResultSet rs = query.execute();
+            while (rs.next()) {
+                String genreName = rs.getString("name");
+                String genreId = String.valueOf(rs.getInt("id"));
+
+                genres.put(genreName, genreId);
+            }
+            query.close();
+
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
 
 
 
@@ -123,10 +188,21 @@ public class ParseMovies extends DefaultHandler {
     }
 
 
+    private String decodeGenre(String code){
+        String decoded = code;
+        if (genreCodes.get(code.trim().toLowerCase()) != null){
+            decoded = genreCodes.get(code.trim().toLowerCase());
+            System.out.println("decoded " + code + " to " + decoded);
+        }
+        return decoded;
+    }
+
+
 
     private void insertGenres(Movie movie){
 
         for (String genre : movie.getGenres()) {
+            genre = decodeGenre(genre);
 
             if (genres.get(genre) == null){
                 genres.put(genre, String.valueOf(this.getNextGenreId()));
