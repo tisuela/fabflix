@@ -278,7 +278,7 @@ public class MoviesServlet extends HttpServlet {
 
         String rootPath = getServletContext().getRealPath("/");
         String TSLogPath = rootPath + "/TSlog.csv";
-        String TJLogPath = rootPath + "/TJLog.csv";
+        String TJLogPath = rootPath + "/TJlog.csv";
 
         // TS IS TOTAL SERVLET TIME
         // TJ IS GETTING THE CONNECTION AND EXECUTING THE QUERY
