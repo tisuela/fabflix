@@ -277,24 +277,17 @@ public class MoviesServlet extends HttpServlet {
         long servletTotalTime = servletEndTime - servletStartTime;
 
         String rootPath = getServletContext().getRealPath("/");
-        String TSLogPath = rootPath + "/TSlog.csv";
-        String TJLogPath = rootPath + "/TJlog.csv";
+        String TSLogPath = rootPath + "/TSTJlog.csv";
 
         // TS IS TOTAL SERVLET TIME
         // TJ IS GETTING THE CONNECTION AND EXECUTING THE QUERY
         try {
-            File TSfile = new File(TSLogPath);
-            File TJfile = new File(TJLogPath);
-            FileWriter TSfr = new FileWriter(TSfile, true);
-            FileWriter TJfr = new FileWriter(TJfile, true);
-            synchronized (TSfr) {
-                TSfr.write(servletTotalTime + "\n");
+            File TSTJfile = new File(TSLogPath);
+            FileWriter TSTJfr = new FileWriter(TSTJfile, true);
+            synchronized (TSTJfr) {
+                TSTJfr.write(servletTotalTime + "," +  queryTotalTime + "\n");
             }
-            TSfr.close();
-            synchronized (TJfr) {
-                TJfr.write(queryTotalTime + "\n");
-            }
-            TJfr.close();
+            TSTJfr.close();
 
         } catch (Exception e) {
             e.printStackTrace();
