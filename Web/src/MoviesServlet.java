@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -18,7 +20,7 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
+import java.util.concurrent.TimeUnit;
 
 
 // Declaring a WebServlet called MoviesServlet, which maps to url "/api/movies"
@@ -204,6 +206,9 @@ public class MoviesServlet extends HttpServlet {
     // Do get request
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+        long servletStartTime = System.nanoTime();
+        long queryTotalTime = 0;
+
         response.setContentType("application/json"); // Response mime type
 
         // Output stream to STDOUT
@@ -222,6 +227,7 @@ public class MoviesServlet extends HttpServlet {
 
             // --- Query execution --- //
 
+            long queryStartTime = System.nanoTime();
             // Get a connection from dataSource
             Connection dbcon = MyUtils.getReadConnection();
 
@@ -229,7 +235,13 @@ public class MoviesServlet extends HttpServlet {
             MyQuery query = buildQuery(request, dbcon);
 
             // Perform the query
+
             ResultSet rs = query.execute();
+
+            long queryEndTime = System.nanoTime();
+
+            queryTotalTime = queryEndTime - queryStartTime;
+
             System.out.println("movie servlet statement = " + query.getStatement());
 
 
@@ -260,5 +272,32 @@ public class MoviesServlet extends HttpServlet {
         }
         out.close();
 
+        long servletEndTime = System.nanoTime();
+
+        long servletTotalTime = servletEndTime - servletStartTime;
+
+        String rootPath = getServletContext().getRealPath("/");
+        String TSLogPath = rootPath + "\\TSlog.csv";
+        String TJLogPath = rootPath + "\\TJLog.csv";
+
+        // TS IS TOTAL SERVLET TIME
+        // TJ IS GETTING THE CONNECTION AND EXECUTING THE QUERY
+        try {
+            File TSfile = new File(TSLogPath);
+            File TJfile = new File(TJLogPath);
+            FileWriter TSfr = new FileWriter(TSfile, true);
+            FileWriter TJfr = new FileWriter(TJfile, true);
+            synchronized (TSfr) {
+                TSfr.write(servletTotalTime + "\n");
+            }
+            TSfr.close();
+            synchronized (TJfr) {
+                TJfr.write(queryTotalTime + "\n");
+            }
+            TJfr.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
