@@ -7,6 +7,8 @@
             Nathaniel Louis Crisostomo Tisuela
     
     - #### Project 5 Video Demo Link: https://www.youtube.com/watch?v=2PgFoPZQS-s
+            
+            In the description of the video, there are helpful timestamps such as when each Jmeter test is finished.
 
     - #### Instruction of deployment:
     If you have not done so, populate your 'moviedb' database with the movie-data.sql file.
