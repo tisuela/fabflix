@@ -74,17 +74,17 @@
 
 - # JMeter TS/TJ Time Measurement Report
 
-| **Single-instance Version Test Plan**          | **Graph Results Screenshot** | **Average Query Time(ms)** | **Average Search Servlet Time(ms)** | **Average JDBC Time(ms)** | **Analysis** |
-|------------------------------------------------|------------------------------|----------------------------|-------------------------------------|---------------------------|--------------|
-| Case 1: HTTP/1 thread                          | ![](img/single-pooling-1thread.png)   | ??                         | ??                                  | ??                        |              |
-| Case 2: HTTP/10 threads                        | ![](img/single-pooling-10threads-http.png)   | ??                         | ??                                  | ??                        | ??           |
-| Case 3: HTTPS/10 threads                       | ![](img/single-pooling-10threads-https.png)   | ??                         | ??                                  | ??                        | ??           |
-| Case 4: HTTP/10 threads/No connection pooling  | ![](img/single-noPool-10thread.png)   | ??                         | ??                                  | ??                        | ??           |
+| **Single-instance Version Test Plan**          | **Graph Results Screenshot** | **Average Query Time(ms)** | **Average Search Servlet Time(ms)** | **Average JDBC Time(ms)** |
+|------------------------------------------------|------------------------------|----------------------------|-------------------------------------|---------------------------|
+| Case 1: HTTP/1 thread                          | ![](img/single-pooling-1thread.png)        | 95|10.59| 8.76|
+| Case 2: HTTP/10 threads                        | ![](img/single-pooling-10threads-http.png) |134|49.47|41.46|
+| Case 3: HTTPS/10 threads                       | ![](img/single-pooling-10threads-https.png)|129|41.80|34.88|
+| Case 4: HTTP/10 threads/No connection pooling  | ![](img/single-noPool-10thread.png)        |172|85.99|76.79|
 
-| **Scaled Version Test Plan**                   | **Graph Results Screenshot** | **Average Query Time(ms)** | **Average Search Servlet Time(ms)** | **Average JDBC Time(ms)** | **Analysis** |
-|------------------------------------------------|------------------------------|----------------------------|-------------------------------------|---------------------------|--------------|
-| Case 1: HTTP/1 thread                          | ![](img/scaled-pooling-1thread.png)   | ??                         | ??                                  | ??                        | ??           |
-| Case 2: HTTP/10 threads                        | ![](img/scaled-pooling-10thread.png)   | ??                         | ??                                  | ??                        | ??           |
-| Case 3: HTTP/10 threads/No connection pooling  | ![](img/scaled-noPool-10thread.png)   | ??                         | ??                                  | ??                        | ??           |
+| **Scaled Version Test Plan**                   | **Graph Results Screenshot** | **Average Query Time(ms)** | **Average Search Servlet Time(ms)** | **Average JDBC Time(ms)** |
+|------------------------------------------------|------------------------------|----------------------------|-------------------------------------|---------------------------|
+| Case 1: HTTP/1 thread                          | ![](img/scaled-pooling-1thread.png) | 96|Master:  9.94 Slave: 10.33 Average: 10.135|Master:  8.50 Slave:  8.61 Average:  8.555|
+| Case 2: HTTP/10 threads                        | ![](img/scaled-pooling-10thread.png)|109|Master: 20.87 Slave: 22.26 Average: 21.565|Master: 16.52 Slave: 17.26 Average: 16.890|
+| Case 3: HTTP/10 threads/No connection pooling  | ![](img/scaled-noPool-10thread.png) |142|Master: 76.74 Slave: 20.85 Average: 48.795|Master: 68.65 Slave: 18.02 Average: 43.335|
 
 
