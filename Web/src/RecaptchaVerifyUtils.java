@@ -10,7 +10,7 @@ import java.net.URL;
 public class RecaptchaVerifyUtils {
 	
     public static final String SITE_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify";
-    private static final String SECRET_KEY = "6LdyIfIUAAAAANhmA782wki53LojlXsSZB7OCOsH";
+    private static final String SECRET_KEY = "";
 	
     public static void verify( String gRecaptchaResponse) throws Exception {
         if (gRecaptchaResponse == null || gRecaptchaResponse.length() == 0) {
