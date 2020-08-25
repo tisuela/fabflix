@@ -1,10 +1,9 @@
 - # General
-    - #### Team#: 99
     
-    - #### Names:
-            Garfield Tsui
+    - #### Contributers:
+            Garfield 
     
-            Nathaniel Louis Crisostomo Tisuela
+            Nathaniel 
     
     - #### Project 5 Video Demo Link: https://www.youtube.com/watch?v=2PgFoPZQS-s
             
